@@ -1,0 +1,273 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Masters/Doctoral Thesis 
+% LaTeX Template
+% Version 1.41 (9/9/13)
+%
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Original authors:
+% Steven Gunn 
+% http://users.ecs.soton.ac.uk/srg/softwaretools/document/templates/
+% and
+% Sunil Patel
+% http://www.sunilpatel.co.uk/thesis-template/
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Note:
+% Make sure to edit document variables in the Thesis.cls file
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt, a4paper, oneside]{Thesis} % Paper size, default font size and one-sided paper
+
+\graphicspath{{Pictures/}} % Specifies the directory where pictures are stored
+
+\usepackage{float}[2001/11/08]%    v1.3d
+\usepackage{placeins}[2005/04/18]% v2.2  ; for \FloatBarrier
+\usepackage{rotating}[2009/03/28]% v2.16a; for sidewaystable-environment
+\usepackage{hyperref}[2012/11/06]% v6.83m
+
+\usepackage{tablefootnote}[2014/01/26]%   v1.1c
+\usepackage[square, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
+\hypersetup{urlcolor=blue, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
+\title{\ttitle} % Defines the thesis title - don't touch this
+
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\setstretch{1.3} % Line spacing of 1.3
+
+% Define the page headers using the FancyHdr package and set up for one-sided printing
+\fancyhead{} % Clears all page headers and footers
+\rhead{\thepage} % Sets the right side header to show the page number
+\lhead{} % Clears the left side page header
+
+\pagestyle{fancy} % Finally, use the "fancy" page style to implement the FancyHdr headers
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
+
+% PDF meta-data
+\hypersetup{pdftitle={\ttitle}}
+\hypersetup{pdfsubject=\subjectname}
+\hypersetup{pdfauthor=\authornames}
+\hypersetup{pdfkeywords=\keywordnames}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{6ex}
+{\huge \bfseries \ttitle}\\[4cm] % Thesis title
+ 
+\textsc {\Large \href{http://ca.linkedin.com/pub/lin-cheng/19/191/422} \authornames}\\[3cm] % Thesis type
+
+\large \textsc{A thesis\\ in\\ The Department\\ of\\ \deptname }\\[3cm] % University requirement text
+{Presented in Partial Fulfilment of the Requirements\\ For the Degree of \degreename \\ \univname\\ Montr\'{e}al, Qu\'{e}bec, Canada}\\[1cm]
+ 
+{\large \today} % Date
+%\includegraphics{Logo} % University/department logo - uncomment to place it
+ 
+\vfill
+\end{center}
+
+\end{titlepage}
+
+\pagestyle{empty} % No headers or footers for the following pages
+  \vspace{1em}
+%     \vspace{1ex}
+     \begin{center}
+        CONCORDIA UNIVERSITY
+     \end{center}
+     \begin{center}
+        School of Graduate Studies
+     \end{center}
+     \vspace{3ex}
+     This is to certify that the thesis prepared\\[2ex]
+     By :\hspace{38pt}{\bf {\authornames}}\\[2ex]
+     Entitled :\hspace*{13pt}{\bf \ttitle}\\[2ex] 
+    and submitted in partial fulfilment of the requirements for the degree
+    of\\[2ex]
+    \hspace*{62pt}{\bf \degreename}\\[2ex]
+    complies with the regulations of this University and meets the accepted
+    standards with respect to originality and quality. \\[2ex]
+    Signed by the final examining committee : \\[5ex]
+    \hspace*{77pt}\underline{\hspace{234pt}} Chair\\
+    \hspace*{77pt}Dr.\@ A. \\[2.5ex]
+    \hspace*{77pt}\underline{\hspace{234pt}} Examiner\\
+    \hspace*{77pt}Dr.\@ B. \\[2.5ex]
+    \hspace*{77pt}\underline{\hspace{234pt}} Examiner\\
+    \hspace*{77pt}Dr.\@ C. \\[2.5ex]
+    \hspace*{77pt}\underline{\hspace{234pt}} Supervisor \\
+    \hspace*{77pt}\@ \supname\\[2.5ex]
+    Approved by \hspace{9pt}\underline{\hspace{232pt}}\\
+    \hspace*{79pt}Dr.\@ D. \\
+    \hspace*{79pt}Chair of Department or Graduate Program Director\\[6ex]
+    \underline{\hspace*{100pt}} \hspace{10pt}  2014. \hspace{64pt} \underline{\hspace{200pt}}\\
+    \hspace*{213pt}Dr.\@ E. \\
+    \hspace*{213pt}Dean of Faculty\\    
+    \hspace*{213pt}(Engineering and Computer Science)
+
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\addtotoc{Abstract} % Add the "Abstract" page entry to the Contents
+
+\abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+
+The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
+}
+
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
+
+\acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
+
+The acknowledgements and the people to thank go here, don't forget to include your project advisor\ldots
+}
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy} % The page style headers have been "empty" all this time, now use the "fancy" headers as defined before to bring them back
+
+\lhead{\emph{Contents}} % Set the left side page header to "Contents"
+\tableofcontents % Write out the Table of Contents
+
+\lhead{\emph{List of Figures}} % Set the left side page header to "List of Figures"
+\listoffigures % Write out the List of Figures
+
+\lhead{\emph{List of Tables}} % Set the left side page header to "List of Tables"
+\listoftables % Write out the List of Tables
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\clearpage % Start a new page
+
+\setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
+
+\lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
+\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
+{
+\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere \\
+%\textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
+}
+
+%----------------------------------------------------------------------------------------
+%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
+%----------------------------------------------------------------------------------------
+
+% \clearpage % Start a new page
+% 
+% \lhead{\emph{Physical Constants}} % Set the left side page header to "Physical Constants"
+% 
+% \listofconstants{lrcl} % Include a list of Physical Constants (a four column table)
+% {
+% Speed of Light & $c$ & $=$ & $2.997\ 924\ 58\times10^{8}\ \mbox{ms}^{-\mbox{s}}$ (exact)\\
+% % Constant Name & Symbol & = & Constant Value (with units) \\
+% }
+
+%----------------------------------------------------------------------------------------
+%	SYMBOLS
+%----------------------------------------------------------------------------------------
+
+\clearpage % Start a new page
+
+\lhead{\emph{Symbols}} % Set the left side page header to "Symbols"
+
+\listofnomenclature{lll} % Include a list of Symbols (a three column table)
+{
+$a$ & distance & m \\
+$P$ & power & W (Js$^{-1}$) \\
+% Symbol & Name & Unit \\
+
+& & \\ % Gap to separate the Roman symbols from the Greek
+
+$\omega$ & angular frequency & rads$^{-1}$ \\
+% Symbol & Name & Unit \\
+}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+\setstretch{1.3} % Return the line spacing back to 1.3
+
+\pagestyle{empty} % Page style needs to be empty for this page
+
+\dedicatory{For/Dedicated to/To my\ldots} % Dedication text
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{fancy} % Return the page headers back to the "fancy" style
+
+% Include the chapters of the thesis as separate files from the Chapters folder
+% Uncomment the lines as you write the chapters
+
+\input{Chapters/Chapter1}
+\input{Chapters/DynamicProg} 
+\input{Chapters/CUDASeqAlign}
+\input{Chapters/CUDAHMMER3} 
+\input{Chapters/Results} 
+%\input{Chapters/Chapter6} 
+%\input{Chapters/Chapter7} 
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
+
+% Include the appendices of the thesis as separate files from the Appendices folder
+% Uncomment the lines as you write the Appendices
+
+\input{Appendices/AppendixA}
+%\input{Appendices/AppendixB}
+%\input{Appendices/AppendixC}
+
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+
+\backmatter
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\label{Bibliography}
+
+\lhead{\emph{Bibliography}} % Change the page header to say "Bibliography"
+
+\bibliographystyle{unsrtnat} % Use the "unsrtnat" BibTeX style for formatting the Bibliography
+
+\bibliography{Bibliography} % The references (bibliography) information are stored in the file named "Bibliography.bib"
+
+\end{document}  
