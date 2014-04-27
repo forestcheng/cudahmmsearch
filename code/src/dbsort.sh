@@ -1,0 +1,2 @@
+gcc -std=gnu99 -O3 -fomit-frame-pointer -fstrict-aliasing -pthread -fPIC -msse2 -DHAVE_CONFIG_H  -I../easel -I../libdivsufsort -I../easel -I. -I. -I/usr/local/cuda-5.5/include -o dbsort.o -c dbsort.c
+gcc -std=gnu99 -O3 -fomit-frame-pointer -fstrict-aliasing -pthread -fPIC -msse2 -DHAVE_CONFIG_H  -L../easel -L./impl_sse -L../libdivsufsort -L. -L/usr/local/cuda-5.5/lib64 -o dbsort dbsort.o  -lhmmer -leasel -ldivsufsort  -lm
