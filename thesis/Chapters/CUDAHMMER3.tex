@@ -13,9 +13,9 @@
 The following are the requirements for a CUDA accelerated HMMER3 protein sequence search tool:
 
 \begin{itemize}
-\item A HMMER3 protein sequence search tool, named cudaSearch, will be implemented to run on CUDA-enabled GPU and several optimization will be taken to accelerate the computation. The cudaSearch will be tested and compared with other CPU and GPU implementations.
-\item The cudaSearch will be based on HMMER3 algorithm so that the result will be same as hmmsearch of HMMER3.
-\item The cudaSearch will be completely usable under various GPU devices and sequence database size. This means that cudaSearch is not just for research purpose or just a proof of concept.
+\item A HMMER3 protein sequence search tool, named cudaHmmsearch, will be implemented to run on CUDA-enabled GPU and several optimization will be taken to accelerate the computation. The cudaHmmsearch will be tested and compared with other CPU and GPU implementations.
+\item The cudaHmmsearch will be based on HMMER3 algorithm so that the result will be same as hmmsearch of HMMER3.
+\item The cudaHmmsearch will be completely usable under various GPU devices and sequence database size. This means that cudaHmmsearch is not just for research purpose or just a proof of concept.
 \end{itemize}
 
 \subsubsection*{Implementation toolkit and language}
@@ -92,9 +92,9 @@ The global memory is used to store most of data on GPU. A primary in the optimiz
 The elements of the \emph{dp} matrix and the query profile 2D matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
 
 \begin{lstlisting}[caption={struct of uint4 and ulong2}, captionpos=t]
-struct __device_builtin__ int4
+struct __device_builtin__ uint4
 {
-    int x, y, z, w;
+    unsigned int x, y, z, w;
 }
 
 struct __device_builtin__ ulong2
@@ -120,11 +120,11 @@ This approach resulted in increased register pressure and gained a huge speed bo
 
 \subsubsection*{coalescing access}
 
-Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine non-contiguous and small reads from global memory, into the single and more efficient contiguous and large memory reads. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure\ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
+Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine non-contiguous and small reads/writes of global memory, into the single and more efficient contiguous and large memory reads. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure\ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/coalesce.png}
+	\includegraphics[totalheight=0.115\textheight]{Figures/coalesce.png}
 	\caption{Coalescing Global Memory Accesses\citep{Waters}.}
 	\label{fig:coalescing}
 \end{figure}
@@ -142,7 +142,7 @@ Figure\ref{fig:dp} presents the similar global memory allocation pattern of \emp
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/dp.png}
+	\includegraphics[totalheight=0.2\textheight]{Figures/dp.png}
 	\caption{dp matrix in global memory.}
 	\label{fig:dp}
 \end{figure}
@@ -197,7 +197,7 @@ Inspired by the fact that CUDA has optimized the operation fetching a four compo
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/simdvector.png}
+	\includegraphics[totalheight=0.2\textheight]{Figures/simdvector.png}
 	\caption{SIMD vector alignment of data: (\textit{a}) target sequence; (\textit{b}) dp array.}
 	\label{fig:simdvector}
 \end{figure}
@@ -214,18 +214,18 @@ The SIMD video instructions can be included in CUDA programs by way of the assem
 The basic syntax of an \emph{asm}() statement is:
 
 \begin{center}
- asm("template-string" : "constraint"(output) : "constraint"(input)"));
+ asm(``template-string" : ``constraint''(output) : ``constraint"(input));
 \end{center}
 
 The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(“op1” and “op2”) and destination operand(“rv”) are all unsigned 32-bit registers(“u32”), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(“sat”) have been used to clamp the values to their appropriate unsigned ranges.
 
 
 \emph{// rv[z] = op1[z] + op2[z] (z = 0,1,2,3)}\\
-asm("vadd4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : "=r"(rv) : "r"(op1), "r"(op2), "r"(0)); 
+asm(``vadd4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0)); 
 \emph{// rv = op1 + op2}\\
-asm("vsub4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : "=r"(rv) : "r"(op1), "r"(op2), "r"(0));
+asm(``vsub4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));
 \emph{// rv = max(op1,op2)}\\
-asm("vmax4.u32.u32.u32 \%0, \%1, \%2, \%3;" : "=r"(rv) : "r"(op1), "r"(op2), "r"(0));
+asm(``vmax4.u32.u32.u32 \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));
 
 Switching to the SIMD video instructions also achieved a large speedup of nearly 2 times.
 
@@ -262,7 +262,7 @@ CUDA compute capabilities above 2.0 are capable of concurrently running multiple
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[totalheight=0.4\textwidth]{Figures/cpu_gpu.png}
+	\includegraphics[totalheight=0.3\textwidth]{Figures/cpu_gpu.png}
 	\caption{CPU/GPU concurrency.}
 	\label{fig:cpu_gpu}
 \end{figure}
@@ -271,7 +271,7 @@ By using multiple streams, we broke the kernel computation into chunks and overl
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[totalheight=0.4\textheight]{Figures/streams.png}
+	\includegraphics[totalheight=0.32\textheight]{Figures/streams.png}
 	\caption{Timeline of intended application execution using two independent streams.}
 	\label{fig:streams}
 \end{figure}
@@ -302,7 +302,7 @@ cudaMemcpyAsync(hostSC1, cudaSC1, num1 * sizeof(float), cudaMemcpyDeviceToHost, 
 
 Running the improved program using pinned memory, asynchronous memory copy and two streams reveals the time drops from 16.45s to just 9.46s, a quite significant drop of over 73.8\% in execution time.
 
-\subsection{Database sorted}
+\subsection{Sorting database}
 \label{dbsort}
 As described in Section\ref{MSVsub}, MSV filter function is sensitive to the length of a target sequence, which determines the execution times of main \emph{for} loop in Algorithm\ref{MSV-SIMD}. 
 
@@ -312,10 +312,8 @@ This brings a problem for parallel processing of threads on GPU: one thread coul
 
 In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore the database is converted with sequences being sorted by length. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp.
 
-This has the advantage of being both effective and quite straightforward as 89\% performance improvement can be gained over the unsorted database without changing the GPU kernel in any way (see Figure x). For the 24GB NCBI NR database used in these experiments, only 6 minutes were taken for sorting. Further, the sorted database can still be usable for other applications, making the one-time cost of sorting it negligible.
-
 \subsubsection*{Block reading}
-Many research implementation, such as [] aren't concerned with practical matters. They just load the whole database data into memories of CPU host and GPU device. Like NCBI NR database size is more than 24GB and is still increasing, being too large to load into memories of most machines.
+Many research implementation weren't concerned with practical matters. They just loaded the whole database data into memories of CPU host and GPU device. Large database, like NCBI NR database, is more than 24GB in size and is still increasing, being too large to load into memories of most machines.
 
 Given GPU global memory is much less than CPU host, we use the size of GPU global memory as the basis to decide the size of sequence block while reading the database.
 
@@ -323,10 +321,10 @@ Given GPU global memory is much less than CPU host, we use the size of GPU globa
 The memory pools for database sequences both in CPU host and GPU device are dynamically allocated at run time. The pools may be required to reallocated due to more space needed for the current data block than the last one. If the pool allocated at the first time is the largest one during execution, then the overhead of reallocation will be saved. Hence, the descending order is used for sorting the database.
 
 \subsubsection*{Performance improved}
-The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optimize the performance of the MSV GPU application cudaSearch. The nvprof command was used as follows:
+The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optimize the performance of the MSV GPU application cudaHmmsearch. The nvprof command was used as follows:
 
 \begin{Verbatim}
-   # nvprof ./cudaSearch globins4.hmm uniprot_sprot.fasta
+   # nvprof ./cudaHmmsearch globins4.hmm uniprot_sprot.fasta
 \end{Verbatim}
 
 The table\ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of before and after the target database was sorted.
@@ -361,22 +359,20 @@ From the result of profiling, we can see the performance has been increased, whi
  \item the  msvSIMDKernel run-time decreased from 4.27108s to 2.07263s and the time of the memory copy from Host to Device (CUDA memcpy HtoD) decreased from 390.01ms to 54.115ms.
 \end{enumerate}
 
-The total effect of sorting database resulted in a large speedup of 2.3 folds.
+This approach has the advantage of being both effective and quite straightforward as a large 129\% performance improvement can be gained over the unsorted database without changing the GPU kernel in any way (see Table\ref{tab.opt} and Figure\ref{fig:imp}). For the 24GB NCBI NR database used in these experiments, only 6 minutes were taken for sorting. Further, the sorted database can still be usable for other applications, making the one-time cost of sorting it negligible.
 
-\subsection{Workload distribution}
+\subsection{Distributing workload}
 \label{workload}
-After launching GPU kernel, CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}( \emph{stream} ). We can get further improvement by distribute some work from GPU to CPU while CPU is waiting. Considering the length distribution of database sequences[xxx] and based on the descending sorted database discussed in section x, we assigned the first part of data with longer lengths to CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
+After launching GPU kernel, CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}( \emph{stream} ). We can get further improvement by distribute some work from GPU to CPU while CPU is waiting. Considering the length distribution of database sequences\footnote{According to Swiss-Prot database statistics \citep{Swiss-Prot}, the percentage of sequences with length $>$ 2500 is only 0.2\%.} and based on the descending sorted database discussed in section\ref{dbsort}, we assigned the first part of data with longer lengths to CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
 
 The compute power of CPU and GPU should be taken into consideration in order to balance the workload distribution between CPU and GPU. The distribution policy calculates a ratio \emph{R} of the number of database sequences assigned to GPU, which is calculated as
 
 \begin{equation*}
-   R = \frac{N_Gf_G}{N_Gf_G + f_G}
+   R = \frac{N_Gf_G}{N_Gf_G + f_C}
 \end{equation*}
-
 
 where $f_G$ and $f_C$ are the core frequencies of GPU and CPU, $N_G$ is the number of GPU Multiprocessors.
 
-Magicbean 2.158 – 1.609 Kronos 2.346 – 1.547
 %----------------------------------------------------------------------------------------
 
 \section{Miscellaneous consideration}
@@ -397,7 +393,7 @@ Since the implementation has changed u8 type in register memory to u32 type, the
 
 \subsection*{Constant memory}
 \label{constant}
-Constant memory is as fast as reading from a register as long as all threads in a warp read the same 4-byte address. Constant memory does not support, or benefit from, coalescing, as this involves threads reading from different addresses. Thus, parameters used by all threads, such as base, tjb, tec, are stored into constant memory.
+Constant memory is as fast as reading from a register as long as all threads in a warp read the same 4-byte address. Constant memory does not support, or benefit from, coalescing, as this involves threads reading from different addresses. Thus, parameters used by all threads, such as $base$, $t_{jb}$, $t_{ec}$, are stored into constant memory.
 
 \subsection*{shared memory}
 \label{shared}
