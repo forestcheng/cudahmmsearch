@@ -5,7 +5,7 @@
 
 \lhead{Chapter \ref{Results}. \emph{Results and discussion}} % This is for the header on each page - perhaps a shortened title
 
-Chapter\ref{CUDAHMMER3} described several approaches to optimize the cudaSearch implementation. This chapter presents presents the performance measurements when experimenting these approaches on a GPU and on a multicore CPU.
+Chapter\ref{CUDAHMMER3} described several approaches to optimize the cudaHmmsearch implementation. This chapter presents the performance measurements when experimenting these approaches on a GPU and on a multicore CPU.
 %----------------------------------------------------------------------------------------
 
 \section{Benchmarking environment}
@@ -60,7 +60,7 @@ The graphic view corresponding to Table is shown in Figure\ref{fig:imp}.
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[totalheight=0.3\textheight]{Figures/improve.png}
+	\includegraphics[totalheight=0.28\textheight]{Figures/improve.png}
 	\caption{Performance of optimization approaches.}
 	\label{fig:imp}
 \end{figure}
@@ -68,49 +68,60 @@ The graphic view corresponding to Table is shown in Figure\ref{fig:imp}.
 From the chart, it can be seen that several factors are related to global memory accesses, including the highest 663\% minimizing global memory access, coalescing of global memory and texture memory. So the global memory optimizations are the most important area for performance. To make all threads in a warp execute similar tasks, the auxiliary sorting database also plays important role in optimizations.
 
 \subsection{Practical benchmarks}
-The final cudaSearch implementation, with the optimization discussed in Chapter\ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for several profile HMMs with various lengths, which were selected from Pfam database. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core.
+\label{Pbench}
+The final cudaHmmsearch implementation, with the optimization discussed in Chapter\ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for several profile HMMs with various lengths, which were selected from Pfam database. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core.
 
-The results of the benchmarks are shown in graphical form in Figure\ref{fig:len}. The GPU cudaSearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaSearch is stable with various lengths of query HMMs. On average, cudaSearch has a speedup of 2.5x than hmmsearch. The reason that the performance of both GPU and CPU searching for AAA\_27 dropped greatly will be explained in Section XXX.
+The results of the benchmarks are shown in graphical form in Figure\ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.5x than hmmsearch. 
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/lengths.png}
+	\includegraphics[totalheight=0.36\textheight]{Figures/lengths.png}
 	\caption{Practical benchmarks.}
 	\label{fig:len}
 \end{figure}
 
-\subsection{Comparison with multicore CPU}
-Since multicore processors were developed in the early 2000s by Intel, AMD and others, nowadays CPU has become multicore with two cores, four cores, six cores and more. The Kronos \ref{Kronos} experiment system has CPU with six cores. This section presents the benchmarks of cudaSearch running with multiple CPU cores.
+Figure\ref{fig:len} shows that the performance of both GPU and CPU searching for AAA\_27 dropped greatly. The reason can be seen from the table\ref{tab.sta} listing the internal pipeline statistics summary for searching globin4 and AAA\_27. For every filter, the count of passed sequences for searching AAA\_27 with 1111 states is much more than that of globin4 with 149 states. This means that for searching AAA\_27, much more target sequences than searching globin4 are needed calculating in each filter after MSV filter. And at the same time, each filter is more time-consuming than MSV filter. All of these result in the AAA\_27 performance dropping greatly.
 
-The experiment was done by executing cudaSearch and hmmsearch with 1, 2...6 CPU cores, searching the NCBI NR database for the HMM with 255-state length.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}\hline
+\shortstack{\textbf{Query profile HMM(length)}} & \shortstack{\textbf{globin4 (149 states)}} & \shortstack{\textbf{AAA\_27 (1111 states)}}\\\hline
+Target sequences & 38442706 & 38442706 \\\hline
+Passed MSV filter & 1195043 & 4305846 \\\hline
+Passed bias filter & 973354 & 1671084 \\\hline
+Passed Viterbi filter & 70564 & 322206 \\\hline
+Passed Forward filter & 7145 & 17719 \\\hline
+\end{tabular}
+\caption{Internal pipeline statistics summary\label{tab.sta}}
+\end{table}
+
+\subsection{Comparison with multicore CPU}
+Since multicore processors were developed in the early 2000s by Intel, AMD and others, nowadays CPU has become multicore with two cores, four cores, six cores and more. The Kronos \ref{Kronos} experiment system has CPU with six cores. This section presents the benchmarks of cudaHmmsearch running with multiple CPU cores.
+
+The experiment was done by executing cudaHmmsearch and hmmsearch with 1, 2...6 CPU cores, searching the NCBI NR database for the HMM with 255-state length.
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/cpuCores.png}
+	\includegraphics[totalheight=0.25\textheight]{Figures/cpuCores.png}
 	\caption{Comparison with multicore CPU.}
 	\label{fig:cpuCores}
 \end{figure}
 
-Figure\ref{fig:cpuCores} shows the benchmark result. The number performance results is measured in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaSearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaSearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the '6 CPU' case.
+Figure\ref{fig:cpuCores} shows the benchmark result. The number performance results is measured in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
 
 \subsection{Comparison with other implementations}
-The performance of cudaSearch was also compared to the previous HMMER solutions: HMMER2.3.2 \citep{HMMER2}, GPU-HMMER2.3.2 \citep{GPUHMM} and HMMER3 \citep{Hsource}.
+The performance of cudaHmmsearch was also compared to the previous HMMER solutions: HMMER2.3.2 \citep{HMMER2}, GPU-HMMER2.3.2 \citep{GPUHMM} and HMMER3 \citep{Hsource}.
 
 All tests are taken searching against the Swiss-Prot database for the globin4 profile HMM.
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics{Figures/manyhmms.png}
+	\includegraphics[totalheight=0.28\textheight]{Figures/manyhmms.png}
 	\caption{Comparison with other implementations.}
 	\label{fig:hmms}
 \end{figure}
 
 As seen from the Figure\ref{fig:hmms}, since the release of HMMER2.3.2 in Oct 2003, accelerating hmmsearch researches on both CPU and GPU have achieved excellent improvement.
-%----------------------------------------------------------------------------------------
-
-\section{Speed benchmarking}
-
-Compared to HMMER2, CUDA-HMMER2, HMMER3.1.
 
 %----------------------------------------------------------------------------------------
 
@@ -122,24 +133,27 @@ Compared to HMMER2, CUDA-HMMER2, HMMER3.1.
 
 \lhead{Chapter 6. \emph{Conclusions and recommendations}} % This is for the header on each page - perhaps a shortened title
 
+A fully-featured and accelerated HMMER3 protein search tool \emph{cudaHmmsearch} was implemented on CUDA-enabled GPU. It can search the protein sequence database for profile HMMs.
 %----------------------------------------------------------------------------------------
 
-\section{Performance}
+\section{Conclusions of current work}
+Our research work started with dynamic programming, the common characteristic of Swith-Waterman algorithm, Viterbi algorithm and MSV algorithm, which are famous protein sequence alignment algorithms in Bioinformatics.
 
-%----------------------------------------------------------------------------------------
+At the beginning of Section \ref{CUDASeqAlign}, we specially summarized the technologies of accelerating Swith-Waterman algorithm on CUDA-enabled GPU, on which has been widely researched. Then we briefly presented GPU acceleration work related to Viterbi algorithm.
 
-\section{Optimizing the implementation}
+Then Chapter \ref{CUDAHMMER3} presented the details of our \emph{cudaHmmsearch} optimization approaches, which is based upon the open source of MSV algorithm from HMMER3's \emph{hmmsearch} database searching tool, one of the widely used Bioinformatics application. At the end of Chapter \ref{CUDAHMMER3}, 6 steps were summarized for better performance of CUDA programming.
 
+Comprehensive benchmarks were performed in Chapter \ref{Results}. The results were analyzed and the efficiency of the \emph{cudaHmmsearch} implementations on the GPUs is proved. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory.
 
+The solutions in this thesis were designed and customized for current GPUs, but we believe that the principles studied here will also apply to future manycore GPU processors, as long as the GPU is CUDA-enabled. Here \footnote{https://developer.nvidia.com/cuda-gpus} is the complete list of CUDA-enabled GPUs.
 %----------------------------------------------------------------------------------------
 
 \section{Recommendations for further research}
 
-Multiple GPUs
+\subsection*{Forward filter for no threshold}
+By default, the top-scoring of target sequences are expected to pass each filter. Alternatively, the -\emph{-max} option is available for those who want to make a search more sensitive to get maximum expected accuracy alignment. The option causes all filters except Forward/Backward algorithm to be bypassed. And according to practical benchmarking in Section\ref{Pbench}, the performance decreased greatly due to much more calculation in Forward algorithm. So our next research should be focused on accelerating Forward algorithm on CUDA-enabled GPU.
 
-Viterbi filter for no threshold
-
-implementation for long seqence
-
+\subsection*{Multiple GPUs approach}
+Since currently we don't have multiple GPUs within a single workstation, we didn't research on multiple GPUs approach. However, CUDA already provides specific facilities for multi-GPU programming, including threading models, peer-to-peer, dynamic parallelism and inter-GPU synchronization, etc. Almost all PCs support at least two PCI-E slots, allowing at least two GPU cards to insert almost any PC. Looking forward, we should also investigate multi-GPU solutions.
 
 %----------------------------------------------------------------------------------------

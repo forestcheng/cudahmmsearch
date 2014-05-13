@@ -6,11 +6,26 @@
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
 
+\bibitem[Smith and Waterman(1981)]{SW}
+Smith TF. and Waterman MS.
+\newblock \emph{Identification of common molecular subsequences}.
+\newblock J Mol Biol 1981, 147:195-197.
+
+\bibitem[Gotoh(1982)]{Gotoh}
+Gotoh O.
+\newblock \emph{An improved algorithm for matching biological sequences}.
+\newblock J. Mol. Biol 1982, 162:705-708.
+
 \bibitem[Rognes and Seeberg(2000)]{SW-SIMD}
 Rognes T and Seeberg E.
 \newblock \emph{Six-fold speed-up of Smith-Waterman sequence 
 database searches using parallel processing on common microprocessors}.
 \newblock Bioinformatics 16: 699â€“706 2000.
+
+\bibitem[Horn et~al.(2005)]{ClawHMMER}
+Daniel Horn, Mike Houston, and Pt Hanrahan
+\newblock \emph{ClawHMMER: A Streaming HMMer-Search Implementation}.
+\newblock presented at Supercomputing 2005, Washington, D.C., 2005.
 
 \bibitem[Farrar(2007)]{SW-SSE2}
 Farrar M.
@@ -18,27 +33,91 @@ Farrar M.
 over other SIMD implementations}.
 \newblock Bioinformatics 23: 156â€“161 2007.
 
+\bibitem[Manavski(2008)]{Manavski}
+Svetlin A Manavski and Giorgio Valle
+\newblock \emph{CUDA compatible GPU cards as efficient hardware accelerators for Smith-Waterman sequence alignment}.
+\newblock BMC Bioinformatics 2008.
+\newblock URL \url{http://www.biomedcentral.com/1471-2105/9/S2/S10}.
+
 \bibitem[Liu et~al.(2009)]{SW++}
 Yongchao Liu, Douglas Maskell and Bertil Schmidt
 \newblock \emph{CUDASW++: optimizing smith-waterman sequence database searches for cuda-enabled graphics processing units}.
 \newblock BMC Research Notes 2, no. 1, 73. 2009.
+\newblock URL \url{http://www.biomedcentral.com/1756-0500/2/73}.
 
 \bibitem[Walters et~al.(2009)]{GPUHMM}
 J. P. Walters, V. Balu, S. Kompalli, and V. Chaudhary
 \newblock \emph{Evaluating the use of GPUs in Liver Image Segmentation and HMMER Database Searches}.
 \newblock International Parallel and Distributed Processing Symposium (IPDPS), 2009.
 
+\bibitem[Akoglu and Striemer(2009)]{Akoglu}
+Ali Akoglu and Gregory M. Striemer
+\newblock \emph{Scalable and highly parallel implementation of Smith-Waterman on graphics processing unit using CUDA}.
+\newblock Springer Science+Business Media, LLC 2009.
+
+\bibitem[Ligowski and Rudnicki(2009)]{Ligowski}
+Lukasz Ligowski and Witold Rudnicki
+\newblock \emph{An Efficient Implementation Of Smith Waterman Algorithm On GPU Using CUDA, For Massively Parallel Scanning Of Sequence Databases}.
+\newblock IEEE 2009.
+
+\bibitem[Saeed et~al.(2010)]{Saeed}
+Ali Khajeh-Saeed, Stephen Poole and J. Blair Perot
+\newblock \emph{Acceleration of the Smith–Waterman algorithm using single and multiple graphics processors}.
+\newblock Journal of Computational Physics 229 (2010) 4247–4258.
+
+\bibitem[Liu et~al.(2010)]{SW++2}
+Yongchao Liu, Bertil Schmidt, and Douglas Maskell
+\newblock \emph{cudasw++2.0: enhanced smith-waterman protein database search on cuda-enabled gpus based on simt and virtualized simd abstractions}.
+\newblock BMC Research Notes 2010.
+\newblock URL \url{http://www.biomedcentral.com/1756-0500/3/93}.
+
+\bibitem[Du et~al.(2010)]{Du}
+Zhihui Du, Zhaoming Yin, and David A. Bader
+\newblock \emph{A Tile-based Parallel Viterbi Algorithm for Biological Sequence Alignment on GPU with CUDA}.
+\newblock Parallel \& Distributed Processing, Workshops and Phd Forum (IPDPSW), 2010 IEEE International Symposium on , vol., no., pp.1,8, 19-23 April 2010.
+
+\bibitem[Ganesan et~al.(2010)]{Ganesan}
+Narayan Ganesan, Roger D. Chamberlain, Jeremy Buhler, and Michela Taufer
+\newblock \emph{Accelerating HMMER on GPUs by Implementing Hybrid Data and Task Parallelism}.
+\newblock Proc. of ACM International Conference on Bioinformatics and Computational Biology, August 2010, pp. 418-421.
+
+\bibitem[Kentie(2010)]{Kentie}
+M.A. Kentie
+\newblock \emph{Biological Sequence Alignment Using Graphics Processing Units}.
+\newblock Master thesis (2010), Delft University of Technology.
+
 \bibitem[Eddy(2011)]{HMMER3}
 Sean~R. Eddy.
 \newblock \emph{Accelerated profile HMM searches}.
 \newblock PLoS Comput Biol 7(10): e1002195.
   doi:10.1371/journal.pcbi.1002195, October 2011.
-\newblock URL \url{www.ploscompbiol.org}.
+\newblock URL \url{http://www.ploscompbiol.org}.
+
+\bibitem[Quirem et~al.(2011)]{Quirem}
+Saddam Quirem, Fahian Ahmed, and Byeong Kil Lee
+\newblock \emph{CUDA Acceleration of P7Viterbi Algorithm in HMMER 3.0}.
+\newblock 30th IEEE Internationa Performance Computing and Communications Conference (IPCCC), 2011.
+
+\bibitem[Ahmed et~al.(2012)]{Ahmed}
+Fahian Ahmed, Saddam Quirem, Gak Min and Byeong Kil Lee
+\newblock \emph{Hotspot Analysis Based Partial CUDA Acceleration of HMMER 3.0 on GPGPUs}.
+\newblock International Journal of Soft Computing and Engineering (IJSCE) ISSN: 2231-2307, Volume-2, Issue-4, September 2012.
 
 \bibitem[M.Isa et~al.(2012)]{FPGA}
 M.Nazrin M.Isa, Khaled Benkrid and Thomas Clayton
 \newblock \emph{A Novel Efficient FPGA Architecture for HMMER Acceleration}.
 \newblock IEEE, 2012.
+
+\bibitem[Liu et~al.(2013)]{SW++3}
+Yongchao Liu, Adrianto Wirawan and Bertil Schmidt
+\newblock \emph{CUDASW++ 3.0: accelerating Smith-Waterman protein database search by coupling CPU and GPU SIMD instructions}.
+\newblock BMC Bioinformatics 2013.
+\newblock URL \url{http://www.biomedcentral.com/1471-2105/14/117}.
+
+\bibitem[Loewy et~al.(1991)]{Loewy}
+Ariel G. Loewy, Philip Siekevitz, John R. Menninger and Jonathan A. N. Gallant
+\newblock \emph{Cell Structure \& Function : An Integrated Approach}.
+\newblock Saunders College Publishing, 3rd edition, 1991.
 
 \bibitem[Durbin et~al.(1998)Durbin, Eddy, Krogh, and Mitchison]{BioSeq}
 Richard Durbin, Sean Eddy, Anders Krogh, and Graeme Mitchison.
@@ -77,17 +156,27 @@ Arthur~M. Lesk.
 \newblock \emph{Introduction to Bioinformatics}.
 \newblock Oxford University Press, New York, USA, 3rd edition, 2008.
 
+\bibitem[Zeller(2008)]{Zeller}
+Cyril Zeller
+\newblock \emph{Tutorial CUDA}.
+\newblock NVIDIA Developer Technology, 2008.
+
 \bibitem[Pevsner(2009)]{BioFunc}
 Jonathan Pevsner.
 \newblock \emph{Bioinformatics and Functional Genomics}.
 \newblock John Wiley \& Sons, New Jersey, USA, 2nd edition, 2009.
+
+\bibitem[Kirk and Hwu(2010)]{Kirk}
+David B. Kirk and Wen-mei W. Hwu
+\newblock \emph{Programming Massively Parallel Processors : A Hands-on Approach}.
+\newblock Published by Elsevier Inc. 2010.  
 
 \bibitem[CUDAintro(2011)]{CUDAintro}
 Jason Sanders and Edward Kandrot.
 \newblock \emph{CUDA by example : an introduction to general-purpose GPU programming}.
 \newblock NVIDIA Corporation 2011.
 
-\bibitem[CUDAhand(2013)]{CUDAHand}
+\bibitem[Wilt(2013)]{CUDAHand}
 Nicholas Wilt.
 \newblock \emph{The CUDA Handbook : A Comprehensive Guide to GPU Programming}.
 \newblock Pearson Education, Inc. 2013.
@@ -121,6 +210,12 @@ NVIDIA.
 \newblock Website, PG-02829-001\_v5.5 May 2013.
 \newblock URL \url{http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html}.
 
+\bibitem[CUDA Best(2013)]{CUDABest}
+NVIDIA.
+\newblock CUDA C Best Practices Guide.
+\newblock Website, DG-05603-001\_v5.5 July 2013.
+\newblock URL \url{http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html}.
+
 \bibitem[CUDA Kepler(2013)]{Kepler}
 NVIDIA.
 \newblock Kepler Tuning Guide.
@@ -148,11 +243,30 @@ Microsoft.
 \newblock URL
   \url{http://msdn.microsoft.com/en-us/library/windows/desktop/bb509635%28v=vs.85%29.aspx}.
 
-\bibitem[Wikipedia(2014-1-14)]{OpenCL}
+\bibitem[UniProt(2014)]{upr}
+Universal Protein Resource.
+\newblock About UniProt.
+\newblock Website, 2014.
+\newblock URL
+  \url{http://www.uniprot.org/help/about}.
+
+\bibitem[OpenCL(2014)]{OpenCL}
+Khronos Group.
+\newblock The open standard for parallel programming of heterogeneous systems.
+\newblock Website, 2014.
+\newblock URL \url{https://www.khronos.org/opencl/}.
+
+\bibitem[Wiki Cell(2014)]{Cell}
 Wikipedia.
-\newblock Open{CL}.
-\newblock Website, 2014-1-14.
-\newblock URL \url{http://en.wikipedia.org/wiki/OpenCL}.
+\newblock Cell (biology).
+\newblock Website, 2014.
+\newblock URL \url{http://en.wikipedia.org/wiki/Cell_(biology)}.
+
+\bibitem[Wiki Sequence(2014)]{sa}
+Wikipedia.
+\newblock Sequence Alignment.
+\newblock Website, 2014.
+\newblock URL \url{http://en.wikipedia.org/wiki/Sequence_alignment}.
 
 \bibitem[NVIDIA(2014)]{DirectCompute}
 NVIDIA.
@@ -225,5 +339,11 @@ National Center for Biotechnology Information, U.S. National Library of Medicine
 \newblock {NCBI NR  (non-redundant) Protein Database}.
 \newblock Website, 2014-4-7.
 \newblock URL \url{ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz}.
+
+\bibitem[Swiss-Prot(2014-04)]{Swiss-Prot}
+SIB Bioinformatics Resource Portal.
+\newblock {UniProtKB/Swiss-Prot protein knowledgebase release 2014-04 statistics}.
+\newblock Website, 2014-04.
+\newblock URL \url{http://web.expasy.org/docs/relnotes/relstat.html}.
 
 \end{thebibliography}
