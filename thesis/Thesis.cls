@@ -199,7 +199,7 @@
 %	defined as \examname above so you cite it as \examname
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Implementing and Accelerating HMMER3 Protein Sequence Search on CUDA™-Enabled GPU} % Your thesis title - this is used in the title and abstract
+\thesistitle{Implementing and Accelerating HMMER3 Protein Sequence Search on CUDA-Enabled GPU} % Your thesis title - this is used in the title and abstract
 %-------------------------------------------------  
 \supervisor{Dr. Gregory \textsc{Butler}} % You supervisor's name - this is used in the title page
 %-------------------------------------------------   
