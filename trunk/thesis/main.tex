@@ -134,6 +134,19 @@ After studying the existing research on CUDA acceleration in bioinformatics, thi
 
 We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory.
 
+Further, memory lay-
+out and load balancing are critical performance barriers
+that must be overcome to maximally utilize the GPU. We
+examine these issues and demonstrate a variety of optimization strategies that are useful for different classes of
+GPU-based applications. We make the following contri-
+butions:
+• Implement a GPU-based implementation of HM-
+MER’s hmmsearch tool.
+• Discuss and analyze the advantages and limitations
+of GPU hardware for general purpose HPC.
+
+ our hmmsearch implementation achieves up to 38x speedup.
+}
 \clearpage % Start a new page
 
 %----------------------------------------------------------------------------------------
@@ -144,7 +157,10 @@ We made comprehensive tests and analysis for multiple enhancements in our GPU ke
 
 \acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-The acknowledgements and the people to thank go here, don't forget to include your project advisor\ldots
+First, I would like to express my deepest gratitude to my supervisor \supname for his profound knowledge, flexibility in supervising students, and selecting this interesting topic for my research.
+
+I also give thanks to my friendly colleagues: Faizah Aplop for her discussing and helping me know more about Bioinformatics and life in Montreal, Stuart Thiel for providing Kronos machine as my developing and benchmarking environment, Dr. Christine Houry Kehyayan for her communicating.
+
 }
 \clearpage % Start a new page
 
@@ -167,16 +183,16 @@ The acknowledgements and the people to thank go here, don't forget to include yo
 %	ABBREVIATIONS
 %----------------------------------------------------------------------------------------
 
-% \clearpage % Start a new page
-% 
-% \setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
-% 
-% \lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
-% \listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
-% {
-% \textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere \\
-% %\textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
-% }
+\clearpage % Start a new page
+
+\setstretch{1.5} % Set the line spacing to 1.5, this makes the following tables easier to read
+
+\lhead{\emph{Abbreviations}} % Set the left side page header to "Abbreviations"
+\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
+{
+\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere \\
+\textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
+}
 
 %----------------------------------------------------------------------------------------
 %	PHYSICAL CONSTANTS/OTHER DEFINITIONS
