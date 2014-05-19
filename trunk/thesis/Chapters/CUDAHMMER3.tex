@@ -91,19 +91,17 @@ The global memory is used to store most of data on GPU. A primary in the optimiz
 
 The elements of the \emph{dp} matrix and the query profile 2D matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
 
-\begin{lstlisting}[caption={struct of uint4 and ulong2}, captionpos=t]
-struct __device_builtin__ uint4
-{
-    unsigned int x, y, z, w;
-}
-
-struct __device_builtin__ ulong2
-{
-    unsigned long int x, y;
-};
-\end{lstlisting}
-
-
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+struct \_\_device\_builtin\_\_ uint4\\
+\{\\
+   unsigned int x, y, z, w;\\
+\}\\
+struct \_\_device\_builtin\_\_ ulong2\\
+\{\\
+    unsigned long int x, y;\\
+\};\\
+\end{quote}
 % \newcommand\codeHighlight[1]{\textcolor[rgb]{0,0,1}{\textbf{#1}}}
 % \begin{Verbatim}[commandchars=\\\{\}]
 % \codeHighlight{struct}  __device_builtin__ uint4
@@ -154,17 +152,24 @@ The move to vertical alignment of \emph{dp} matrix resulted in an improvement of
 \subsubsection*{Note on coding global memory coalescing access}
 At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}() was used, since uint4 is 16-bytes block. \emph{dp} is the pointer to the address of global memory. \emph{mpv} and \emph{sv} are \emph{uint4} data residing in register memory.
 
-\begin{lstlisting}[frame=none]
-memcpy(&mpv, dp, sizeof(uint4));
-memcpy(dp,  &sv, sizeof(uint4));
-\end{lstlisting}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+ memcpy(\&mpv, dp, sizeof(uint4));\\
+ memcpy(dp, \&sv, sizeof(uint4));
+\end{quote}
+
+% \begin{lstlisting}[frame=none]
+% memcpy(&mpv, dp, sizeof(uint4));
+% memcpy(dp,  &sv, sizeof(uint4));
+% \end{lstlisting}
 
 However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This doesn't fully coalescing access global memory. Switching to the following direct assignment resulted in 81\% improvement.
 
-\begin{lstlisting}[frame=none]
-mpv = *(dp);
-*(dp) = sv;
-\end{lstlisting}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+ mpv = *(dp);\\
+ *(dp) = sv;
+\end{quote}
 
 \subsection{texture memory}
 \label{tex}
@@ -179,15 +184,17 @@ Switching to texture memory for the query profile texOMrbv resulted in about 22\
 
 Texture memory come from the GPU graphics and therefore are less flexible than the CUDA standard types. It must be declared at compile time as a fixed type, \emph{uint4} for the query profile in our case:
 
-\begin{center}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
  texture$<$uint4, cudaTextureType2D, cudaReadModeElementType$>$ \emph{texOMrbv};
-\end{center}
+\end{quote}
 
 How the values are interpreted is specified at run time. Texture memory is read-only to CUDA kernel and must be explicitly accessed via a special texture API (e.g. tex2D(), tex1Dfetch(), etc) and arrays bound to textures.
 
-\begin{center}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
  uint4 rsc4 = tex2D(texOMrbv, x, y);
-\end{center}
+\end{quote}
 
 However, on the CUDA next-generation architecture Kepler, the texture cache gets a special compute path, removing the complexity associated with programming it \citep{Kepler}.
 
@@ -213,32 +220,38 @@ The SIMD video instructions can be included in CUDA programs by way of the assem
 
 The basic syntax of an \emph{asm}() statement is:
 
-\begin{center}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
  asm(``template-string" : ``constraint''(output) : ``constraint"(input));
-\end{center}
+% \slshape A narrow slanted f\'ee.\\
+\end{quote}
 
 The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(“op1” and “op2”) and destination operand(“rv”) are all unsigned 32-bit registers(“u32”), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(“sat”) have been used to clamp the values to their appropriate unsigned ranges.
 
-
-\emph{// rv[z] = op1[z] + op2[z] (z = 0,1,2,3)}\\
-asm(``vadd4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0)); 
-\emph{// rv = op1 + op2}\\
-asm(``vsub4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));
-\emph{// rv = max(op1,op2)}\\
-asm(``vmax4.u32.u32.u32 \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+ \textsl{/* rv[z] = op1[z] + op2[z] (z = 0,1,2,3) */}\\
+ asm(``vadd4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));\\
+ \textsl{/* rv = op1 + op2 */}\\
+ asm(``vsub4.u32.u32.u32.sat \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));\\
+ \textsl{/* rv = max(op1,op2) */}\\
+ asm(``vmax4.u32.u32.u32 \%0, \%1, \%2, \%3;" : ``=r"(rv) : ``r"(op1), ``r"(op2), ``r"(0));
+% \slshape A narrow slanted f\'ee.\\
+\end{quote}
 
 Switching to the SIMD video instructions also achieved a large speedup of nearly 2 times.
 
 \subsection{Pinned (non-pageable) Memory}
 \label{pin}
 
-It’s necessary to transfer data to the GPU over the PCI-E data bus. Compared to access to CPU host memory, this bus is very slow. Pinned memory is memory that cannot be paged (swapped) out to disk by the virtual memory management of the OS. In fact, PCI-E transfer can only be done using pinned memory, and if the application does not allocate pinned memory, the CUDA driver does this in the background for us. Unfortunately, this results in a needless copy operation from the regular (paged) memory to or from pinned memory. We can of course eliminate this by allocating pinned memory ourselves.
+It is necessary to transfer data to the GPU over the PCI-E data bus. Compared to access to CPU host memory, this bus is very slow. Pinned memory is memory that cannot be paged (swapped) out to disk by the virtual memory management of the OS. In fact, PCI-E transfer can only be done using pinned memory, and if the application does not allocate pinned memory, the CUDA driver does this in the background for us. Unfortunately, this results in a needless copy operation from the regular (paged) memory to or from pinned memory. We can of course eliminate this by allocating pinned memory ourselves.
 
 In the application, we simply replace \emph{malloc/free} when allocating/freeing memory in the host application with \emph{cudaHostAlloc/cudaFreeHost}.
 
-\begin{center}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
  cudaHostAlloc (void** host\_pointer, size\_t size, unsigned int flags)
-\end{center}
+\end{quote}
 
 \subsection{Asynchronous memory copy and Streams}
 \label{asyn}
@@ -258,8 +271,6 @@ processing kernels.} concurrency. Within a given stream, operations are performe
 
 To take advantage of CPU/GPU concurrency as depicted in Figure\ref{fig:cpu_gpu}, when performing memory copies as well as kernel launches, asynchronous memory copy must be used. And Mapped pinned memory can be used to overlap PCI Express transfers and kernel processing.
 
-CUDA compute capabilities above 2.0 are capable of concurrently running multiple kernels, provided they are launched in different streams and have block sizes that are small enough so a single kernel will not fill the whole GPU.
-
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.3\textwidth]{Figures/cpu_gpu.png}
@@ -267,7 +278,9 @@ CUDA compute capabilities above 2.0 are capable of concurrently running multiple
 	\label{fig:cpu_gpu}
 \end{figure}
 
-By using multiple streams, we broke the kernel computation into chunks and overlap the memory copies with kernel execution. The new improved implementation might have the execution timeline as shown in Figure\ref{fig:streams} in which empty boxes represent time when one stream is waiting to execute an operation that it cannot overlap with the other stream’s operation.
+CUDA compute capabilities above 2.0 are capable of concurrently running multiple kernels, provided they are launched in different streams and have block sizes that are small enough so a single kernel will not fill the whole GPU.
+
+By using multiple streams, we broke the kernel computation into chunks and overlap the memory copies with kernel execution. The new improved implementation might have the execution timeline as shown in Figure\ref{fig:streams} in which empty boxes represent time when one stream is waiting to execute an operation that it cannot overlap with the other stream's operation.
 
 \begin{figure}[!htb]
 	\centering
@@ -275,30 +288,29 @@ By using multiple streams, we broke the kernel computation into chunks and overl
 	\caption{Timeline of intended application execution using two independent streams.}
 	\label{fig:streams}
 \end{figure}
-
-\begin{lstlisting}[language=C++, caption={Combined asynchronous memory copy and multiple streams}, captionpos=t]
-// enqueue copies of dbQuad in stream0 and stream1
-cudaMemcpyAsync(cudaPtr.dbQuad0, hostPtr.dbQuad0,
-		num0 * sizeof(uint),
-		cudaMemcpyHostToDevice,
-		stream[0]);
-cudaMemcpyAsync(cudaPtr.dbQuad1, hostPtr.dbQuad1,
-		num2 * sizeof(uint),
-		cudaMemcpyHostToDevice,
-		stream[1]);
-
-// enqueue copies of hashQuad in stream0 and stream1
-cudaMemcpyAsync(cudaPtr.hashQuad0, hostPtr.hashQuad0, num0 * sizeof(uint), cudaMemcpyHostToDevice, stream[0]);
-cudaMemcpyAsync(cudaPtr.hashQuad1, hostPtr.hashQuad1, num1 * sizeof(uint), cudaMemcpyHostToDevice, stream[1]);
-
-// enqueue kernels in stream0 and stream1
-msvSIMDKernel0<<<numBlocks, KERNEL_BLOCKSIZE, 0, stream[0]>>>();
-msvSIMDKernel0<<<numBlocks, KERNEL_BLOCKSIZE, 0, stream[1]>>>();
-
-// enqueue copies of result from device to locked memory
-cudaMemcpyAsync(hostSC0, cudaSC0, num0 * sizeof(float), cudaMemcpyDeviceToHost, stream[0]);
-cudaMemcpyAsync(hostSC1, cudaSC1, num1 * sizeof(float), cudaMemcpyDeviceToHost, stream[1]);
-\end{lstlisting}
+% \begin{lstlisting}[language=C++, caption={Combined asynchronous memory copy and multiple streams}, captionpos=t]
+% // enqueue copies of dbQuad in stream0 and stream1
+% cudaMemcpyAsync(cudaPtr.dbQuad0, hostPtr.dbQuad0,
+% 		num0 * sizeof(uint),
+% 		cudaMemcpyHostToDevice,
+% 		stream[0]);
+% cudaMemcpyAsync(cudaPtr.dbQuad1, hostPtr.dbQuad1,
+% 		num2 * sizeof(uint),
+% 		cudaMemcpyHostToDevice,
+% 		stream[1]);
+% 
+% // enqueue copies of hashQuad in stream0 and stream1
+% cudaMemcpyAsync(cudaPtr.hashQuad0, hostPtr.hashQuad0, num0 * sizeof(uint), cudaMemcpyHostToDevice, stream[0]);
+% cudaMemcpyAsync(cudaPtr.hashQuad1, hostPtr.hashQuad1, num1 * sizeof(uint), cudaMemcpyHostToDevice, stream[1]);
+% 
+% // enqueue kernels in stream0 and stream1
+% msvSIMDKernel0<<<numBlocks, KERNEL_BLOCKSIZE, 0, stream[0]>>>();
+% msvSIMDKernel0<<<numBlocks, KERNEL_BLOCKSIZE, 0, stream[1]>>>();
+% 
+% // enqueue copies of result from device to locked memory
+% cudaMemcpyAsync(hostSC0, cudaSC0, num0 * sizeof(float), cudaMemcpyDeviceToHost, stream[0]);
+% cudaMemcpyAsync(hostSC1, cudaSC1, num1 * sizeof(float), cudaMemcpyDeviceToHost, stream[1]);
+% \end{lstlisting}
 
 Running the improved program using pinned memory, asynchronous memory copy and two streams reveals the time drops from 16.45s to just 9.46s, a quite significant drop of over 73.8\% in execution time.
 
@@ -313,7 +325,7 @@ This brings a problem for parallel processing of threads on GPU: one thread coul
 In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore the database is converted with sequences being sorted by length. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp.
 
 \subsubsection*{Block reading}
-Many research implementation weren't concerned with practical matters. They just loaded the whole database data into memories of CPU host and GPU device. Large database, like NCBI NR database, is more than 24GB in size and is still increasing, being too large to load into memories of most machines.
+Many research implementation were not concerned with practical matters. They just loaded the whole database data into memories of CPU host and GPU device. Large database, like NCBI NR database, is more than 24GB in size and is still increasing, being too large to load into memories of most machines.
 
 Given GPU global memory is much less than CPU host, we use the size of GPU global memory as the basis to decide the size of sequence block while reading the database.
 
@@ -323,9 +335,10 @@ The memory pools for database sequences both in CPU host and GPU device are dyna
 \subsubsection*{Performance improved}
 The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optimize the performance of the MSV GPU application cudaHmmsearch. The nvprof command was used as follows:
 
-\begin{Verbatim}
-   # nvprof ./cudaHmmsearch globins4.hmm uniprot_sprot.fasta
-\end{Verbatim}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+ \# nvprof  ./cudaHmmsearch globins4.hmm uniprot\_sprot.fasta
+\end{quote}
 
 The table\ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of before and after the target database was sorted.
 
@@ -338,7 +351,7 @@ The table\ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of b
 0.01\% & 556.21us & 134 & 4.1500us & 1.7280us & 5.9840us& [CUDA memcpy DtoH]\\\hline
 0.01\% & 491.23us & 134 & 3.6650us & 3.4880us& 4.0640us& [CUDA memset]\\\hline
 \end{tabular}
-\caption{profiling result of before sorting database\label{tab.nvprof1}}
+\caption{\fontfamily{pag}\selectfont\textbf{Profiling result of before sorting database.} Each row is the statistics of profiling result for the function named in the `\textbf{Name}'. The statistics includes the percentage of running time, the running time, the number of called times, as well as the average, minimum, and maximum time.\label{tab.nvprof1}}
 \end{table}
 
 \begin{table}[H]
@@ -350,7 +363,7 @@ The table\ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of b
 0.03\% & 550.53us & 134 & 4.1080us & 1.6640us & 4.6720us& [CUDA memcpy DtoH]\\\hline
 0.02\% & 474.90us & 134 & 3.5440us & 672ns& 4.0320us& [CUDA memset]\\\hline
 \end{tabular}
-\caption{profiling result of after sorting database\label{tab.nvprof2}}
+\caption{\fontfamily{pag}\selectfont\textbf{Profiling result of after sorting database.} The meaning of each column is same as Table\ref{tab.nvprof1}\label{tab.nvprof2}}
 \end{table}
 
 From the result of profiling, we can see the performance has been increased, which is clearly shown in two ways:
@@ -395,7 +408,7 @@ Since the implementation has changed u8 type in register memory to u32 type, the
 \label{constant}
 Constant memory is as fast as reading from a register as long as all threads in a warp read the same 4-byte address. Constant memory does not support, or benefit from, coalescing, as this involves threads reading from different addresses. Thus, parameters used by all threads, such as $base$, $t_{jb}$, $t_{ec}$, are stored into constant memory.
 
-\subsection*{shared memory}
+\subsection*{Shared memory}
 \label{shared}
 In terms of speed, shared memory is perhaps 10x slower than register accesses but 10x faster than accesses to global memory. However, some disadvantages apply to shared memory.
 
@@ -410,9 +423,10 @@ Because of these disadvantages, the MSV implementation doesn't use shared memory
 \subsection*{Kernel launch configuration}
 \label{launch}
 Since the MSV implementation doesn't use shared memory explained above, the following dynamic kernel launch configuration is used to prefer larger L1 cache and smaller shared memory so as to further improve memory throughput.
-\begin{verbatim}
-   cudaFuncSetCacheConfig(msvSIMDKernel, cudaFuncCachePreferL1);
-\end{verbatim}
+\begin{quote}
+\fontfamily{phv}\fontseries{mc}\selectfont
+ cudaFuncSetCacheConfig(msvSIMDKernel, cudaFuncCachePreferL1);
+\end{quote}
 
 %----------------------------------------------------------------------------------------
 
