@@ -82,6 +82,11 @@ over other SIMD implementations}.
 \newblock \emph{Dictionary of {B}ioinformatics and {C}omputational {B}iology}.
 \newblock John Wiley \& Sons, New Jersey, USA, 2004.
 
+\bibitem[Henikoff and Henikoff(1992)]{Henikoff}
+[Henikoff and Henikoff, 1992] S. Henikoff and J.G. Henikoff
+\newblock \emph{Amino Acid Substitution Matrices from Protein Blocks}.
+\newblock PNAS 89 (22): 10915–10919. doi:10.1073/pnas.89.22.10915. PMC 50453. PMID 1438297, 1992.
+
 \bibitem[HMMER(2014a)]{Hsource}
 [HMMER, 2014a] Howard Hughes~Medical Institute.
 \newblock HMMER source code release archives.
@@ -299,11 +304,17 @@ database searches using parallel processing on common microprocessors}.
 \newblock \emph{Identification of common molecular subsequences}.
 \newblock J Mol Biol 1981, 147:195-197.
 
-\bibitem[Swiss-Prot(2014-04)]{Swiss-Prot}
-[Swiss-Prot, 2014-04] SIB Bioinformatics Resource Portal.
-\newblock {UniProtKB/Swiss-Prot protein knowledgebase release 2014-04 statistics}.
-\newblock Website, 2014-04.
+\bibitem[UniProtSP(2014-05)]{Swiss-Prot}
+[UniProtSP, 2014-05] SIB Bioinformatics Resource Portal.
+\newblock {UniProtKB/Swiss-Prot protein knowledgebase release 2014-05 statistics}.
+\newblock Website, 2014-05.
 \newblock URL \url{http://web.expasy.org/docs/relnotes/relstat.html}.
+
+\bibitem[UniProtTr(2014-05)]{UniProtTr}
+[UniProtTr, 2014-05] EMBL-EBI, Wellcome Trust Genome Campus.
+\newblock {UniProtKB/TrEMBL PROTEIN DATABASE RELEASE 2014\_05 STATISTICS}.
+\newblock Website, 2014-05.
+\newblock URL \url{http://www.ebi.ac.uk/uniprot/TrEMBLstats}.
 
 \bibitem[UniProt(2013-09)]{UniProt}
 [UniProt, 2013-09] Universal Protein Resource.

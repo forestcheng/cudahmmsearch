@@ -70,9 +70,10 @@
 \usepackage{vmargin}
 
 \usepackage{pseudocode}
-\usepackage[T1]{fontenc}
 
 \RequirePackage[utf8]{inputenc} % Allows the use of international characters (e.g. Umlauts)
+
+% \usepackage[T1]{fontenc}
 
 %----------------------------------------------------------------------------------------
 %	MARGINS

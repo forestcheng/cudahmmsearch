@@ -92,7 +92,7 @@ The global memory is used to store most of data on GPU. A primary in the optimiz
 The elements of the \emph{dp} matrix and the query profile 2D matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
 struct \_\_device\_builtin\_\_ uint4\\
 \{\\
    unsigned int x, y, z, w;\\
@@ -153,7 +153,7 @@ The move to vertical alignment of \emph{dp} matrix resulted in an improvement of
 At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}() was used, since uint4 is 16-bytes block. \emph{dp} is the pointer to the address of global memory. \emph{mpv} and \emph{sv} are \emph{uint4} data residing in register memory.
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  memcpy(\&mpv, dp, sizeof(uint4));\\
  memcpy(dp, \&sv, sizeof(uint4));
 \end{quote}
@@ -166,7 +166,7 @@ At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}
 However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This doesn't fully coalescing access global memory. Switching to the following direct assignment resulted in 81\% improvement.
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  mpv = *(dp);\\
  *(dp) = sv;
 \end{quote}
@@ -192,7 +192,7 @@ Texture memory come from the GPU graphics and therefore are less flexible than t
 How the values are interpreted is specified at run time. Texture memory is read-only to CUDA kernel and must be explicitly accessed via a special texture API (e.g. tex2D(), tex1Dfetch(), etc) and arrays bound to textures.
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  uint4 rsc4 = tex2D(texOMrbv, x, y);
 \end{quote}
 
@@ -221,7 +221,7 @@ The SIMD video instructions can be included in CUDA programs by way of the assem
 The basic syntax of an \emph{asm}() statement is:
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  asm(``template-string" : ``constraint''(output) : ``constraint"(input));
 % \slshape A narrow slanted f\'ee.\\
 \end{quote}
@@ -249,7 +249,7 @@ It is necessary to transfer data to the GPU over the PCI-E data bus. Compared to
 In the application, we simply replace \emph{malloc/free} when allocating/freeing memory in the host application with \emph{cudaHostAlloc/cudaFreeHost}.
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  cudaHostAlloc (void** host\_pointer, size\_t size, unsigned int flags)
 \end{quote}
 
@@ -336,7 +336,7 @@ The memory pools for database sequences both in CPU host and GPU device are dyna
 The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optimize the performance of the MSV GPU application cudaHmmsearch. The nvprof command was used as follows:
 
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  \# nvprof  ./cudaHmmsearch globins4.hmm uniprot\_sprot.fasta
 \end{quote}
 
@@ -388,7 +388,7 @@ where $f_G$ and $f_C$ are the core frequencies of GPU and CPU, $N_G$ is the numb
 
 %----------------------------------------------------------------------------------------
 
-\section{Miscellaneous consideration}
+\subsection{Miscellaneous consideration}
 This sections discusses various small-scale optimization and explains some techniques not suited to the MSV implementation.
 
 \subsection*{Data type for register memory}
@@ -397,18 +397,18 @@ In order to reduce the register pressure in CUDA kernel, we may consider using u
 
 Changing the u8 definition to an u32 definition benefits from eliminating huge numbers of instructions. It seems potentially wasting some register space. In practice, CUDA implements u8 registers as u32 registers, so this doesn’t actually cost anything extra in terms of register space \citep{cook}.
 
-\subsection*{Branch divergence}
+\subsubsection*{Branch divergence}
 \label{branch}
 
 A warp executes one common instruction at a time, so full efficiency is realized when all 32 threads of a warp agree on their execution path. If threads of a warp diverge via a data-dependent conditional branch, the warp serially executes each branch path taken, disabling threads that are not on that path, and when all paths complete, the threads converge back to the same execution path. Branch divergence occurs only within a warp; different warps execute independently regardless of whether they are executing common or disjoint code paths. So the divergence results in some slowdown.
 
 Since the implementation has changed u8 type in register memory to u32 type, the test for the overflow condition is not needed any more. This not only saves several instructions, but also avoids the issue of branch divergence.
 
-\subsection*{Constant memory}
+\subsubsection*{Constant memory}
 \label{constant}
 Constant memory is as fast as reading from a register as long as all threads in a warp read the same 4-byte address. Constant memory does not support, or benefit from, coalescing, as this involves threads reading from different addresses. Thus, parameters used by all threads, such as $base$, $t_{jb}$, $t_{ec}$, are stored into constant memory.
 
-\subsection*{Shared memory}
+\subsubsection*{Shared memory}
 \label{shared}
 In terms of speed, shared memory is perhaps 10x slower than register accesses but 10x faster than accesses to global memory. However, some disadvantages apply to shared memory.
 
@@ -420,17 +420,19 @@ In terms of speed, shared memory is perhaps 10x slower than register accesses bu
 
 Because of these disadvantages, the MSV implementation doesn't use shared memory.
 
-\subsection*{Kernel launch configuration}
+\subsubsection*{Kernel launch configuration}
 \label{launch}
 Since the MSV implementation doesn't use shared memory explained above, the following dynamic kernel launch configuration is used to prefer larger L1 cache and smaller shared memory so as to further improve memory throughput.
 \begin{quote}
-\fontfamily{phv}\fontseries{mc}\selectfont
+\fontfamily{phv}\fontseries{m}\selectfont
  cudaFuncSetCacheConfig(msvSIMDKernel, cudaFuncCachePreferL1);
 \end{quote}
 
 %----------------------------------------------------------------------------------------
 
-\section{Summary of optimization steps taken}
+\section{Conclusion of optimization}
+Summary of optimization steps taken
+
 This section briefly reviews the all the optimization approaches discussed in this chapter thus far, and summarizes the steps to gain better performance for CUDA programming.
 
 \subsection*{Six steps to better performance}
