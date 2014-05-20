@@ -51,7 +51,7 @@ The CPU serial version of hmmsearch in HMMER3 is shown in Figure\ref{fig:hmmsear
 \begin{figure}[!htb]
  \centering
  \includegraphics[totalheight=0.5\textheight]{Figures/hmmsearch.png}
- \caption{The CPU serial version of hmmsearch}
+ \caption{\fontfamily{pag}\selectfont The CPU serial version of hmmsearch}
  \label{fig:hmmsearch}
 \end{figure}
 
@@ -65,7 +65,7 @@ A basic flow of the GPU implementation for MSV filter is shown in Figure\ref{fig
 \begin{figure}[!htb]
  \centering
  \includegraphics[totalheight=0.6\textheight]{Figures/gpuMSV.png}
- \caption{The GPU porting of MSV filter}
+ \caption{\fontfamily{pag}\selectfont The GPU porting of MSV filter}
  \label{fig:gpuMSV}
 \end{figure}
 
@@ -123,7 +123,7 @@ Coalescing access is the single most important performance consideration in prog
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.115\textheight]{Figures/coalesce.png}
-	\caption{Coalescing Global Memory Accesses\citep{Waters}.}
+	\caption{\fontfamily{pag}\selectfont Coalescing Global Memory Accesses\citep{Waters}.}
 	\label{fig:coalescing}
 \end{figure}
 
@@ -132,7 +132,7 @@ For coalescing access, the target sequences are arranged in an array like an ups
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/dbalign.png}
-	\caption{Alignment of target sequences.}
+	\caption{\fontfamily{pag}\selectfont Alignment of target sequences.}
 	\label{fig:dbalign}
 \end{figure}
 
@@ -141,7 +141,7 @@ Figure\ref{fig:dp} presents the similar global memory allocation pattern of \emp
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/dp.png}
-	\caption{dp matrix in global memory.}
+	\caption{\fontfamily{pag}\selectfont The dp matrix in global memory.}
 	\label{fig:dp}
 \end{figure}
 
@@ -205,7 +205,7 @@ Inspired by the fact that CUDA has optimized the operation fetching a four compo
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/simdvector.png}
-	\caption{SIMD vector alignment of data: (\textit{a}) target sequence; (\textit{b}) dp array.}
+	\caption{\fontfamily{pag}\selectfont SIMD vector alignment of data: (\textit{a}) target sequence; (\textit{b}) dp array.}
 	\label{fig:simdvector}
 \end{figure}
 
@@ -274,7 +274,7 @@ To take advantage of CPU/GPU concurrency as depicted in Figure\ref{fig:cpu_gpu},
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.3\textwidth]{Figures/cpu_gpu.png}
-	\caption{CPU/GPU concurrency.}
+	\caption{\fontfamily{pag}\selectfont CPU/GPU concurrency.}
 	\label{fig:cpu_gpu}
 \end{figure}
 
@@ -285,7 +285,7 @@ By using multiple streams, we broke the kernel computation into chunks and overl
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.32\textheight]{Figures/streams.png}
-	\caption{Timeline of intended application execution using two independent streams.}
+	\caption{\fontfamily{pag}\selectfont Timeline of intended application execution using two independent streams.}
 	\label{fig:streams}
 \end{figure}
 % \begin{lstlisting}[language=C++, caption={Combined asynchronous memory copy and multiple streams}, captionpos=t]
@@ -463,7 +463,7 @@ Nsight™ Ecipse Edition & Linux and Mac OSX & graphical\\\hline
 \shortstack{NVIDIA® Nsight™ \\ Visual Studio Edition} & Windows & graphical\\\hline
 Parallel Nsight™ & Windows & graphical\\\hline
 \end{tabular}
-\caption{CUDA profiling tools\label{tab.prof}}
+\caption{\fontfamily{pag}\selectfont\textbf{CUDA profiling tools}\label{tab.prof}}
 \end{table}
 
  \item Optimizing memory usage\\

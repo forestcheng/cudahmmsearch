@@ -29,7 +29,7 @@ R & Arginine & S & Serine  \\\hline
 T & Threonine & V & Valine   \\\hline
 W & Tryptophan & Y & Tyrosine  \\\hline
 \end{tabular}
-\caption{The 20 amino acids\label{tab.amino}}
+\caption{\fontfamily{pag}\selectfont The 20 amino acids\label{tab.amino}}
 \end{table}
 
 \subsection{Sequence alignment}
@@ -144,7 +144,7 @@ In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM use
 
 \begin{figure}[!htb]
 	\includegraphics[width=150mm]{Figures/pHMM.png}
-	\caption{Profile HMM architecture used by HMMER\citep{HMMER3}.}
+	\caption{\fontfamily{pag}\selectfont Profile HMM architecture used by HMMER\citep{HMMER3}.}
 	\label{fig:pHMM}
 \end{figure}
 
@@ -273,7 +273,7 @@ HMMER3 is near rewrite of the earlier HMMER2 package, with the aim of improving 
 
 \begin{figure}[!htb]
 	\includegraphics[width=150mm]{Figures/pHMM_msv.png}
-	\caption{MSV profile: multiple ungapped local alignment segments\citep{HMMER3}.}
+	\caption{\fontfamily{pag}\selectfont MSV profile: multiple ungapped local alignment segments\citep{HMMER3}.}
 	\label{fig:pMSV}
 \end{figure}
 
@@ -333,7 +333,7 @@ Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of lengt
 
 \begin{figure}[!htb]
 	\includegraphics{Figures/msv_vector.jpg}
-	\caption{Illustration of striped indexing for SIMD vector calculations\citep{HMMER3}.}
+	\caption{\fontfamily{pag}\selectfont Illustration of striped indexing for SIMD vector calculations\citep{HMMER3}.}
 	\label{fig:strip}
 \end{figure}
 
@@ -344,7 +344,7 @@ Striping method can remove the SIMD register data dependencies. As can be seen i
 \begin{figure}[!htb]
 \centering
 	\includegraphics[width=110mm]{Figures/msv_nostrip.jpg}
-	\caption{Illustration of linear indexing for SIMD vector calculations.}
+	\caption{\fontfamily{pag}\selectfont Illustration of linear indexing for SIMD vector calculations.}
 	\label{fig:nostrip}
 \end{figure}
 
@@ -418,11 +418,11 @@ $\begin{cases}
   2^8-1\\
   v1[z]+v2[z]
 \end{cases}$\\\hline
-\shortstack{\textbf{v1 = vec\_rightshift(v2)} \\ v1 = \_mm\_slli\_si128(v2, 1)\tablefootnote[21]{Because x86 and x86-64 use little endian, this means using a left bit shift intrinsic \_mm\_slli\_si128 to do right shift.}} & right shift & \shortstack{$v1[z] = v2[z-1](z=15...1)$; \\ $v1[0]=0;$}\\\hline
+\shortstack{\textbf{v1 = vec\_rightshift(v2)} \\ v1 = \_mm\_slli\_si128(v2, 1)} & right shift & \shortstack{$v1[z] = v2[z-1](z=15...1)$; \\ $v1[0]=0;$}\\\hline
 \shortstack{\textbf{v = vec\_max(v1, v2)} \\ v = \_mm\_max\_epu8(v1, v2)} & max & $v[z] = max(v1[z], v2[z])$\\\hline
-\shortstack{\textbf{x = vec\_hmax(v)} \\ -\tablefootnote[22]{No SSE2 intrinsic is corresponding to vec\_hmax. Shuffle intrinsic \_mm\_shuffle\_epi32 and \_mm\_max\_epu8 can be combined to implement vec\_hmax.}} & horizontal max & $x = max(v[z]),z=0...15$\\\hline
+\shortstack{\textbf{x = vec\_hmax(v)} \\ -} & horizontal max & $x = max(v[z]),z=0...15$\\\hline
 \end{tabular}
-\caption{SSE2 intrinsics for pseudocode in Algorithm\ref{MSV-SIMD}\label{tab.SSE2}}
+\caption{\fontfamily{pag}\selectfont\textbf{SSE2 intrinsics for pseudocode in Algorithm\ref{MSV-SIMD}} The first column is pseudocode and its corresponding SSE2 intrinsic in C language. Because x86 and x86-64 use little endian, \textbf{vec\_rightshift()} means using a left bit shift intrinsic \textbf{\_mm\_slli\_si128()} to do right shift. No SSE2 intrinsic is corresponding to \textbf{vec\_hmax()}. Shuffle intrinsic \textbf{\_mm\_shuffle\_epi32} and \textbf{\_mm\_max\_epu8} can be combined to implement \textbf{vec\_hmax()}.\label{tab.SSE2}}
 \end{table}
 
 
@@ -456,7 +456,7 @@ SM 1.x & \shortstack[l]{Global memory atomics; mapped pinned memory; debuggable;
 {SM 2.x} & \shortstack[l]{64-bit addressing; L1 and L2 cache; concurrent kernel execution;\\ global atomic add for single-precision floating-point values;\\ Function calls and indirect calls in kernels} \\\hline
 SM 3.x & \shortstack[l]{SIMD Video Instructions; Increase maximum grid size; warp shuffle;\\ Bindless textures (``texture objects''); read global memory via texture;\\ faster global atomics; 64-bit atomic min, max, AND, OR, and XOR;\\ dynamic parallelism} \\\hline
 \end{tabular}
-\caption{Features per Compute Capability\label{tab.sm}}
+\caption{\fontfamily{pag}\selectfont Features per Compute Capability\label{tab.sm}}
 \end{table}
 
 \subsubsection{CUDA thread hierarchy}
@@ -465,7 +465,7 @@ The execution of a typical CUDA program is illustrated in Figure\ref{fig:exeCUDA
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/exeCUDA.png}
-	\caption{Execution of a CUDA program\citep{Kirk}.}
+	\caption{\fontfamily{pag}\selectfont Execution of a CUDA program\citep{Kirk}.}
 	\label{fig:exeCUDA}
 \end{figure}
 
@@ -474,7 +474,7 @@ Threads in a grid are organized into a two-level hierarchy, as illustrated in Fi
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.4\textheight]{Figures/gridBlock.png}
-	\caption{CUDA thread organization\citep{Zeller}.}
+	\caption{\fontfamily{pag}\selectfont CUDA thread organization\citep{Zeller}.}
 	\label{fig:grid}
 \end{figure}
 
@@ -488,7 +488,7 @@ Besides the threading model, another thing that makes CUDA programming different
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.4\textheight]{Figures/cudaMem.png}
-	\caption{CUDA memory organization\citep{Zeller}.}
+	\caption{\fontfamily{pag}\selectfont CUDA memory organization\citep{Zeller}.}
 	\label{fig:cudaMem}
 \end{figure}
 
@@ -497,19 +497,19 @@ CUDA memory spaces have different characteristics that reflect their distinct us
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}\hline
-\textbf{Memory} & \textbf{Location} & \textbf{Cached} & \textbf{Access} & \textbf{Scope} & \textbf{Speed} \tablefootnote[31]{ Relative Speed in number of instructions} & \textbf{Lifetime} \\\hline
+\textbf{Memory} & \textbf{Location} & \textbf{Cached} & \textbf{Access} & \textbf{Scope} & \textbf{Speed} & \textbf{Lifetime} \\\hline
 Register & On chip & n/a & R/W & 1 Thread & 1 & Thread \\\hline
-Local & Off chip & \dag \tablefootnote[32]{ Cached only on devices of compute capability 2.x} & R/W & 1 Thread & $\sim 2 - 16$ & Thread \\\hline
+Local & Off chip & \dag & R/W & 1 Thread & $\sim 2 - 16$ & Thread \\\hline
 Shared & On chip & n/a & R/W & \shortstack{All threads\\ in block} & $\sim 2 - 16$ & Block \\\hline
 Global & Off chip & \dag & R/W & \shortstack{All threads\\ + host} & 200+ & Host allocation \\\hline
 Constant & Off chip & Yes & R & \shortstack{All threads\\ + host} & $2 - 200$ & Host allocation \\\hline
 Texture & Off chip & Yes & R & \shortstack{All threads\\ + host} & $2 - 200$ & Host allocation \\\hline
 \end{tabular}
-\caption{Salient Features of GPU Device Memory \label{tab.mem}}
+\caption{\fontfamily{pag}\selectfont \textbf{Salient Features of GPU Device Memory.} \textbf{Speed} column is the relative speed in number of instructions. {\dag} means it is cached only on devices of above compute capability 2.x. \label{tab.mem}}
 \end{table}
 
 \subsubsection{CUDA tools}
-http://docs.nvidia.com/cuda/profiler-users-guide/#axzz32CP5hrTb
+% http://docs.nvidia.com/cuda/profiler-users-guide/#axzz32CP5hrTb
 %----------------------------------------------------------------------------------------
 
 \subsection{CUDA accelerated Smith-Waterman}
@@ -573,7 +573,7 @@ HMMER includes a MPI (Message Passing Interface) implementation of the searching
 \subsubsection*{HMM-based algorithm researched}
 \citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem} parallelized Viterbi algorithm.
 
-\citep{Ahmed} used Intel® VTune™ Analyzer \footnote{https://software.intel.com/en-us/articles/analyzing-and-optimizing-performance-of-windows-store-apps-using-intel-vtune-analyzer-and} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms. And they also found data transfer overhead between heterogeneous processors could be a performance bottleneck.
+\citep{Ahmed} used Intel® VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms. And they also found data transfer overhead between heterogeneous processors could be a performance bottleneck.
 
 However, our research focus on the MSV algorithm in HMMER3.
 
