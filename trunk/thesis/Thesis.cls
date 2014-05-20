@@ -225,12 +225,12 @@
                 {CONCORDIA UNIVERSITY}}
 %-------------------------------------------------                
 \department{\texorpdfstring{\href{http://encs.concordia.ca/)} % Your department's URL
-                {Engineering and Computer Science}} % Your department's name - used in the title page and abstract
+                {Computer Science and Software Engineering}} % Your department's name - used in the title page and abstract
                 {Department or School Name}}
 %-------------------------------------------------                
 \DEPARTMENT{\texorpdfstring{\href{http://encs.concordia.ca/)} % Your department's URL
-                {Engineering and Computer Science}} % Your department's name in capitals - this is not currently used anywhere in the template, cite it with \DEPTNAME if you want it
-                {Engineering and Computer Science}}
+                {Computer Science and Software Engineering}} % Your department's name in capitals - this is not currently used anywhere in the template, cite it with \DEPTNAME if you want it
+                {Computer Science and Software Engineering}}
 %-------------------------------------------------                
 \group{\texorpdfstring{\href{Research Group Web Site URL Here (include http://)} % Your research group's URL
                 {Research Group Name}} % Your research group's name - this is currently used in the title page 

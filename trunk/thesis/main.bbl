@@ -105,6 +105,12 @@ over other SIMD implementations}.
 \newblock \emph{ClawHMMER: A Streaming HMMer-Search Implementation}.
 \newblock presented at Supercomputing 2005, Washington, D.C., 2005.
 
+\bibitem[Intel(2013)]{Intel}
+[Intel, 2013] Intel.
+\newblock Intel VTune Amplifier XE 2013.
+\newblock Website, 2013.
+\newblock URL \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe/}. 
+
 \bibitem[Kentie(2010)]{Kentie}
 [Kentie, 2010] M.A. Kentie
 \newblock \emph{Biological Sequence Alignment Using Graphics Processing Units}.

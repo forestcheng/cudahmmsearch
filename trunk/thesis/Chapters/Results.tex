@@ -53,7 +53,7 @@ Texture memory\tablefootnote[52]{benchmarked only for the query profile texOMrbv
 Sorting Database & 2.346 & 12.207 & 129 \\\hline
 Distributing workload & 1.650 & 17.357 & 42 \\\hline
 \end{tabular}
-\caption{Performance of optimization approaches\label{tab.opt}}
+\caption{\fontfamily{pag}\selectfont Performance of optimization approaches\label{tab.opt}}
 \end{table}
 
 The graphic view corresponding to Table is shown in Figure\ref{fig:imp}. 
@@ -61,7 +61,7 @@ The graphic view corresponding to Table is shown in Figure\ref{fig:imp}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.28\textheight]{Figures/improve.png}
-	\caption{Performance of optimization approaches.}
+	\caption{\fontfamily{pag}\selectfont Performance of optimization approaches.}
 	\label{fig:imp}
 \end{figure}
 
@@ -76,7 +76,7 @@ The results of the benchmarks are shown in graphical form in Figure\ref{fig:len}
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.36\textheight]{Figures/lengths.png}
-	\caption{Practical benchmarks.}
+	\caption{\fontfamily{pag}\selectfont Practical benchmarks.}
 	\label{fig:len}
 \end{figure}
 
@@ -92,7 +92,7 @@ Passed bias filter & 973354 & 1671084 \\\hline
 Passed Viterbi filter & 70564 & 322206 \\\hline
 Passed Forward filter & 7145 & 17719 \\\hline
 \end{tabular}
-\caption{Internal pipeline statistics summary\label{tab.sta}}
+\caption{\fontfamily{pag}\selectfont Internal pipeline statistics summary\label{tab.sta}}
 \end{table}
 
 \subsection{Comparison with multicore CPU}
@@ -103,7 +103,7 @@ The experiment was done by executing cudaHmmsearch and hmmsearch with 1, 2...6 C
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.25\textheight]{Figures/cpuCores.png}
-	\caption{Comparison with multicore CPU.}
+	\caption{\fontfamily{pag}\selectfont Comparison with multicore CPU.}
 	\label{fig:cpuCores}
 \end{figure}
 
@@ -117,7 +117,7 @@ All tests are taken searching against the Swiss-Prot database for the globin4 pr
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.28\textheight]{Figures/manyhmms.png}
-	\caption{Comparison with other implementations.}
+	\caption{\fontfamily{pag}\selectfont Comparison with other implementations.}
 	\label{fig:hmms}
 \end{figure}
 
@@ -145,7 +145,7 @@ Then Chapter \ref{CUDAHMMER3} presented the details of our \emph{cudaHmmsearch} 
 
 Comprehensive benchmarks were performed in Chapter \ref{Results}. The results were analyzed and the efficiency of the \emph{cudaHmmsearch} implementations on the GPUs is proved. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory.
 
-The solutions in this thesis were designed and customized for current GPUs, but we believe that the principles studied here will also apply to future manycore GPU processors, as long as the GPU is CUDA-enabled. Here \footnote{https://developer.nvidia.com/cuda-gpus} is the complete list of CUDA-enabled GPUs.
+The solutions in this thesis were designed and customized for current GPUs, but we believe that the principles studied here will also apply to future manycore GPU processors, as long as the GPU is CUDA-enabled. Here is the complete list of CUDA-enabled GPUs: \url{https://developer.nvidia.com/cuda-gpus}.
 %----------------------------------------------------------------------------------------
 
 \section{Recommendations for further research}
