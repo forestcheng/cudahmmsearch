@@ -163,7 +163,7 @@ At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}
 % memcpy(dp,  &sv, sizeof(uint4));
 % \end{lstlisting}
 
-However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This doesn't fully coalescing access global memory. Switching to the following direct assignment resulted in 81\% improvement.
+However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This does not fully coalesce access global memory. Switching to the following direct assignment resulted in 81\% improvement.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -266,8 +266,7 @@ When possible, synchronous memory copy should be avoided for performance reasons
 It works well only where either the input or output of the GPU workload is small in comparison to one another and the total transfer time is less than the kernel execution time. By this means we have the opportunity to hide the input transfer time and only suffer the output transfer time.
 
 \subsubsection*{Multiple streams}
-A CUDA stream represents a queue of GPU operations that get executed in a specific order. We can add operations such as kernel launches, memory copies, and event starts and stops into a stream. The order in which operations are added to the stream specifies the order in which they will be executed. CUDA streams enable CPU/GPU and memory copy/kernel processing\footnote{For GPUs that have one or more copy engines, host $\longleftrightarrow$ device memory copy can be performed while the SMs are
-processing kernels.} concurrency. Within a given stream, operations are performed in sequential order, but operations in different streams may be performed in parallel \citep{CUDAintro}.
+A CUDA stream represents a queue of GPU operations that get executed in a specific order. We can add operations such as kernel launches, memory copies, and event starts and stops into a stream. The order in which operations are added to the stream specifies the order in which they will be executed. CUDA streams enable CPU/GPU and memory copy/kernel processing concurrency. For GPUs that have one or more copy engines, host $\longleftrightarrow$ device memory copy can be performed while the SMs are processing kernels. Within a given stream, operations are performed in sequential order, but operations in different streams may be performed in parallel \citep{CUDAintro}.
 
 To take advantage of CPU/GPU concurrency as depicted in Figure\ref{fig:cpu_gpu}, when performing memory copies as well as kernel launches, asynchronous memory copy must be used. And Mapped pinned memory can be used to overlap PCI Express transfers and kernel processing.
 
@@ -318,7 +317,7 @@ Running the improved program using pinned memory, asynchronous memory copy and t
 \label{dbsort}
 As described in Section\ref{MSVsub}, MSV filter function is sensitive to the length of a target sequence, which determines the execution times of main \emph{for} loop in Algorithm\ref{MSV-SIMD}. 
 
-Target sequence database could contain many sequences with different lengths.  The 24GB NCBI NR database consists of over 38 million sequences with sequence lengths varying from 6–37,000+ amino acids \citep{NCBI}.
+Target sequence database could contain many sequences with different lengths.  The 24GB NCBI NR database consists of over 38 million sequences with sequence lengths varying from 6 $\sim$ 37,000+ amino acids \citep{NCBI}.
 
 This brings a problem for parallel processing of threads on GPU: one thread could be processing a sequence of several thousands of residues while another might be working on a sequence of just a few. As a result, the thread that finishes first might be idle while the long sequence is being handled. Furthermore, unless care is taken when assigning sequences to threads, this effect might be compounded by the heavily unbalanced workload among threads.
 
@@ -376,7 +375,7 @@ This approach has the advantage of being both effective and quite straightforwar
 
 \subsection{Distributing workload}
 \label{workload}
-After launching GPU kernel, CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}( \emph{stream} ). We can get further improvement by distribute some work from GPU to CPU while CPU is waiting. Considering the length distribution of database sequences\footnote{According to Swiss-Prot database statistics \citep{Swiss-Prot}, the percentage of sequences with length $>$ 2500 is only 0.2\%.} and based on the descending sorted database discussed in section\ref{dbsort}, we assigned the first part of data with longer lengths to CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
+After launching GPU kernel, CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}( \emph{stream} ). We can get further improvement by distribute some work from GPU to CPU while CPU is waiting. In protein database, the sequences with the longest or the shortest length are very few. According to Swiss-Prot database statistics \citep{Swiss-Prot}, the percentage of sequences with length $>$ 2500 is only 0.2\%. Considering the length distribution of database sequences and based on the descending sorted database discussed in section\ref{dbsort}, we assigned the first part of data with longer lengths to CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
 
 The compute power of CPU and GPU should be taken into consideration in order to balance the workload distribution between CPU and GPU. The distribution policy calculates a ratio \emph{R} of the number of database sequences assigned to GPU, which is calculated as
 
@@ -395,7 +394,7 @@ This sections discusses various small-scale optimization and explains some techn
 \label{register}
 In order to reduce the register pressure in CUDA kernel, we may consider using unsigned 8-bit char type (u8) instead of 32-bit int type (u32). Declaring the registers as u8 results in sections of code to shift and mask data. The extract data macros are deliberately written to mask off the bits that are not used, so this is entirely unnecessary. In fact, around four times the amount of code will be generated if using an u8 type instead of an u32 type.
 
-Changing the u8 definition to an u32 definition benefits from eliminating huge numbers of instructions. It seems potentially wasting some register space. In practice, CUDA implements u8 registers as u32 registers, so this doesn’t actually cost anything extra in terms of register space \citep{cook}.
+Changing the u8 definition to an u32 definition benefits from eliminating huge numbers of instructions. It seems potentially wasting some register space. In practice, CUDA implements u8 registers as u32 registers, so this does not actually cost anything extra in terms of register space \citep{cook}.
 
 \subsubsection*{Branch divergence}
 \label{branch}
@@ -418,11 +417,11 @@ In terms of speed, shared memory is perhaps 10x slower than register accesses bu
  \item Shared memory is well suited to exchange data between CUDA threads within a block. As described in subsection\ref{impl}, task-based parallelism is applied without the need for inter-thread communications, which also saves the cost of synchronization \emph{\_\_syncthreads}() among threads.
 \end{itemize}
 
-Because of these disadvantages, the MSV implementation doesn't use shared memory.
+Because of these disadvantages, the MSV implementation does not use shared memory.
 
 \subsubsection*{Kernel launch configuration}
 \label{launch}
-Since the MSV implementation doesn't use shared memory explained above, the following dynamic kernel launch configuration is used to prefer larger L1 cache and smaller shared memory so as to further improve memory throughput.
+Since the MSV implementation does not use shared memory explained above, the following dynamic kernel launch configuration is used to prefer larger L1 cache and smaller shared memory so as to further improve memory throughput.
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
  cudaFuncSetCacheConfig(msvSIMDKernel, cudaFuncCachePreferL1);
