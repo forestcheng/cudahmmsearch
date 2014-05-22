@@ -87,7 +87,7 @@ Dynamic Programming (DP) is an optimization technique that recursively breaks do
 \subsection{The Smith-Waterman algorithm}
 The Smith-Waterman algorithm is designed to find the optimal local alignment between two sequences. It was proposed by Smith and Waterman \citep{SW} and enhanced by Gotoh \citep{Gotoh}. The alignment of two sequences is based on dynamic programming approach by computing the similarity score which is given in the form of similarity score matrix $H$. 
 
-Given a query sequence $Q$ with length $L_Q$ and a target sequence $T$ with length $L_T$, let $S$ be the substitution matrix and its element $S[i,j]$ be the similarity score for the combination of the $i^{th}$ residue in $Q$ and the $j^{th}$ residue in $T$. Define $G_e$ as the gap extension penalty, and $G_o$ as the gap opening penalty. These similarity scores and $G_e$, $G_o$ are pre-determined by the life sciences community. The similarity score matrix $H$ for aligning $Q$ and $T$ is calculated as 
+Given a query sequence $Q$ with length $L_q$ and a target sequence $T$ with length $L_t$, let $S$ be the substitution matrix and its element $S[i,j]$ be the similarity score for the combination of the $i^{th}$ residue in $Q$ and the $j^{th}$ residue in $T$. Define $G_e$ as the gap extension penalty, and $G_o$ as the gap opening penalty. These similarity scores and $G_e$, $G_o$ are pre-determined by the life sciences community. The similarity score matrix $H$ for aligning $Q$ and $T$ is calculated as 
 
 \begin{equation*}
    E[i, j] = max 
@@ -113,7 +113,7 @@ Given a query sequence $Q$ with length $L_Q$ and a target sequence $T$ with leng
    \end{cases}
 \end{equation*}
 
-where $1\leqslant i \leqslant L_Q$ and $1\leqslant j \leqslant L_T$. The values for $E$, $F$ and $H$ are initialized as $E[i,0] = F[0,j] = H[i,0] = H[0,j]$ when $0\leqslant i \leqslant L_Q$ and $0\leqslant j \leqslant L_T$.
+where $1\leqslant i \leqslant L_q$ and $1\leqslant j \leqslant L_t$. The values for $E$, $F$ and $H$ are initialized as $E[i,0] = F[0,j] = H[i,0] = H[0,j]$ when $0\leqslant i \leqslant L_q$ and $0\leqslant j \leqslant L_t$.
 
 The maximum value of the matrix $H$ gives the similarity score between $Q$ and $T$.
 
@@ -158,11 +158,11 @@ The dynamics of the system is based on Markov Chain, meaning that only the curre
 
 Profile HMM is a variant of HMM and can be constructed from an initial multiple sequence alignment to define a set of probabilities. The symbol sequence of an HMM is an observed sequence that resembles a consensus for the multiple sequence alignment. And a protein or gen family can be defined by profile HMMs.
 
-In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insertion} state and one \emph{deletion} state. 
+In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insert} state and one \emph{delete} state. 
 \begin{itemize}
 \item \textbf{\emph{Match states}} match and emit a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
-\item \textbf{\emph{Insertion states}} allows the insertion of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
-\item \textbf{\emph{Deletion states}} skip the alignment column and emit a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
+\item \textbf{\emph{insert states}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
+\item \textbf{\emph{delete states}} skip the alignment column and emit a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
 \end{itemize}
 
 \begin{figure}[!htb]
@@ -173,10 +173,10 @@ In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM use
 
 Begin at Start(S), and follow some chain of arrows until arriving at Termination(T). Each arrow transits to a state of the system. 
 At each state, an action can be taken either as (1) emitting a residue, or (2) selecting an arrow to the next state. The action and the selection of successor state are governed by sets of probabilities\citep{IntroBio}.
-The linear core model has five sets of match (M), insertion (I) and deletion (D) states. Each M state represents one consensus position and a set of M, I, D states is the main element of the model and is referred to as a ``node''� in HMMER. Additional flanking states (marked as N, C, and J) emit zero or more residues from the background distribution, modelling nonhomologous regions preceding, following, or joining homologous regions aligned to the core model. Start (S), begin (B), end (E) and termination (T) states are non-emitting states.
+The linear core model has five sets of match (M), insert (I) and delete (D) states. Each M state represents one consensus position and a set of M, I, D states is the main element of the model and is referred to as a ``node''� in HMMER. Additional flanking states (marked as N, C, and J) emit zero or more residues from the background distribution, modelling nonhomologous regions preceding, following, or joining homologous regions aligned to the core model. Start (S), begin (B), end (E) and termination (T) states are non-emitting states.
 
 
-A profile HMM for a protein family can be used to compare with query sequences, and classify sequences that are members of the family and those which are not\citep{ProteinBio}. 
+A profile HMM for a protein family can be used to compare with target sequences, and classify sequences that are members of the family and those which are not\citep{ProteinBio}. 
 A common application of profile HMMs is used to search a profile HMM against a sequence database. Another application is the query of a single protein sequence of interest against a database of profile HMMs.
 
 \subsubsection{Viterbi algorithm in HMMER2}
@@ -185,7 +185,7 @@ A common application of profile HMMs is used to search a profile HMM against a s
 
 In HMMER2, both \emph{hmmsearch} and \emph{hmmpfam} rely on the same core Viterbi algorithm for their scoring function which is named as \emph{P7Viterbi} in codes.
 
-To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as Viterbi to find one path that has the maximum probability of the HMM generating the sequence. Viterbi is a dynamic programming algorithm. Let $V_{i,j}$ be the maximum probability of a path from the start state $S_i$ ending at state $S_j$ and generating the prefix $q_{1...j}$ of the query. $V_{i+1,j}$ is found by the recurrence:
+To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as Viterbi to find one path that has the maximum probability of the HMM generating the sequence. Viterbi is a dynamic programming algorithm. Let $V_{i,j}$ be the maximum probability of a path from the start state $S_i$ ending at state $S_j$ and generating the prefix $q_{1...j}$ of the target sequence. $V_{i+1,j}$ is found by the recurrence:
 
 \begin{equation*}
    \displaystyle V_{i+1,j} = \max_{0 \leqslant k \leqslant j-1} \big ( V_{i,k} P(k,j)P(q_{i+1} |j) \big )
@@ -205,7 +205,7 @@ To find whether a sequence is member of the family described by a HMM, we compar
 % \end{array} \right.
 
 Define $a[i,j]$ as the transition probability from state $i$ to $j$ and $e_i$ as emission probability in state $i$.
-Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence $x_{1...i}$ to the submodel up to state $j$, ending with $x_i$ being emitted by \emph{match} state $M_j$. Similarly $V_j^I(i)$ is the score of the optimal path ending in $x_i$ being emitted by \emph{insertion} state $I_j$, and $V_j^D(i)$ for the optimal path ending in \emph{deletion} state $D_j$. $q_{x_i}$ is the probability of $x_i$. Then we can write the Viterbi general equation\citep{BioSeq}:
+Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence $x_{1...i}$ to the submodel up to state $j$, ending with $x_i$ being emitted by \emph{match} state $M_j$. Similarly $V_j^I(i)$ is the score of the optimal path ending in $x_i$ being emitted by \emph{insert} state $I_j$, and $V_j^D(i)$ for the optimal path ending in \emph{delete} state $D_j$. $q_{x_i}$ is the probability of $x_i$. Then we can write the Viterbi general equation\citep{BioSeq}:
 
 \begin{equation*}
    V_j^M(i) = \log\frac{e_{M_j}(x_i)}{q_{x_i}} + max 
@@ -232,7 +232,7 @@ Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence
    \end{cases}  
 \end{equation*}
 
-The efficient DP-based pseudo code of Viterbi algorithm is shown in Algorithm\ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
+Based on the above equations, we can write the efficient pseudo code of Viterbi algorithm, as shown in Algorithm\ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
 
 \renewcommand{\thepseudonum}{\roman{pseudonum}}
 \begin{pseudocode}{Viterbi}{ }
@@ -241,7 +241,7 @@ The efficient DP-based pseudo code of Viterbi algorithm is shown in Algorithm\re
 N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
 E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO n \DO
+\FOR i \GETS 1 \TO L_t \DO
 \BEGIN
   N[i] \GETS N[i-1] + tr(N, N)\\
   B[i] \GETS max 
@@ -250,8 +250,8 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
    J[i-1] + tr(J, B)
   \end{cases}\\
   M[i,0] \GETS I[i,0] \GETS D[i,0] \GETS -\infty\\
-  \COMMENT{For every model position j from 1 to m}\\
-  \FOR j \GETS 1 \TO m \DO
+  \COMMENT{For every model position j from 1 to $L_q$}\\
+  \FOR j \GETS 1 \TO L_q \DO
   \BEGIN
     M[0, j] \GETS I[0, j] \GETS D[0, j] \GETS -\infty\\
     M[i, j] \GETS e(M_j, S[i]) + max 
@@ -272,7 +272,7 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
      D[i, j-1] + tr(D_{j-1}, D_j)
     \end{cases}\\
   \END\\
-  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO m-1)\\
+  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
   J[i] \GETS max 
   \begin{cases}
    J[i-1] + tr(J, J)\\
@@ -285,8 +285,18 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
   \end{cases}\\
 \END\\
 \COMMENT{Termination: }\\
-\RETURN {T(S,M) \GETS C[n] + tr(C,T)}
+\RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
+
+From Algorithm\ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for Biological Sequence Alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure\ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+
+\begin{figure}[!htb]
+\centering
+	\includegraphics[width=120mm]{Figures/dpViterbi.png}
+	\caption{\fontfamily{pag}\selectfont \textbf{The DP matrix calculated in Viterbi algorithm.} 
+The rectangle on the left represents the whole matrix to be calculated by the Viterbi algorithm, and the right rectangle of the figure shows the process of updating a single block of the matrix.}
+	\label{fig:dpV}
+\end{figure}
 
 \subsubsection{MSV algorithm in HMMER3}
 
@@ -296,12 +306,21 @@ HMMER3 is near rewrite of the earlier HMMER2 package, with the aim of improving 
 
 \begin{figure}[!htb]
 	\includegraphics[width=150mm]{Figures/pHMM_msv.png}
-	\caption{\fontfamily{pag}\selectfont MSV profile: multiple ungapped local alignment segments\citep{HMMER3}.}
+	\caption{\fontfamily{pag}\selectfont MSV profile: multiple ungapped local alignment segments \citep{HMMER3}.}
 	\label{fig:pMSV}
 \end{figure}
 
-Figure\ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Figure\ref{fig:pHMM}, the MSV corresponds to the virtual removal of the deletion and insertion states. All match-match transition probabilities are treated as 1.0. The rest parameters remains unchanged. So this model generates sequences containing one or
- more ungapped local alignment segments. The pseudo code of MSV score algorithm is simplified and shown in Algorithm\ref{MSV}.
+Figure\ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Figure\ref{fig:pHMM}, the MSV corresponds to the virtual removal of the delete and insert states. All match-match transition probabilities are treated as 1.0. The rest parameters remains unchanged. So this model generates sequences containing one or more ungapped local alignment segments. The pseudo code of MSV score algorithm is simplified and shown in Algorithm\ref{MSV}.
+
+Figure\ref{fig:dpMSV} illustrates an example of an alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence (length $L_t=22$). A path to generate the target sequence with the profile HMM model is shown through a dynamic programming (DP) matrix. The model identifies two high-scoring ungapped alignment segments, as shown in black dots, indicating residues aligned to profile match states. All other residues are assigned to N, J, and C states in the model, as shown in orange dots. Unfilled dot indicates a ``mute'' non-emitting state or state transition.
+
+\begin{figure}[!htb]
+\centering
+	\includegraphics[width=100mm]{Figures/dpMSV.png}
+	\caption{\fontfamily{pag}\selectfont \textbf{Example of an MSV path in DP matrix \citep{HMMER3}.} 
+An alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence (length $L_t=22$). A path from top to bottom is through a dynamic programming (DP) matrix. The model identifies two high-scoring ungapped alignment segments, as shown in black dots, indicating residues aligned to profile match states. All other residues are assigned to N, J, and C states in the model, as shown in orange dots. Unfilled dot indicates a ``mute'' non-emitting state or state transition.}
+	\label{fig:dpMSV}
+\end{figure}
 
 \begin{pseudocode}{MSV}{ }
 \label{MSV}
@@ -309,7 +328,7 @@ Figure\ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Fig
 N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
 E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO n \DO
+\FOR i \GETS 1 \TO L_t \DO
 \BEGIN
   N[i] \GETS N[i-1] + tr(N, N)\\
   B[i] \GETS max 
@@ -318,8 +337,8 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
    J[i-1] + tr(J, B)
   \end{cases}\\
   M[i,0] \GETS -\infty\\
-  \COMMENT{For every model position j from 1 to m}\\
-  \FOR j \GETS 1 \TO m \DO
+  \COMMENT{For every model position j from 1 to $L_q$}\\
+  \FOR j \GETS 1 \TO L_q \DO
   \BEGIN
     M[0, j] \GETS -\infty\\
     M[i, j] \GETS e(M_j, S[i]) + max 
@@ -328,7 +347,7 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
      B[i-1] + tr(B, M_j)
     \end{cases}\\
   \END\\
-  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO m-1)\\
+  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
   J[i] \GETS max 
   \begin{cases}
    J[i-1] + tr(J, J)\\
@@ -341,18 +360,22 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
   \end{cases}\\
 \END\\
 \COMMENT{Termination: }\\
-\RETURN {T(S,M) \GETS C[n] + tr(C,T)}
+\RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
 
 \textbf{SIMD vector parallelization in HMMER3}
 \label{SSE2}
 
-Single-Instruction Multiple-Data (SIMD) instruction is able to perform the same operation on multiple pieces of data in parallel. The SIMD vector instruction sets use 128-bit vector registers to compute up to 16 simultaneous operations. Several SIMD vector parallelization methods have been described for accelerating Smith-waterman dynamic programming. Rognes and Seeberg \citep{SW-SIMD} presented an implementation of the Smith–Waterman algorithm running on the Intel Pentium processor using the MMX SIMD instructions. A six-fold speedup was reported over an optimized non-SIMD implementation. Farrar \citep{SW-SSE2} presented an efficient vector-parallel approach called striped Smith-Waterman using Intel Streaming SIMD Extensions 2 (SSE2). A speedup of 2–8 times was reported over the Rognes and Seeberg SIMD implementations.
+Single-Instruction Multiple-Data (SIMD) instruction is able to perform the same operation on multiple pieces of data in parallel. The SIMD vector instruction sets use 128-bit vector registers to compute up to 16 simultaneous operations. Due to the huge number of iterations in the Smith-Waterman algorithm calculation, using SIMD instructions to reduce the number of instructions needed to perform one cell calculation has a significant impact on the execution time. Several SIMD vector parallelization methods have been described for accelerating SW dynamic programming. 
 
-Similarly, since the MSV model removes deletion and insertion states that interfere with vector parallelism, the striped vector-parallel technique can be remarkably efficient way to calculate MSV alignment scores. To maximize parallelism, in HMMER3\citep{HMMER3}, Sean R. Eddy implemented MSV as a 16-fold parallel calculation with score values stored as 8-bit byte integers. He used SSE2 instructions on Intel-compatible systems and Altivec/VMX instructions on PowerPC systems.
+In 2000, Rognes and Seeberg presented an implementation of the SW algorithm running on the Intel Pentium processor using the MMX SIMD instructions \citep{SW-SIMD}. They used a query profile parallel to the query sequence for each possible residue. A query profile was pre-calculated in a sequential layout just once before searching database. A six-fold speedup was reported over an optimized non-SIMD implementation. 
 
-Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of length $m$ is divided into vectors with equal length $v$. The vector length $v$ is equal to the number of elements being processed in the 128-bit SIMD register. MSV processes 8-bit byte integer with $v$ = 128/8 = 16. In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. dp stores $m$ cells in $Q$ vectors which is numbered as $q = 1...Q$, where $Q = (m+v-1)/v$. Figure\ref{fig:strip} illustrates $m$ cells assigned to $Q$ vectors in a non-sequential way. For simple illustration, $v = 4, m = 14$, and $Q = 4$.
+In 2007, Farrar presented an efficient vector-parallel approach called striped layout for vectorizing SW algorithm \citep{SW-SSE2}. He designed a striped query profile for SIMD vector computation. He used Intel Streaming SIMD Extensions 2 (SSE2) to implement his design. A speedup of 2–8 times was reported over the Rognes and Seeberg SIMD non-stripped implementations.
+
+Similarly, since the MSV model removes \emph{delete} and \emph{insert} states that interfere with vector parallelism, the striped vector-parallel technique can be remarkably efficient way to calculate MSV alignment scores. To maximize parallelism, in HMMER3\citep{HMMER3}, Sean R. Eddy implemented MSV as a 16-fold parallel calculation with score values stored as 8-bit byte integers. He used SSE2 instructions on Intel-compatible systems and Altivec/VMX instructions on PowerPC systems.
+
+Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of length $L_q$ is divided into vectors with equal length $L_v$. The vector length $L_v$ is equal to the number of elements being processed in the 128-bit SIMD register. MSV processes 8-bit byte integer with $L_v$ = 128/8 = 16. In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. The dp stores $L_q$ cells in $L_Q$ vectors which is numbered as $q = 1...L_Q$, where $L_Q = (L_q+L_v-1)/L_v$. Figure\ref{fig:strip} illustrates $L_q$ cells assigned to $L_Q$ vectors in a non-sequential way. For simple illustration, $L_v = 4, L_q = 14$, and $L_Q = 4$.
 
 \begin{figure}[!htb]
 	\includegraphics{Figures/msv_vector.jpg}
@@ -360,7 +383,7 @@ Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of lengt
 	\label{fig:strip}
 \end{figure}
 
-In Smith-Waterman and Viterbi dynamic programming, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in MSV algorithm, the deletion and insertion states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure\ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
+In Smith-Waterman and Viterbi dynamic programming, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in MSV algorithm, the \emph{delete} and \emph{insert} states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure\ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
 
 Striping method can remove the SIMD register data dependencies. As can be seen in the Figure\ref{fig:strip}, with striped indexing, vector $q-1$ contains exactly the four $j-1$ cells needed to calculate the four cells $j$ in a new vector $q$ on a new blue row of the dp matrix. For example, when we calculate cells $j=(2,6,10,14)$ in vector $q=2$, we access the previous row’s vector $q-1=1$ which contains the cells we need in the order we need them, $j-1=(1,5,9,13)$ (the vector above). 
 
@@ -371,22 +394,22 @@ Striping method can remove the SIMD register data dependencies. As can be seen i
 	\label{fig:nostrip}
 \end{figure}
 
-Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure\ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. Outside the inner loop(for $q = 1$ to Q), the last vector on each finished row is right-shifted (mpv, in grey with red cell $j$ indices) and used to initialize the next row calculation.
+Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure\ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. Outside the inner loop(for $q = 1$ to $L_Q$), the last vector on each finished row is right-shifted (mpv, in grey with red cell $j$ indices) and used to initialize the next row calculation.
 
 The pseudo code for the implementation is shown in Algorithm\ref{MSV-SIMD}
 
 \begin{pseudocode}{MSV-SIMD}{ }
 \label{MSV-SIMD}
 \COMMENT{Initialization}\\
-xJ \GETS 0; \ \  dp[q] \GETS vec\_splat(0) \  (q \GETS 0 \TO Q-1)\\
+xJ \GETS 0; \ \  dp[q] \GETS vec\_splat(0) \  (q \GETS 0 \TO L_Q-1)\\
 xB \GETS base + tr(N, B)\\
 xBv \GETS vec\_adds(xB, tr(B, M))\\
 \COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO n \DO
+\FOR i \GETS 1 \TO L_t \DO
 \BEGIN
   xEv \GETS vec\_splat(0)\\
-  mpv \GETS vec\_rightshift(dp[Q-1])\\
-  \FOR q \GETS 0 \TO Q-1 \DO
+  mpv \GETS vec\_rightshift(dp[L_Q-1])\\
+  \FOR q \GETS 0 \TO L_Q-1 \DO
   \BEGIN
     \COMMENT{temporary  storage of 1 current row value in progress}\\
     tmpv \GETS vec\_max(mpv, xBv)\\
