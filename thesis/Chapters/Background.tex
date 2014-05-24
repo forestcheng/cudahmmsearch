@@ -363,7 +363,6 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
-
 \textbf{SIMD vector parallelization in HMMER3}
 \label{SSE2}
 
@@ -529,6 +528,7 @@ Each block can be identified by an index accessible within the kernel through th
 The threads in a block are executed by the same multiprocessor within a GPU. They can cooperate by sharing data through some shared memory and by synchronizing their execution to coordinate memory accesses. Each block can be scheduled on any of the available multiprocessors, in any order, concurrently or sequentially, so that a compiled CUDA program can execute on any number of multiprocessors. On the hardware level, a block's threads are executed in parallel as \emph{warps} which name originate from \emph{weaving loom}. A warp consists of 32 threads.
 
 \subsubsection{CUDA memory hierarchy}
+\label{cudaMemH}
 Besides the threading model, another thing that makes CUDA programming different from a general purpose CPU is its memory spaces, including registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}
 
 \begin{figure}[!htb]
@@ -555,6 +555,49 @@ Texture & Off chip & Yes & R & \shortstack{All threads\\ + host} & $2 - 200$ & H
 \end{table}
 
 \subsubsection{CUDA tools}
+\label{cudaTools}
+
+The NVIDIA CUDA Toolkit provides a comprehensive development environment for C/C++ developers building GPU-accelerated applications. The CUDA Toolkit is available at \url{https://developer.nvidia.com/cuda-toolkit}, including a compiler \emph{nvcc} for NVIDIA GPUs, math libraries, and tools for debugging and optimizing the performance of CUDA applications.
+
+\textbf{Nsight Eclipse Edition}\\
+NVIDIA Nsight Eclipse Edition is a full-featured IDE powered by the Eclipse platform that provides an all-in-one integrated programming environment for editing, building, debugging and profiling CUDA C/C++ applications. Nsight Eclipse Edition supports a rich set of commercial and free plugins.
+Nsight Eclipse Edition ships as part of the CUDA Toolkit Installer for Linux and Mac at \url{https://developer.nvidia.com/nsight-eclipse-edition}.
+
+\textbf{NVIDIA Nsight Visual Studio Edition}\\
+NVIDIA provides Nsight Visual Studio Edition to integrate seamlessly into Microsoft Visual Studio environment at\\ \url{https://developer.nvidia.com/nvidia-nsight-visual-studio-edition}. It can\\ build, debug, profile and trace heterogeneous compute and graphics applications using CUDA C/C++, OpenCL, DirectCompute, Direct3D, and OpenGL.
+
+\textbf{Profiling tools}\\
+ NVIDIA® provides profiling tools to help execute the kernels in question under the watchful gaze, which are publicly available as a separate download on the CUDA Zone website \citep{CUDAzone}.
+ 
+% \begin{table}[H]
+% \centering
+% \begin{tabular}{|c|c|c|c|}\hline
+% \shortstack{\textbf{Tools Name}} & \shortstack{\textbf{Command}} & \shortstack{\textbf{OS}} & \shortstack{\textbf{User interface}}\\\hline
+% nvprof & nvprof & \shortstack{Linux, Mac OS X\\ and Windows} & command-line\\\hline
+% Visual Profiler & nvvp & \shortstack{Linux, Mac OS X\\ and Windows} & graphical \\\hline
+% Nsight™ Ecipse Edition & nsight & Linux and Mac OSX & graphical\\\hline
+% \shortstack{NVIDIA® Nsight™ \\ Visual Studio Edition} & -\tablefootnote[12]{Integrated into Microsoft Visual Studio} & Windows & graphical\\\hline
+% Parallel Nsight™ & - & Windows & graphical\\\hline
+% \end{tabular}
+% \caption{CUDA profiling tools\label{tab.prof}}
+% \end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}\hline
+\shortstack{\textbf{Tools Name}} & \shortstack{\textbf{OS}} & \shortstack{\textbf{User interface}}\\\hline
+nvprof & \shortstack{Linux, Mac OS X\\ and Windows} & command-line\\\hline
+Visual Profiler & \shortstack{Linux, Mac OS X\\ and Windows} & graphical \\\hline
+Nsight™ Ecipse Edition & Linux and Mac OSX & graphical\\\hline
+\shortstack{NVIDIA® Nsight™ \\ Visual Studio Edition} & Windows & graphical\\\hline
+Parallel Nsight™ & Windows & graphical\\\hline
+\end{tabular}
+\caption{\fontfamily{pag}\selectfont {CUDA profiling tools}\label{tab.prof}}
+\end{table}
+
+\textbf{Nvidia-SMI}\\
+The NVIDIA System Management Interface (nvidia-smi) is a command line utility that helps managing and monitoring GPU devices. It ships with NVIDIA GPU display drivers on Linux and Windows. This utility allows administrators to query GPU device state and modify GPU device state. It can also report control aspects of GPU execution, such as whether ECC is enabled and how many CUDA contexts can be created on a given GPU.
+
 % http://docs.nvidia.com/cuda/profiler-users-guide/#axzz32CP5hrTb
 %----------------------------------------------------------------------------------------
 
@@ -562,18 +605,22 @@ Texture & Off chip & Yes & R & \shortstack{All threads\\ + host} & $2 - 200$ & H
 The Smith-Waterman algorithm for sequence alignment uses dynamic programming method for sequence alignment, which is also the characteristic of HMM-based algorithms. In this section, we review the techniques used in parallelizing Smith-Waterman on a CUDA-enabled GPU and these techniques will be evaluated for accelerating MSV algorithm in Chapter \ref{CUDAHMMER3}.
 
 \subsubsection*{Parallelism strategy applied}
-\citep{Manavski}, \citep{SW++}, \citep{Akoglu}, \citep{Ligowski}, \citep{SW++2}, \citep{Kentie}, \citep{SW++3} used task-based parallelism to process each target sequence independently with a single GPU thread.
+As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 8 articles reviewed here, 7 articles, i.e. \citep{Manavski}, \citep{SW++}, \citep{Akoglu}, \citep{Ligowski}, \citep{SW++2}, \citep{Kentie} and \citep{SW++3} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
 
-\citep{SW++} used data-based parallelism to support longest query/target sequences.
+For data-based parallelism, \citep{Saeed} formulated parallel version of the Smith-Waterman algorithm so that the calculations
+can be performed in parallel one row (or column) of similarity matrix at a time. They exploited approach of parallelizing multiple GPUs with using MPI (Message Passing Interface) parallel technique over 100 Mb Ethernet to extend work to multiple GPUs.
 
-\citep{Saeed} formulated parallel version of the Smith-Waterman algorithm and used MPI over 100 Mb Ethernet to extend work to multiple GPUs.
+\citep{SW++} investigated the two parallelism approaches for parallelizing the sequence database searches using CUDA. They found task-based parallelism can achieve better performance although it needs more device memory than data-based. They used data-based parallelism to support longest query/target sequences. Each task was assigned to one thread block and all threads in the thread block cooperate to perform the task in parallel, exploiting the parallel characteristics of cells in the minor diagonals of similarity matrix. 
 
 \subsubsection*{Processing target sequences database}
+In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore many studies often sorted sequences databases by length of sequences. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp.
 \citep{Manavski}, \citep{Akoglu}, \citep{SW++3} presorted database in ascending order.
 
-\citep{Ligowski} presorted database in descending order and organized in blocks consisting of 256 sequences.\citep{Kentie} presorted database also in descending order and converted into a special format. 
+\citep{Ligowski} presorted database in descending order and organized in blocks consisting of 256 sequences. \citep{Kentie} presorted database also in descending order and converted into a special format. 
 
 \subsubsection*{Device memory access pattern}
+As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
+
 \citep{SW++} sorted target sequences and arranged in an array like a multi-layer bookcase to store into global memory, so that the reading of the database across multiple threads could be coalesced. Writes to global memory were first batched in shared memory for better coalescing.  Due to a reduction in the global memory accesses, they proposed a cell block division method for the task-based parallelization, where the alignment matrix is divided into cell blocks of equal size.
 
 \citep{Kentie} reduced global memory access by making temporary values interleaved and read/wrote score and Ix temporary values in one access.
@@ -587,6 +634,8 @@ The Smith-Waterman algorithm for sequence alignment uses dynamic programming met
 \citep{Ligowski} reduce global memory access only at the loop initialization and for writing the results at the exit. They performed all operations within the loop in fast shared memory and registers.
 
 \subsubsection*{Vector programming model}
+Vector programming model plays important role in operations of array or matrix. On one side, it can reduce greatly the frequency of memory access; on the other side, it can utilize the built-in SIMD vector instructions for parallel computing both on CPU and GPU.
+
 \citep{Manavski} packaged the query profile in texture memory, storing 4 successive values into the 4-byte of a single unsigned integer. And they read at a time 4 H and 4 E values from local memory.
 
 \citep{Akoglu} calculated the Smith-Waterman score from the query sequence and database sequences by means of columns, four cells at a time.
@@ -607,12 +656,12 @@ The Smith-Waterman algorithm for sequence alignment uses dynamic programming met
 %----------------------------------------------------------------------------------------
 
 \subsection{CUDA accelerated HMMER}
-HMMER includes a MPI (Message Passing Interface) implementation of the searching algorithms, which uses conventional CPU clusters for parallel computing. Since \citep{ClawHMMER} \footnote{ClawHMMer is based on the BrookGPU stream programming language, not CUDA programming model.}, the first GPU-enabled \emph{hmmsearch} implementation, there has been several researches on accelerating HMMER for CUDA-enabled GPU. The following is the summary of techniques applied by 5 research work.
+HMMER includes a MPI (Message Passing Interface) implementation of the searching algorithms, which uses conventional CPU clusters for parallel computing. ClawHMMer \citep{ClawHMMER} is the first GPU-enabled \emph{hmmsearch} implementation. Their implementation is based on the BrookGPU stream programming language, not CUDA programming model. Since ClawHMMer, there has been several researches on accelerating HMMER for CUDA-enabled GPU. The following is the summary of techniques applied by 5 research work.
 
 \subsubsection*{Parallelism strategy applied}
-\citep{GPUHMM}, \citep{Quirem} and \citep{Ahmed} used task-based parallelism to process each target sequence independently with a single GPU thread.
+As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 5 articles reviewed here, 3 articles, i.e. \citep{GPUHMM}, \citep{Quirem} and \citep{Ahmed} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
 
-\citep{Du} used data-based parallelism by dividing the basic computational kernel of the Viterbi algorithm of each tile into two parts, independent and dependent parts.
+For data-based parallelism, \citep{Du} divided the basic computational kernel of the Viterbi algorithm of each tile into two parts, independent and dependent parts.
 
 \citep{Ganesan} presented a hybrid parallelization strategy by combining task-based and data-based parallelism. They parallelized evaluations of recurrence equations by partitioning the chain of dependencies in a uniform and regular fashion.
 
@@ -624,6 +673,8 @@ HMMER includes a MPI (Message Passing Interface) implementation of the searching
 However, our research focus on the MSV algorithm in HMMER3.
 
 \subsubsection*{Device memory access pattern}
+As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
+
 \citep{GPUHMM} made use of high speed texture memory to store both the target sequence batch as well as the query profile HMM. Their benchmark result showed that global memory coalescing contributed an improvement of more than 9x for larger HMMs. They also used constant memory to store the HMM and used shared memory to temporarily store the index into each thread�s digitized sequence.
 
 \citep{Ganesan} adopted the partitioning scheme to coalesce memory access by storing lookup data of model positions at regular intervals
