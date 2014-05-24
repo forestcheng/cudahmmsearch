@@ -71,8 +71,7 @@ A basic flow of the GPU implementation for MSV filter is shown in Figure\ref{fig
 
 The CPU code mainly concerns about allocating data structures on GPU, loading data, copying them to GPU, launching the GPU kernel and copying back the result for further steps.
 
-The GPU kernel code is corresponding to the MSV filter Algorithm \ref{MSV-SIMD}. and Some more explanation are worth for it. First, the thread's current database sequence is set to the thread id. By this way each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on GPU kernel is halted when each thread finishes its sequences.
-
+The GPU kernel code is corresponding to the MSV filter Algorithm \ref{MSV-SIMD} and some more explanation are worth for it. First, the thread's current database sequence is set to the thread id. By this way each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on GPU kernel is halted when each thread finishes its sequences.
 
 %----------------------------------------------------------------------------------------
 
@@ -158,11 +157,6 @@ At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}
  memcpy(dp, \&sv, sizeof(uint4));
 \end{quote}
 
-% \begin{lstlisting}[frame=none]
-% memcpy(&mpv, dp, sizeof(uint4));
-% memcpy(dp,  &sv, sizeof(uint4));
-% \end{lstlisting}
-
 However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This does not fully coalesce access global memory. Switching to the following direct assignment resulted in 81\% improvement.
 
 \begin{quote}
@@ -223,7 +217,6 @@ The basic syntax of an \emph{asm}() statement is:
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
  asm(``template-string" : ``constraint''(output) : ``constraint"(input));
-% \slshape A narrow slanted f\'ee.\\
 \end{quote}
 
 The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(“op1” and “op2”) and destination operand(“rv”) are all unsigned 32-bit registers(“u32”), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(“sat”) have been used to clamp the values to their appropriate unsigned ranges.
@@ -439,34 +432,9 @@ This section briefly reviews the all the optimization approaches discussed in th
  \item Assessing the application\\
  In order to benefit from any modern processor architecture, including GPUs, the first steps are to assess the application to identify the hotspots [MSV filter in Section\ref{hmmsearch}], which type of parallelism [Task-based parallelism in Section\ref{impl}] is better suited to the application.
  \item Application Profiling\\
- NVIDIA® provides profiling tools to help execute the kernels in question under the watchful gaze [nvprof in Section\ref{dbsort}], which are publicly available as a separate download on the CUDA Zone website \citep{CUDAzone}.
+ NVIDIA provides profiling tools to help identify hotspots and compile a list of candidates for parallelization or optimization on CUDA-enabled GPUs [nvprof in Section\ref{dbsort}], as detailed in Section\ref{cudaTools}. 
+ Intel provides VTune Amplifier XE to collect a rich set of data to tune CPU \& GPU compute performance at \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe}.
  
-% \begin{table}[H]
-% \centering
-% \begin{tabular}{|c|c|c|c|}\hline
-% \shortstack{\textbf{Tools Name}} & \shortstack{\textbf{Command}} & \shortstack{\textbf{OS}} & \shortstack{\textbf{User interface}}\\\hline
-% nvprof & nvprof & \shortstack{Linux, Mac OS X\\ and Windows} & command-line\\\hline
-% Visual Profiler & nvvp & \shortstack{Linux, Mac OS X\\ and Windows} & graphical \\\hline
-% Nsight™ Ecipse Edition & nsight & Linux and Mac OSX & graphical\\\hline
-% \shortstack{NVIDIA® Nsight™ \\ Visual Studio Edition} & -\tablefootnote[12]{Integrated into Microsoft Visual Studio} & Windows & graphical\\\hline
-% Parallel Nsight™ & - & Windows & graphical\\\hline
-% \end{tabular}
-% \caption{CUDA profiling tools\label{tab.prof}}
-% \end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|}\hline
-\shortstack{\textbf{Tools Name}} & \shortstack{\textbf{OS}} & \shortstack{\textbf{User interface}}\\\hline
-nvprof & \shortstack{Linux, Mac OS X\\ and Windows} & command-line\\\hline
-Visual Profiler & \shortstack{Linux, Mac OS X\\ and Windows} & graphical \\\hline
-Nsight™ Ecipse Edition & Linux and Mac OSX & graphical\\\hline
-\shortstack{NVIDIA® Nsight™ \\ Visual Studio Edition} & Windows & graphical\\\hline
-Parallel Nsight™ & Windows & graphical\\\hline
-\end{tabular}
-\caption{\fontfamily{pag}\selectfont\textbf{CUDA profiling tools}\label{tab.prof}}
-\end{table}
-
  \item Optimizing memory usage\\
  Optimizing memory usage starts with minimizing data transfers both in size [Data-base sorted in Section\ref{dbsort}, workload distribution in Section\ref{workload}] and time [Pinned Memory in Section\ref{pin}] between the host and the device [Asynchronous memory copy in Section\ref{asyn}]. Be careful with CUDA memory hierarchy: register memory [Section\ref{register}], local memory, shared memory [Section\ref{shared}], global memory, constant memory [Section\ref{constant}] and texture memory [Section\ref{tex}], and combine these memories to best suit the application [Kernel launch configuration in Section\ref{launch}]. Sometimes, the best optimization might even be to avoid any data transfer in the first place by simply recomputing the data whenever it is needed.\\
  The next step in optimizing memory usage is to organize memory accesses according to the optimal memory access patterns. This optimization is especially important for coalescing global memory accesses [Section\ref{global}].

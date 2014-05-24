@@ -128,12 +128,13 @@
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
 The recent emergence of multicore CPU and manycore GPU architectures has made parallel computing more and more popular. Hundreds of industrial and research applications have been mapped onto GPUs to further utilize the extra GPUs computing resource.
-In bioinformatics, the application of Smith-Waterman algorithm and HMMER's hmmsearch are two important applications for finding similarity among protein sequences with dynamic programming method. Both applications are particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. However, the manycore architecture of the GPU creates challenges to HMMER implementations. And multiple spaces of memory exposed by CUDA must be carefully managed.
+In bioinformatics, the application of Smith-Waterman algorithm and HMMER's hmmsearch are two important applications for finding similarity among protein sequences with dynamic programming method. Both applications are particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
 
-After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key MSV algorithm in HMMER3. A fully-featureed CUDA-enabled protein database search tool cudaHmmsearch was designed, implemented and optimized. Based on our optimization experience in parallel computing, 6 steps were summarized for better performance of CUDA programming. 
+After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key MSV algorithm in HMMER3. A fully-featureed CUDA-enabled protein database search tool cudaHmmsearch was designed, implemented and optimized. We demonstrated a variety of optimization strategies that are useful for general purpose GPU-based applications. Based on our optimization experience in parallel computing, 6 steps were summarized for better performance of CUDA programming. 
 
-We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory.
+We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory. The results show that our implementation achieved 2.5x speedup over single-threaded HMMER3 CPU SSE2 implementation on average.
 
+ However, the manycore architecture of the GPU creates challenges to HMMER implementations. And multiple spaces of memory exposed by CUDA must be carefully managed.
 Further, memory lay-
 out and load balancing are critical performance barriers
 that must be overcome to maximally utilize the GPU. We
@@ -197,6 +198,7 @@ My deepest gratitude goes to my family for their unquestioning love.
 \textbf{GPU} & \textbf{G}raphics \textbf{P}rocessing \textbf{U}nit \\
 \textbf{HMM} & \textbf{H}idden \textbf{M}arkov \textbf{M}odel \\
 \textbf{HMMER} & \textbf{H}idden \textbf{M}arkov \textbf{M}odel\textbf{ER} \\
+\textbf{MPI} & \textbf{M}essage \textbf{P}assing \textbf{I}nterface \\
 \textbf{MSV} & \textbf{M}ultiple \textbf{S}egment \textbf{V}iterbi \\
 \textbf{NCBI} & \textbf{N}ational \textbf{C}enter for \textbf{B}iotechnology \textbf{I}nformation) \\
 \textbf{NR} & \textbf{N}on-\textbf{R}edundant \\

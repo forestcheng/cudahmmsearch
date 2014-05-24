@@ -18,6 +18,54 @@ Summary of work + contribution
 
 Discuss common use of HMMER
 
+HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
+It is an open source implementation of HMM algorithms for use with protein databases.
+
+One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
+This search requires a computationally intensive procedure.
+
+There has been a great deal of work on optimizing HMMer for traditional CPUs: JackHMMer[Wun et al., 2005] [Walters et al. 2006].
+
+GPUs have been shown to provide very attractive compute and bandwidth resources in addition to CPUs.
+
+MPI-HMMER [24] is a wellknown
+and commonly used implementation.
+
+J. P. Walters, B. Qudah, and V. Chaudhary. Accelerating
+the HMMER Sequence Analysis Suite Using Conventional
+Processors. In AINA ’06: Proceedings of the 20th
+International Conference on Advanced Information Networking
+and Applications, pages 289–294, Washington,
+DC, USA, 2006. IEEE Computer Society.
+
+John Paul Walters, Joseph Landman and Vipin Chaudhary 2006 Optimized ClusterEnabled HMMER Searches 
+In book: Grid Computing for Bioinformatics and Computational Biology, pp.51 - 70
+https://www.researchgate.net/publication/227987859_Optimized_ClusterEnabled_HMMER_Searches?ev=srch_pub&_sg=90v0%2FM%2FObKOe0lGb7vt630TN%2BCVRfFm%2FrSTeF%2FC%2FeNV905UE%2Bt8ZZo9urkZEMIXr_uMgA2HwKuq8e6BYfOc8Thl2%2Fxpk223W%2BesVp7mJaPT2KiUCj3VedL%2BXQqaxBJHnv
+
+https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=4&cad=rja&uact=8&ved=0CFEQFjAD&url=http%3A%2F%2Fwww.researchgate.net%2Fpublication%2F227987859_Optimized_ClusterEnabled_HMMER_Searches%2Ffile%2F60b7d517e7501cc6aa.pdf&ei=5AqBU6b8HMS-8gGBj4HoDw&usg=AFQjCNFoTh5akZMbF3au8OlufUUGp864PA&sig2=hWFbM1CabJR4qwUUh8vmww
+
+
+HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology.
+
+HMMer [Eddy 2003a]  One of the more widely used algorithms,
+hmmsearch, works as follows: a user provides an
+HMM modeling a desired protein family and hmmsearch
+processes each protein sequence in a large database, evaluating
+the probability that the most likely path through the
+query HMM could generate that database protein sequence.
+This search requires a computationally intensive procedure,
+known as the Viterbi [1967; 1973] algorithm. The search
+could take hours or even days depending on the size of the
+database, query model, and the processor used.
+
+hmmsearch is widely used in the biology
+research community.
+
+There has been
+a great deal of work on optimizing HMMer for traditional
+CPUs [Lindahl 2005; Cofer and SGI. 2002].
+
+
 \section{Research Contributions}
 
 \section{Organization of thesis}
@@ -39,14 +87,12 @@ The following font conventions are used in this thesis:
 %-----------------------------------
 \subsection{Subsection 1}
 
-Nunc posuere quam at lectus tristique eu ultrices augue venenatis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam erat volutpat. Vivamus sodales tortor eget quam adipiscing in vulputate ante ullamcorper. Sed eros ante, lacinia et sollicitudin et, aliquam sit amet augue. In hac habitasse platea dictumst.
 
 %-----------------------------------
 %	SUBSECTION 2
 %-----------------------------------
 
 \subsection{Subsection 2}
-Morbi rutrum odio eget arcu adipiscing sodales. Aenean et purus a est pulvinar pellentesque. Cras in elit neque, quis varius elit. Phasellus fringilla, nibh eu tempus venenatis, dolor elit posuere quam, quis adipiscing urna leo nec orci. Sed nec nulla auctor odio aliquet consequat. Ut nec nulla in ante ullamcorper aliquam at sed dolor. Phasellus fermentum magna in augue gravida cursus. Cras sed pretium lorem. Pellentesque eget ornare odio. Proin accumsan, massa viverra cursus pharetra, ipsum nisi lobortis velit, a malesuada dolor lorem eu neque.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 2
@@ -54,4 +100,3 @@ Morbi rutrum odio eget arcu adipiscing sodales. Aenean et purus a est pulvinar p
 
 \section{Main Section 2}
 
-Sed ullamcorper quam eu nisl interdum at interdum enim egestas. Aliquam placerat justo sed lectus lobortis ut porta nisl porttitor. Vestibulum mi dolor, lacinia molestie gravida at, tempus vitae ligula. Donec eget quam sapien, in viverra eros. Donec pellentesque justo a massa fringilla non vestibulum metus vestibulum. Vestibulum in orci quis felis tempor lacinia. Vivamus ornare ultrices facilisis. Ut hendrerit volutpat vulputate. Morbi condimentum venenatis augue, id porta ipsum vulputate in. Curabitur luctus tempus justo. Vestibulum risus lectus, adipiscing nec condimentum quis, condimentum nec nisl. Aliquam dictum sagittis velit sed iaculis. Morbi tristique augue sit amet nulla pulvinar id facilisis ligula mollis. Nam elit libero, tincidunt ut aliquam at, molestie in quam. Aenean rhoncus vehicula hendrerit.
