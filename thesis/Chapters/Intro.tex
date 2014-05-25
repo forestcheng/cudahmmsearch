@@ -24,30 +24,24 @@ It is an open source implementation of HMM algorithms for use with protein datab
 One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
 This search requires a computationally intensive procedure.
 
-There has been a great deal of work on optimizing HMMer for traditional CPUs: JackHMMer[Wun et al., 2005] [Walters et al. 2006].
-JackHMMer uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
+There has been a great deal of work on optimizing HMMER for both CPUs and GPUs since the stable HMMER1 was developed in 2005. 
+JackHMMer \citep{Wun} uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
 
-MPI-HMMER [24] is a wellknown and commonly used implementation. In MPIHMMER, A single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
+\citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
 
-J. P. Walters, B. Qudah, and V. Chaudhary. Accelerating
-the HMMER Sequence Analysis Suite Using Conventional
-Processors. In AINA'6: Proceedings of the 20th
-International Conference on Advanced Information Networking
-and Applications, pages 289–294, Washington,
-DC, USA, 2006. IEEE Computer Society.
 
-HMMER3 is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
+HMMER3 \citep{HMMER3} is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
 
-GPUs have been shown to provide very attractive compute and bandwidth resources in addition to CPUs.
+GPUs have been shown to provide very attractive compute resources in addition to CPUs, because of particular manycore parallel computing in GPUs.
+\citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem}
 [Walters et al., 2009], [Ganesan et al., 2010], [Du et al., 2010] and [Quirem et al., 2011]
-parallelized Viterbi algorithm.
-[Ahmed et al., 2012] used Intel VTune Analyzer [Intel, 2013] to investigate performance
-hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA ac-
-celeration for three individual algorithm: Forward, Backward and Viterbi algorithms.
+parallelized Viterbi algorithm on CUDA-enabled GPUs.
+[Ahmed et al., 2012]\citep{Ahmed} used Intel VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms.
 
-As described in Section\ref{}, the MSV and Viterbi algorithms described in subsection 2.2.2.2 and 2.2.2.3 are implemented in the
-so-called \acceleration pipeline" at the core of the HMMER3 software package [Eddy,2011]. And the MSV algorithm is the first filter of "acceleration pipeline" and is the key hotspot of the whole process. Therefore, our research concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
+of hmmsearch in HMMER3 is shown in Figure\ref{fig:hmmsearch}. The MSV and Viterbi algorithms described in subsection \ref{ViterbiSub} and \ref{MSVsub}
+
+As shown in Figure\ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of "acceleration pipeline" and is the key hotspot of the whole process. Therefore, our research concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
 
 HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology.
 

@@ -330,6 +330,11 @@ database searches using parallel processing on common microprocessors}.
 \newblock URL
   \url{http://www.uniprot.org/help/about}.
 
+\bibitem[Walters et~al.(2006)]{Walters2006}
+[Walters et al., 2006] J. P. Walters, B. Qudah, and V. Chaudhary
+\newblock \emph{Accelerating the HMMER Sequence Analysis Suite Using Conventional Processors}.
+\newblock In AINA'6: Proceedings of the 20th International Conference on Advanced Information Networking and Applications, pages 289–294, Washington, DC, USA, 2006. IEEE Computer Society.
+
 \bibitem[Walters et~al.(2009)]{GPUHMM}
 [Walters et al., 2009] J. P. Walters, V. Balu, S. Kompalli, and V. Chaudhary
 \newblock \emph{Evaluating the use of GPUs in Liver Image Segmentation and HMMER Database Searches}.
@@ -357,6 +362,11 @@ database searches using parallel processing on common microprocessors}.
 [Wilt, 2013] Nicholas Wilt.
 \newblock \emph{The CUDA Handbook : A Comprehensive Guide to GPU Programming}.
 \newblock Pearson Education, Inc. 2013.
+
+\bibitem[Wun et~al.(2005)]{Wun}
+[Wun et al., 2005] Wun, B., Buhler, J., and Crowley, P.
+\newblock \emph{Exploiting coarsegrained parallelism to accelerate protein motif finding with a network processor}.
+\newblock In PACT ’05: Proceedings of the 2005 International Conference on Parallel Architectures and Compilation Techniques, 2005.
 
 \bibitem[Zeller(2008)]{Zeller}
 [Zeller, 2008] Cyril Zeller
