@@ -132,21 +132,8 @@ In bioinformatics, the application of Smith-Waterman algorithm and HMMER's hmmse
 
 After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key MSV algorithm in HMMER3. A fully-featureed CUDA-enabled protein database search tool cudaHmmsearch was designed, implemented and optimized. We demonstrated a variety of optimization strategies that are useful for general purpose GPU-based applications. Based on our optimization experience in parallel computing, 6 steps were summarized for better performance of CUDA programming. 
 
-We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory. The results show that our implementation achieved 2.5x speedup over single-threaded HMMER3 CPU SSE2 implementation on average.
+We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory. The results show that our implementation achieved 2.5x speedup over the single-threaded HMMER3 CPU SSE2 implementation on average.
 
- However, the manycore architecture of the GPU creates challenges to HMMER implementations. And multiple spaces of memory exposed by CUDA must be carefully managed.
-Further, memory lay-
-out and load balancing are critical performance barriers
-that must be overcome to maximally utilize the GPU. We
-examine these issues and demonstrate a variety of optimization strategies that are useful for different classes of
-GPU-based applications. We make the following contri-
-butions:
-• Implement a GPU-based implementation of HM-
-MER’s hmmsearch tool.
-• Discuss and analyze the advantages and limitations
-of GPU hardware for general purpose HPC.
-
- our hmmsearch implementation achieves up to 38x speedup.
 }
 \clearpage % Start a new page
 
@@ -158,9 +145,9 @@ of GPU hardware for general purpose HPC.
 
 \acknowledgements{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-First, I would like to express my deepest gratitude to my supervisor {\supname} for his profound knowledge, flexibility in supervising students, and selecting this interesting topic for my research.
+First, I am truely thankful to my supervisor {\supname} for his profound knowledge, flexibility in supervising students, warm-hearted, and selecting this interesting topic for my research.
 
-I also give thanks to my friendly colleagues: Faizah Aplop and Dr. Christine Houry Kehyayan for their communicating and helping me know more about Bioinformatics and life in Montreal, Stuart Thiel for providing Kronos machine as my developing and benchmarking environment.
+I also give thanks to my friendly group: Faizah Aplop, Christine Houry Kehyayan and Nada Alhirabi for their communicating and helping me know more about Bioinformatics and life in Montreal, Stuart Thiel for providing Kronos machine as my developing and benchmarking environment.
 
 My deepest gratitude goes to my family for their unquestioning love.
 
