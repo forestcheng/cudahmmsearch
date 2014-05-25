@@ -208,7 +208,7 @@ Similarly, the dp array and the query profile also use the virtualized SIMD vect
 \subsection{SIMD Video Instructions}
 \label{video}
 
-Like Interl SSE2 described in subsection\ref{SSE2}, CUDA also provides the scalar SIMD (Single Instruction, Multiple Data) video instructions. These are available on devices of compute capability 3.0. The SIMD video instructions enable efficient operations on pairs of 16-bit values and quads of 8-bit values needed for video processing.
+Like Intel SSE2 described in subsection\ref{SSE2}, CUDA also provides the scalar SIMD (Single Instruction, Multiple Data) video instructions. These are available on devices of compute capability 3.0. The SIMD video instructions enable efficient operations on pairs of 16-bit values and quads of 8-bit values needed for video processing.
 
 The SIMD video instructions can be included in CUDA programs by way of the assembler, \emph{asm}(), statement.
 
@@ -233,6 +233,8 @@ The following three instructions are used in the implementation. Every instructi
 \end{quote}
 
 Switching to the SIMD video instructions also achieved a large speedup of nearly 2 times.
+
+From here and the acceleration of HMMER3, we can see the parallel vector instructions can greatly improve computing for array or matrix. We can also see the limitation of GPU computing: GPU can only support 32-bit operations, much lower than SSE2 128-bit operations.
 
 \subsection{Pinned (non-pageable) Memory}
 \label{pin}

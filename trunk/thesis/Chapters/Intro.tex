@@ -10,62 +10,49 @@
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 \section{Problem Statement}
-What's it + why important
-
-History of problem + state of art
-
-Summary of work + contribution
-
-Discuss common use of HMMER
 
 HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
 It is an open source implementation of HMM algorithms for use with protein databases.
 
-One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
+One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm described in subsection \ref{ViterbiSub} by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
 This search requires a computationally intensive procedure.
 
 There has been a great deal of work on optimizing HMMER for both CPUs and GPUs since the stable HMMER1 was developed in 2005. 
-JackHMMer \citep{Wun} uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
+JackHMMer \citep{Wun} uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
 \citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
 
-
-HMMER3 \citep{HMMER3} is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
+HMMER3 \citep{HMMER3} is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi, as described in Section\ref{MSVsub}. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
 
 GPUs have been shown to provide very attractive compute resources in addition to CPUs, because of particular manycore parallel computing in GPUs.
-\citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem}
-[Walters et al., 2009], [Ganesan et al., 2010], [Du et al., 2010] and [Quirem et al., 2011]
-parallelized Viterbi algorithm on CUDA-enabled GPUs.
+
+\citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem} parallelized Viterbi algorithm on CUDA-enabled GPUs.
+
 [Ahmed et al., 2012]\citep{Ahmed} used Intel VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms.
 
-of hmmsearch in HMMER3 is shown in Figure\ref{fig:hmmsearch}. The MSV and Viterbi algorithms described in subsection \ref{ViterbiSub} and \ref{MSVsub}
-
-As shown in Figure\ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of "acceleration pipeline" and is the key hotspot of the whole process. Therefore, our research concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
-
-HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology.
-
-HMMer [Eddy 2003a]  One of the more widely used algorithms,
-hmmsearch, works as follows: a user provides an
-HMM modeling a desired protein family and hmmsearch
-processes each protein sequence in a large database, evaluating
-the probability that the most likely path through the
-query HMM could generate that database protein sequence.
-This search requires a computationally intensive procedure,
-known as the Viterbi [1967; 1973] algorithm. The search
-could take hours or even days depending on the size of the
-database, query model, and the processor used.
-
-hmmsearch is widely used in the biology
-research community.
-
-
+As shown in Figure\ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of ``acceleration pipeline" and is the key hotspot of the whole process. Therefore, this thesis concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
 
 \section{Research Contributions}
+The contribution of this thesis can be classified as follows:
+\begin{enumerate}
+ \item Analyze the core application \emph{hmmsearch} in HMMER3 and find the key hotspot MSV filter for accelerating hmmsearch.
+ \item Implement and optimize the protein sequence search tool \emph{cudaHmmsearch} on CUDA-enabled GPU. We achieved 2.5x speedup over the single-threaded HMMER3 CPU SSE2 implementation.
+ \item Discuss and analyze the advantages and limitations of GPU hardware for CUDA parallel programming.
+\end{enumerate}
 
 \section{Organization of thesis}
+The rest of this thesis is organized as follows:
 
-\subsection*{Typographical Conventions}
+Chapter \ref{Background} introduces the background necessary for understanding the work in this thesis.
+
+Then Chapter \ref{CUDAHMMER3} presents the details of our \emph{cudaHmmsearch} implementation and optimization approaches. And 6 steps are summarized for better performance of CUDA programming at the end of this Chapter.
+
+Comprehensive benchmarks were performed and analyzed in Chapter \ref{Results}. 
+
+The conclusion of Chapter \ref{Conclusions} summarizes our contributions, points out its limitations, and makes suggestions for future work.
+
+\section{Typographical Conventions}
 The following font conventions are used in this thesis:
 \begin{itemize}
  \item {\fontfamily{phv}\fontseries{m}\selectfont Adobe Helvetica font}\\
@@ -75,23 +62,3 @@ The following font conventions are used in this thesis:
  \item {\fontfamily{pag}\selectfont Adobe AvantGarde font}\\
  Used for captions of table and figure.
 \end{itemize}
-
-
-%-----------------------------------
-%	SUBSECTION 1
-%-----------------------------------
-\subsection{Subsection 1}
-
-
-%-----------------------------------
-%	SUBSECTION 2
-%-----------------------------------
-
-\subsection{Subsection 2}
-
-%----------------------------------------------------------------------------------------
-%	SECTION 2
-%----------------------------------------------------------------------------------------
-
-\section{Main Section 2}
-
