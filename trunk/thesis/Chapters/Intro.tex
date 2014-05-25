@@ -25,25 +25,29 @@ One of its more widely used applications, \emph{hmmsearch} is to identify homolo
 This search requires a computationally intensive procedure.
 
 There has been a great deal of work on optimizing HMMer for traditional CPUs: JackHMMer[Wun et al., 2005] [Walters et al. 2006].
+JackHMMer uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
-GPUs have been shown to provide very attractive compute and bandwidth resources in addition to CPUs.
 
-MPI-HMMER [24] is a wellknown
-and commonly used implementation.
+MPI-HMMER [24] is a wellknown and commonly used implementation. In MPIHMMER, A single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
 
 J. P. Walters, B. Qudah, and V. Chaudhary. Accelerating
 the HMMER Sequence Analysis Suite Using Conventional
-Processors. In AINA ’06: Proceedings of the 20th
+Processors. In AINA'6: Proceedings of the 20th
 International Conference on Advanced Information Networking
 and Applications, pages 289–294, Washington,
 DC, USA, 2006. IEEE Computer Society.
 
-John Paul Walters, Joseph Landman and Vipin Chaudhary 2006 Optimized ClusterEnabled HMMER Searches 
-In book: Grid Computing for Bioinformatics and Computational Biology, pp.51 - 70
-https://www.researchgate.net/publication/227987859_Optimized_ClusterEnabled_HMMER_Searches?ev=srch_pub&_sg=90v0%2FM%2FObKOe0lGb7vt630TN%2BCVRfFm%2FrSTeF%2FC%2FeNV905UE%2Bt8ZZo9urkZEMIXr_uMgA2HwKuq8e6BYfOc8Thl2%2Fxpk223W%2BesVp7mJaPT2KiUCj3VedL%2BXQqaxBJHnv
+HMMER3 is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
 
-https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=4&cad=rja&uact=8&ved=0CFEQFjAD&url=http%3A%2F%2Fwww.researchgate.net%2Fpublication%2F227987859_Optimized_ClusterEnabled_HMMER_Searches%2Ffile%2F60b7d517e7501cc6aa.pdf&ei=5AqBU6b8HMS-8gGBj4HoDw&usg=AFQjCNFoTh5akZMbF3au8OlufUUGp864PA&sig2=hWFbM1CabJR4qwUUh8vmww
+GPUs have been shown to provide very attractive compute and bandwidth resources in addition to CPUs.
+[Walters et al., 2009], [Ganesan et al., 2010], [Du et al., 2010] and [Quirem et al., 2011]
+parallelized Viterbi algorithm.
+[Ahmed et al., 2012] used Intel VTune Analyzer [Intel, 2013] to investigate performance
+hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA ac-
+celeration for three individual algorithm: Forward, Backward and Viterbi algorithms.
 
+As described in Section\ref{}, the MSV and Viterbi algorithms described in subsection 2.2.2.2 and 2.2.2.3 are implemented in the
+so-called \acceleration pipeline" at the core of the HMMER3 software package [Eddy,2011]. And the MSV algorithm is the first filter of "acceleration pipeline" and is the key hotspot of the whole process. Therefore, our research concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
 
 HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology.
 
@@ -61,9 +65,6 @@ database, query model, and the processor used.
 hmmsearch is widely used in the biology
 research community.
 
-There has been
-a great deal of work on optimizing HMMer for traditional
-CPUs [Lindahl 2005; Cofer and SGI. 2002].
 
 
 \section{Research Contributions}
