@@ -194,7 +194,7 @@ The solutions in this thesis were designed and customized for current GPUs, but 
 \section{Limitations of Work}
 There are some weak points in our work summarized as follows:
 
-Although our \emph{cudaHmmsearch} can search against unsorted protein sequence database, it can gain 129\% improvement searching against sorted database according to benchmark Table\ref{tab.opt}. And although the extra sorting database program is provided, user may be unaware of this and run \emph{cudaHmmsearch} against an unsorted database. It is better for the program to evaluate the database automatically and remind user to sort if necessary.
+Although our \emph{cudaHmmsearch} can search against unsorted protein sequence database, it can gain 129\% improvement searching against sorted database according to benchmark Table\ref{tab.opt}. And although the extra sorting database program is provided, user may be unaware of this and run \emph{cudaHmmsearch} against an unsorted database. It is better for the program to evaluate the database automatically and prompt user to sort if necessary.
 
 We use block reading method to process very large database. However, the number of sequences for each block reading is fixed. So the number of threads launched in GPU kernel is also fixed. For those sequences with shorter lengths, it is better to use dynamic block reading to get more sequences, so as to increase the occupancy of GPU threads and achieve better performance.
 
