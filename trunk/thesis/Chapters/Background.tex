@@ -124,11 +124,11 @@ The maximum value of the matrix $H$ gives the similarity score between $Q$ and $
 
 \label{HMMERsect}
 
-HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology. The main elements of this HMM-based sequence alignment package are \emph{hmmsearch} and \emph{hmmscan}. The former searches for a profile HMM in a sequence database, while the latter searches for one or more sequences in profile HMMs database.
+HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology. The main elements of this HMM-based sequence alignment package are \emph{hmmsearch} and \emph{hmmscan}. The former searches a profile HMM against a sequence database, while the latter searches a sequence against a profile HMMs database.
 
 \subsubsection{HMM and profile HMM}
 
-A hidden Markov model (HMM) is a computational structure for linearly analyzing sequences with a probabilistic method\citep{DicBioinfo}. HMMs have been widely used in speech signal, handwriting and gesture detection problems. In bioinformatics they have been used for applications such as sequence alignment, prediction of protein structure, analysis of chromosomal copy number changes, and gene-finding algorithm, etc\citep{BioFunc}. 
+A hidden Markov model (HMM) is a computational structure for linearly analyzing sequences with a probabilistic method \citep{DicBioinfo}. HMMs have been widely used in speech signal, handwriting and gesture detection problems. In bioinformatics they have been used for applications such as sequence alignment, prediction of protein structure, analysis of chromosomal copy number changes, and gene-finding algorithm, etc \citep{BioFunc}. 
 
 A HMM is a type of a non-deterministic finite state machine with transiting to another state and emitting a symbol under a probabilistic model.
 According to \citep{SeqData}, a HMM can be defined as a 6-tuple ($A$, $Q$, $q_0$, $q_e$, $tr$, $e$) where \\[-1cm]
@@ -162,9 +162,9 @@ Profile HMM is a variant of HMM and can be constructed from an initial multiple 
 
 In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insert} state and one \emph{delete} state. 
 \begin{itemize}
-\item \textbf{\emph{Match states}} match and emit a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
-\item \textbf{\emph{insert states}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
-\item \textbf{\emph{delete states}} skip the alignment column and emit a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
+\item \textbf{\emph{match state}} matches and emits a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
+\item \textbf{\emph{insert state}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
+\item \textbf{\emph{delete state}} skips the alignment column and emits a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
 \end{itemize}
 
 \begin{figure}[!htb]
@@ -173,10 +173,9 @@ In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM use
 	\label{fig:pHMM}
 \end{figure}
 
-Begin at Start(S), and follow some chain of arrows until arriving at Termination(T). Each arrow transits to a state of the system. 
+The structure begins at Start(S), and follows some chain of arrows until arriving at Termination(T). Each arrow transits to a state of the system. 
 At each state, an action can be taken either as (1) emitting a residue, or (2) selecting an arrow to the next state. The action and the selection of successor state are governed by sets of probabilities\citep{IntroBio}.
 The linear core model has five sets of match (M), insert (I) and delete (D) states. Each M state represents one consensus position and a set of M, I, D states is the main element of the model and is referred to as a ``node''ù in HMMER. Additional flanking states (marked as N, C, and J) emit zero or more residues from the background distribution, modelling nonhomologous regions preceding, following, or joining homologous regions aligned to the core model. Start (S), begin (B), end (E) and termination (T) states are non-emitting states.
-
 
 A profile HMM for a protein family can be used to compare with target sequences, and classify sequences that are members of the family and those which are not\citep{ProteinBio}. 
 A common application of profile HMMs is used to search a profile HMM against a sequence database. Another application is the query of a single protein sequence of interest against a database of profile HMMs.

@@ -17,15 +17,15 @@ It is an open source implementation of HMM algorithms for use with protein datab
 One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm described in subsection \ref{ViterbiSub} by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
 This search requires a computationally intensive procedure.
 
-There has been a great deal of work on optimizing HMMER for both CPUs and GPUs since the stable HMMER1 was developed in 2005. 
+There has been a great deal of work on optimizing HMMER for both CPUs and GPUs. 
 
-JackHMMer \citep{Wun} uses the Intel IXP 2850 as a singlechip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
+JackHMMer \citep{Wun} uses the Intel IXP 2850 network processor to accelerate Viterbi algorithm. The processor is used as a single-chip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
-\citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
+MPI-HMMER \citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
 
 HMMER3 \citep{HMMER3} is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi, as described in Section\ref{MSVsub}. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
 
-GPUs have been shown to provide very attractive compute resources in addition to CPUs, because of particular manycore parallel computing in GPUs.
+GPUs have been shown to provide very attractive compute resources in addition to CPUs, because of particular manycore parallel computation in GPUs.
 
 \citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem} parallelized Viterbi algorithm on CUDA-enabled GPUs.
 
@@ -35,11 +35,11 @@ As shown in Figure\ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implem
 
 \section{Research Contributions}
 The contribution of this thesis can be classified as follows:
-\begin{enumerate}
+\begin{itemize}
  \item Analyze the core application \emph{hmmsearch} in HMMER3 and find the key hotspot MSV filter for accelerating hmmsearch.
- \item Implement and optimize the protein sequence search tool \emph{cudaHmmsearch} on CUDA-enabled GPU. We achieved 2.5x speedup over the single-threaded HMMER3 CPU SSE2 implementation.
+ \item Implement the protein sequence search tool \emph{cudaHmmsearch} on CUDA-enabled GPU. Demonstrate many optimization approches to accelerate cudaHmmsearch.
  \item Discuss and analyze the advantages and limitations of GPU hardware for CUDA parallel programming.
-\end{enumerate}
+\end{itemize}
 
 \section{Organization of thesis}
 The rest of this thesis is organized as follows:
