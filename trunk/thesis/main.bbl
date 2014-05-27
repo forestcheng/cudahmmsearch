@@ -85,7 +85,7 @@ over other SIMD implementations}.
 \bibitem[Henikoff and Henikoff(1992)]{Henikoff}
 [Henikoff and Henikoff, 1992] S. Henikoff and J.G. Henikoff
 \newblock \emph{Amino Acid Substitution Matrices from Protein Blocks}.
-\newblock PNAS 89 (22): 10915–10919. doi:10.1073/pnas.89.22.10915. PMC 50453. PMID 1438297, 1992.
+\newblock PNAS 89 (22): 10915Â–10919. doi:10.1073/pnas.89.22.10915. PMC 50453. PMID 1438297, 1992.
 
 \bibitem[HMMER(2014a)]{Hsource}
 [HMMER, 2014a] Howard Hughes~Medical Institute.
@@ -291,8 +291,8 @@ database searches using parallel processing on common microprocessors}.
 
 \bibitem[Saeed et~al.(2010)]{Saeed}
 [Saeed et al., 2010] Ali Khajeh-Saeed, Stephen Poole and J. Blair Perot
-\newblock \emph{Acceleration of the Smith–Waterman algorithm using single and multiple graphics processors}.
-\newblock Journal of Computational Physics 229 (2010) 4247–4258.
+\newblock \emph{Acceleration of the SmithÂ–Waterman algorithm using single and multiple graphics processors}.
+\newblock Journal of Computational Physics 229 (2010) 4247Â–4258.
 
 \bibitem[Sanders(2011)]{CUDAintro}
 [Sanders, 2011] Jason Sanders and Edward Kandrot.
@@ -333,7 +333,7 @@ database searches using parallel processing on common microprocessors}.
 \bibitem[Walters et~al.(2006)]{Walters2006}
 [Walters et al., 2006] J. P. Walters, B. Qudah, and V. Chaudhary
 \newblock \emph{Accelerating the HMMER Sequence Analysis Suite Using Conventional Processors}.
-\newblock In AINA'6: Proceedings of the 20th International Conference on Advanced Information Networking and Applications, pages 289–294, Washington, DC, USA, 2006. IEEE Computer Society.
+\newblock In AINA'6: Proceedings of the 20th International Conference on Advanced Information Networking and Applications, pages 289Â–294, Washington, DC, USA, 2006. IEEE Computer Society.
 
 \bibitem[Walters et~al.(2009)]{GPUHMM}
 [Walters et al., 2009] J. P. Walters, V. Balu, S. Kompalli, and V. Chaudhary
@@ -366,10 +366,10 @@ database searches using parallel processing on common microprocessors}.
 \bibitem[Wun et~al.(2005)]{Wun}
 [Wun et al., 2005] Wun, B., Buhler, J., and Crowley, P.
 \newblock \emph{Exploiting coarsegrained parallelism to accelerate protein motif finding with a network processor}.
-\newblock In PACT ’05: Proceedings of the 2005 International Conference on Parallel Architectures and Compilation Techniques, 2005.
+\newblock In PACT Â’05: Proceedings of the 2005 International Conference on Parallel Architectures and Compilation Techniques, 2005.
 
 \bibitem[Zeller(2008)]{Zeller}
-[Zeller, 2008] Cyril Zeller
+[Zeller, 2008] Cyril Zeller.
 \newblock \emph{Tutorial CUDA}.
 \newblock NVIDIA Developer Technology, 2008.
 
