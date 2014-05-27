@@ -5,12 +5,12 @@
 
 \lhead{Chapter \ref{Results}. \emph{Benchmark results and discussion}} % This is for the header on each page - perhaps a shortened title
 
-Chapter\ref{CUDAHMMER3} described several approaches to optimize the cudaHmmsearch implementation. This chapter presents the performance measurements when experimenting these approaches on a GPU and on a multicore CPU.
+Chapter \ref{CUDAHMMER3} described several approaches to optimize the cudaHmmsearch implementation. This chapter presents the performance measurements when experimenting these approaches on a GPU and on a multicore CPU.
 %----------------------------------------------------------------------------------------
 
 \section{Benchmarking environment}
 The benchmarking environment were set up in Kronos machine \label{Kronos}as follows:
-
+ 
 \begin{itemize}
  \item CPU host\\
  Intel® Core™ i7-3960X with 6 cores, 3.3GHz clock speed, 64GB RAM
@@ -19,9 +19,8 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
  \item Software system\\
  The operating system used was Ubuntu 64 bit Linux v12.10; the CUDA toolkit used was version 5.5.
  \item Target sequences database\\
- One was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. Another was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 37,000+ amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
+ One was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. Another was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
  \item Query profile HMMs\\
- \label{pHMMs}
  We tested 5 profile HMMs of length 149, 255, 414, 708 and 1111 states, detailed in Table\ref{tab.phmms}. Globin4 with length of 149 states was distributed with the HMMER source \citep{Hsource}. Other 4 HMMs were taken directly from the Pfam database \citep{Pfam} that vary in length from 255 to 1111 states.\\
  \begin{table}[H]
  \centering
@@ -79,7 +78,7 @@ From the chart, it can be seen that several factors are related to global memory
 
 \subsection{Practical benchmark}
 \label{Pbench}
-The final cudaHmmsearch implementation, with the optimization discussed in Chapter\ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for several profile HMMs with various lengths, as detailed in Section\ref{pHMMs}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core.
+The final cudaHmmsearch implementation, with the optimization discussed in Chapter\ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for the 5 profile HMMs with various lengths, as detailed in Table\ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core. The result of this benchmark is shown in the following table.
 
 \begin{table}[H]
 \centering
@@ -121,7 +120,7 @@ Since multicore processors were developed in the early 2000s by Intel, AMD and o
 
 The experiment was done by executing cudaHmmsearch and hmmsearch with 1, 2...6 CPU cores, searching the NCBI NR database for the HMM with 255-state length.
 
-The benchmark has not been used in the articles cited in this thesis. The purpose of this benchmark is to show how the performance increase or decrease with more CPU cores involved in computing.
+The benchmark has not been used in the articles cited in this thesis. The purpose of this benchmark is to show how the performance increase or decrease with more CPU cores involved in computing. The result of this benchmark is shown in the following table.
 
 \begin{table}[H]
 \centering
@@ -133,7 +132,7 @@ hmmsearch & 11.72 & 23.28 & 29.22 & 44.15 & 46.19 & 44.69 \\\hline
 \caption{\fontfamily{pag}\selectfont {Result of Comparison with multicore CPU.} \label{tab.mcpu}}
 \end{table}
 
-Figure\ref{fig:cpuCores} shows the benchmark result. The number performance results is measured in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
+The graphic view of the benchmark is shown in Figure\ref{fig:cpuCores}. The number above each bar is the Performance in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
 
 \begin{figure}[!htb]
 	\centering
@@ -145,7 +144,7 @@ Figure\ref{fig:cpuCores} shows the benchmark result. The number performance resu
 \subsection{Comparison with other implementations}
 The performance of cudaHmmsearch was also compared to the previous HMMER solutions: HMMER2.3.2 \citep{HMMER2}, GPU-HMMER2.3.2 \citep{GPUHMM} and HMMER3 \citep{Hsource}.
 
-All tests are taken searching against the Swiss-Prot database for the globin4 profile HMM.
+All tests are taken searching against the Swiss-Prot database for the globin4 profile HMM. The result of this benchmark is shown in the following table.
 
 \begin{table}[H]
 \centering
