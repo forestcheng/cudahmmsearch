@@ -30,8 +30,8 @@ HMMER3 is implemented in C programming language. CUDA provides a comprehensive d
 The following two approaches have been explored for parallelizing the protein sequence database search using CUDA. A target sequence in the database is processed as one task.
 
 \begin{itemize}
- \item \textbf{Task-based parallelism} Each task is assigned to exactly one thread, and \emph{dimBlock} tasks are performed in parallel by different threads in a thread block.
- \item \textbf{Data-based parallelism} Each task is assigned to one thread block and all \emph{dimBlock} threads in the thread block cooperate to perform the task in parallel.
+ \item \textbf{Task-based parallelism} Each task is assigned to exactly one thread, and \emph{blockDim} tasks are performed in parallel by different threads in a thread block.
+ \item \textbf{Data-based parallelism} Each task is assigned to one or many thread block(s) and all threads in the thread block(s) cooperate to perform the task in parallel.
 \end{itemize}
 
 Task-based parallelism has some advantages over data-based parallelism. On one side, it removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. As described before, the thread or processing elements of one CUDA multiprocessor can communicate by using shared memory, while slow global memory must be used to transfer data between multiprocessors. At the same time, data-based also needs to take time on synchronizing and cooperating among threads. On the other side, to task-based, performing one sequence on each thread results in a kernel where each processing element is doing the exact same thing independently. This also simplifies implementation and testing. Although task-based parallelism needs more device memory than data-based, it can achieve better performance \citep{SW++}. Thus, the approach of task-based parallelism is taken and more efforts are put on optimizing CUDA kernel execution.
@@ -56,7 +56,7 @@ The CPU serial version of hmmsearch in HMMER3 is shown in Figure\ref{fig:hmmsear
 \end{figure}
 
 \label{hmmsearch}
-After each filter step, the pipeline either accepts or rejects the entire comparison, based on the P-value of the score calculated in each filter. For example, as can be seen in Figure\ref{fig:hmmsearch}, by default a target sequence can pass the MSV filter if its comparison gets a P-value of less than 0.02, which means the top-scoring 2\% of target sequences are expected to pass the filter. So, much fewer target sequence can pass one filter and need further computing. By this way, the comparison is accelerated. Thus, the first MSV filter is typically the run time bottleneck for hmmsearch. Therefore, the key to parallelizing hmmsearch tool is to offload the MSV filter function to multiple computing elements on GPU, while ensuring that the code shown in Figure\ref{MSV-SIMD} is as efficient as possible.
+After each filter step, the pipeline either accepts or rejects the entire comparison, based on the P-value of the score calculated in each filter. For example, as can be seen in Figure\ref{fig:hmmsearch}, by default a target sequence can pass the MSV filter if its comparison gets a P-value of less than 0.02. By this way, in practice about 2\% of the top-scoring target sequences are expected to pass the filter. So, much fewer target sequence can pass one filter and need further computing. In consequence, the comparison is accelerated. Thus, the first MSV filter is typically the run time bottleneck for hmmsearch. Therefore, the key to parallelizing hmmsearch tool is to offload the MSV filter function to multiple computing elements on GPU, while ensuring that the code shown in Figure\ref{MSV-SIMD} is as efficient as possible.
 
 \subsection{GPU implementation of MSV filter}
 
@@ -71,15 +71,15 @@ A basic flow of the GPU implementation for MSV filter is shown in Figure\ref{fig
 
 The CPU code mainly concerns about allocating data structures on GPU, loading data, copying them to GPU, launching the GPU kernel and copying back the result for further steps.
 
-The GPU kernel code is corresponding to the MSV filter Algorithm \ref{MSV-SIMD} and some more explanation are worth for it. First, the thread's current database sequence is set to the thread id. By this way each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on GPU kernel is halted when each thread finishes its sequences.
+The GPU kernel code is corresponding to the MSV filter Algorithm \ref{MSV-SIMD} and some more explanation are worth for it. First, the thread's current database sequence is set to the thread id. By this way each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on GPU kernel is halted when every thread finishes its sequence.
 
 %----------------------------------------------------------------------------------------
 
 \section{Optimizing the implementation}
 
-Although a fully functioning GPU MSV filter has been presented, its simple implementation is quite slow: more than 227 seconds to search a test database with 540,958 query sequences.
+Although a fully functioning GPU MSV filter has been presented, its simple implementation is quite slow: more than 227 seconds to search the test database Swiss-Prot with 540,958 query sequences, as shown in Table{tab.opt}.
 
-This section discusses the optimization steps taken to eventually reach a benchmark database search time of 1.55 seconds: an almost 147 times speedup.
+This section discusses the optimization steps taken to eventually reach a benchmark database search time of 1.65 seconds: an almost 137 times speedup.
 
 \subsection{Global Memory Accesses}
 \label{global}
@@ -88,7 +88,7 @@ The global memory is used to store most of data on GPU. A primary in the optimiz
 
 \subsubsection*{Access frequency}
 
-The elements of the \emph{dp} matrix and the query profile 2D matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
+The elements of the \emph{dp} matrix and the query profile matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -149,7 +149,7 @@ An alignment requirement is needed to fulfill for fully coalescing, which means 
 The move to vertical alignment of \emph{dp} matrix resulted in an improvement of about 44\%.
 
 \subsubsection*{Note on coding global memory coalescing access}
-At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}() was used, since uint4 is 16-bytes block. \emph{dp} is the pointer to the address of global memory. \emph{mpv} and \emph{sv} are \emph{uint4} data residing in register memory.
+At the beginning, since \emph{uint4} is 16-bytes data block, the traditional C/C++ memory block copy function \emph{memcpy}() was used to copy data between global memory and register memory, as shown in the following code. The \emph{dp} is the pointer to the address of global memory. The \emph{mpv} and \emph{sv} are \emph{uint4} data type residing in register memory.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -157,7 +157,7 @@ At the beginning, the traditional C/C++ memory block copy function \emph{memcpy}
  memcpy(dp, \&sv, sizeof(uint4));
 \end{quote}
 
-However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 16 (sizeof(uint4)) reads and writes respectively. This does not fully coalesce access global memory. Switching to the following direct assignment resulted in 81\% improvement.
+However, in practice of CUDA kernel execution, the above \emph{memcpy} involves $16 = sizeof(uint4)$ reads/writes from/to global memory respectively, not 1 read/write. Switching to the following direct assignment instruction will be 1 read/write and fully coalesce access global memory, with 81\% improvement over the above \emph{memcpy}().
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -170,13 +170,13 @@ However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 
 
 The read-only texture memory space is a cached window into global memory that offers much lower latency and does not require coalescing for best performance. Therefore, a texture fetch costs one device memory read only on a cache miss; otherwise, it just costs one read from the texture cache. The texture cache is optimized for 2D spatial locality, so threads of the same warp that read texture addresses that are close together will achieve best performance \citep{CUDA-C}.
 
-Texture memory is well suited to random access. CUDA has optimized the operation fetching four values (RGB colors and alpha component, a typical graphics usage) at a time in texture memory. And this mechanism is also applied to fetch four values from the query profile 2D matrix with the \emph{uint4} built-in type. Since the data of target sequences is read-only, it can also use texture for better performance.
+Texture memory is well suited to random access. CUDA has optimized the operation fetching 4 values (RGB colors and alpha component, a typical graphics usage) at a time in texture memory. And this mechanism is applied to fetch 4 read-only values from the query profile matrix \emph{texOMrbv} with the \emph{uint4} built-in type. Since the data of target sequences is read-only, it can also use texture for better performance.
 
 Switching to texture memory for the query profile texOMrbv resulted in about 22\% performance improvement.
 
 \subsubsection*{Restrictions using texture memory}
 
-Texture memory come from the GPU graphics and therefore are less flexible than the CUDA standard types. It must be declared at compile time as a fixed type, \emph{uint4} for the query profile in our case:
+Texture memory come from the GPU graphics and therefore are less flexible than the CUDA standard types. It must be declared at compile time as a fixed type, for example \emph{uint4} for the query profile in our case:
 
 \begin{quote}
 \fontfamily{phv}\fontseries{mc}\selectfont
@@ -312,7 +312,7 @@ Running the improved program using pinned memory, asynchronous memory copy and t
 \label{dbsort}
 As described in Section\ref{MSVsub}, MSV filter function is sensitive to the length of a target sequence, which determines the execution times of main \emph{for} loop in Algorithm\ref{MSV-SIMD}. 
 
-Target sequence database could contain many sequences with different lengths.  The 24GB NCBI NR database consists of over 38 million sequences with sequence lengths varying from 6 $\sim$ 37,000+ amino acids \citep{NCBI}.
+Target sequence database could contain many sequences with different lengths. The NCBI NR database used in this thesis consists of over 38 million sequences with sequence lengths varying from 6 $\sim$ 41,943 amino acids \citep{NCBI}.
 
 This brings a problem for parallel processing of threads on GPU: one thread could be processing a sequence of several thousands of residues while another might be working on a sequence of just a few. As a result, the thread that finishes first might be idle while the long sequence is being handled. Furthermore, unless care is taken when assigning sequences to threads, this effect might be compounded by the heavily unbalanced workload among threads.
 
@@ -425,7 +425,6 @@ Since the MSV implementation does not use shared memory explained above, the fol
 %----------------------------------------------------------------------------------------
 
 \section{Conclusion of optimization}
-Summary of optimization steps taken
 
 This section briefly reviews the all the optimization approaches discussed in this chapter thus far, and summarizes the steps to gain better performance for CUDA programming.
 
