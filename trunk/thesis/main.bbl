@@ -11,6 +11,11 @@
 \newblock \emph{Hotspot Analysis Based Partial CUDA Acceleration of HMMER 3.0 on GPGPUs}.
 \newblock International Journal of Soft Computing and Engineering (IJSCE) ISSN: 2231-2307, Volume-2, Issue-4, September 2012.
 
+\bibitem[Aji et~al.(2008)]{Aji}
+[Aji et al., 2008] S. Aji, F. Blagojevic, W. Feng, D.S. Nikolopoulos. 
+\newblock \emph{Cell-Swat: Modeling and Scheduling Wavefront Computations on the Cell Broadband Engine}.
+\newblock Proceedings of the 2008 ACM International Conference on Computing Frontiers 13-22.
+
 \bibitem[Akoglu and Striemer(2009)]{Akoglu}
 [Akoglu and Striemer, 2009] Ali Akoglu and Gregory M. Striemer
 \newblock \emph{Scalable and highly parallel implementation of Smith-Waterman on graphics processing unit using CUDA}.
@@ -287,7 +292,13 @@ over other SIMD implementations}.
 [Rognes and Seeberg, 2000] Rognes T and Seeberg E.
 \newblock \emph{Six-fold speed-up of Smith-Waterman sequence 
 database searches using parallel processing on common microprocessors}.
-\newblock Bioinformatics 16: 699–706 2000.
+\newblock Bioinformatics 16: 699-706 2000.
+
+\bibitem[Rognes(2011)]{Rognes}
+[Rognes, 2011] Rognes T.
+\newblock \emph{Faster Smith-Waterman database searches with inter-sequence
+SIMD parallelization}.
+\newblock BMC Bioinformatics 2011, 12:221.
 
 \bibitem[Saeed et~al.(2010)]{Saeed}
 [Saeed et al., 2010] Ali Khajeh-Saeed, Stephen Poole and J. Blair Perot
