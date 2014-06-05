@@ -606,53 +606,110 @@ The NVIDIA System Management Interface (nvidia-smi) is a command line utility th
 The Smith-Waterman algorithm for sequence alignment uses dynamic programming method for sequence alignment, which is also the characteristic of HMM-based algorithms. In this section, we review the techniques used in parallelizing Smith-Waterman on a CUDA-enabled GPU and these techniques will be evaluated for accelerating MSV algorithm in Chapter \ref{CUDAHMMER3}.
 
 \subsubsection*{Parallelism strategy applied}
-As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 8 articles reviewed here, 7 articles, i.e. \citep{Manavski}, \citep{SW++}, \citep{Akoglu}, \citep{Ligowski}, \citep{SW++2}, \citep{Kentie} and \citep{SW++3} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
+\textbf{1) Task-based parallelism}
 
-For data-based parallelism, \citep{Saeed} formulated parallel version of the Smith-Waterman algorithm so that the calculations
-can be performed in parallel one row (or column) of similarity matrix at a time. They exploited approach of parallelizing multiple GPUs with using MPI (Message Passing Interface) parallel technique over 100 Mb Ethernet to extend work to multiple GPUs.
+As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
 
-\citep{SW++} investigated the two parallelism approaches for parallelizing the sequence database searches using CUDA. They found task-based parallelism can achieve better performance although it needs more device memory than data-based. They used data-based parallelism to support longest query/target sequences. Each task was assigned to one thread block and all threads in the thread block cooperate to perform the task in parallel, exploiting the parallel characteristics of cells in the minor diagonals of similarity matrix. 
+Liu et al. have been studying accelerating Smith-Waterman sequence database searches for CUDA-enabled GPU since 2009. Here are their 3 articles from 2009 to 2013: \citep{SW++}, \citep{SW++2} and \citep{SW++3}. They present many approaches for optimization. They use task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. 
 
-\subsubsection*{Processing target sequences database}
+Due to these reasons, task-based parallelism has been taken by most of studies and more efforts are put on optimizing CUDA kernel execution. Among 8 articles reviewed here, 7 articles apply this approach. Beside 3 articles of Liu et al., other 4 article are \citep{Manavski}, \citep{Akoglu}, \citep{Ligowski} and \citep{Kentie}.
+
+In \citep{SW++3}, Liu et al. not only distribute tasks to many threads in GPU kernel, but also balance the workload between CPU and GPU. Their distribution policy calculates a rate $R$ of the number of residues from the database assigned to GPUs, with a formular as
+
+\begin{equation*}
+  R = \frac{N_Gf_G}{N_Gf_G + N_Cf_C / C}
+\end{equation*}
+
+where $f_C$ and $f_G$ are the core frequencies of CPUs and GPUs, $N_C$ and $N_G$ are the number of CPU cores and the number of GPU SMs, and C is a constant derived from empirical evaluations.
+
+They find the sequence length deviation generally causes execution imbalance between threads, which in return can not fully utilize GPU compute power. Considering this, they design two CUDA kernels based on two parallelization approaches: static scheduling and dynamic scheduling. These two kernels are launched based on the sequence length deviation of the database. 
+
+Since each thread has its own buffers in global memory, the static scheduling launches all thread blocks onto the GPU at the same time. When a thread block finishes its current computation, this thread block will use the dynamic scheduling to obtain an unprocessed profile block. They use the atomic addition function \emph{atomicAdd}() to increment the index of global profile blocks.
+
+\citep{Manavski} also distributes some tasks to CPU. In GPU, they only launch 450 thread-blocks at a time on a grid. For a database with sequences more than 450, several kernel launches are necessary and this will create additional latency. And since they run 64 threads per block. So, they can only process 450 * 64 = 28,800 alignments per kernel launch. CUDA limits the number of blocks in a grid to 65,535 blocks in a single dimension, which is far above the threshold they are using. This results in low GPU kernel thread occupancy.
+
+Considering Manavski's implementation limitation in thread occupancy, \citep{Akoglu} sets thread block size by the total number of sequences located in the database so that they can to do all alignments with a single kernel launch.
+
 In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore many studies often sorted sequences databases by length of sequences. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp.
-\citep{Manavski}, \citep{Akoglu}, \citep{SW++3} presorted database in ascending order.
 
-\citep{Ligowski} presorted database in descending order and organized in blocks consisting of 256 sequences. \citep{Kentie} presorted database also in descending order and converted into a special format. 
+\citep{Manavski}, \citep{Akoglu}, \citep{SW++}, \citep{SW++2} and \citep{SW++3} presorted database in ascending order.
+
+\citep{Ligowski} presorts database in descending order and organizes data in blocks consisting of 256 sequences, since each kernel has 16 blocks, and a single block consists of 256 threads. The choice of 4096 threads per kernel is dictated partially by limitations of architecture and partially by optimization of performance. There are 16 multiprocessors in each core, each executes a single block of threads. The number of 256 threads per block is limited by the number of registers (8192 per multiprocessor). The SW main routine needs 29 registers, and therefore the highest multiply of 64 that can be concurrently executed is 256.
+They process the alignment matrix horizontally. The main loop for calculating the matrix is executed for a band of 12 cells columns. Slow global memory is accessed only at the initialization and termination of the loop. Fast shared memory and registers are used for all operations within the loop. The width of the band is limited by availability of shared memory.
+
+\citep{Kentie} implements a \emph{dbconv} tool to presort database also in descending order and converted into a special format. The \emph{dbconv} writes the sorted sequences to file in an interlaced fashion: the database is split up into half-warp sized blocks of 16 sequences. The sequences of a block are written in an alternating fashion: one 8-bit symbol of the first sequence is written, then one of the second one, etc. In this way, the first character of all 16 sequences is written, then the second character, etc. All sequences in a rectangular block are padded to the length of the block's longest sequence with blank symbols. By this way, all of a half-warp's threads will load database symbols from neighboring addresses so as to access the global memory in coalesced way.
+
+\textbf{2) Data-based parallelism}
+
+In data-based parallelism, each task is assigned to one or many thread block(s) and all threads in the thread block(s) cooperate to perform the task in parallel.
+
+The main target of \citep{Saeed} is to solve a single but very large Smith-Waterman problem for sequences with very long lengths. Their calculation work along anti-diagonals of the alignment matrix. Each diagonal item can be calculated independently of the others. Block diagonal algorithms are also possible as long as each block is processed serially.
+
+They formulate parallel version of the Smith-Waterman algorithm so that the calculations can be performed in parallel one row (or column) of similarity matrix at a time. Row (or column) calculations allow the GPU global memory accesses to be consecutive and therefore high memory throughput is achieved.
+
+They exploit approach of parallelizing multiple GPUs with using MPI (Message Passing Interface) parallel technique over 100 Mb Ethernet to extend work to multiple GPUs. To use N GPUs, the Smith-Waterman alignment matrix is decomposed into N large, and slightly overlapping blocks. 
+
+\citep{SW++} investigate the two parallelism approaches for parallelizing the sequence database searches using CUDA. They find task-based parallelism can achieve better performance although it needs more device memory than data-based. 
+For task-based parallelism, they sort target sequences and store in an array row by row from the top-left corner to the bottom-right corner, where all symbols of a sequence are restricted to be stored in the same row from left to right. Using these arrangement patterns for the two parallelism strategies, access to the target sequences is coalesced for all threads in a half-warp. 
+
+To maximize performance and to reduce the bandwidth demand of global memory, they also apply a cell block division method for the task-based parallelism, where the alignment matrix is divided into cell blocks of equal size.
+
+They apply data-based parallelism to support longest query/target sequences. Each task is assigned to one thread block and all threads in the thread block cooperate to perform the task in parallel, exploiting the parallel characteristics of cells in the minor diagonals of similarity matrix. 
 
 \subsubsection*{Device memory access pattern}
 As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
 
-\citep{SW++} sorted target sequences and arranged in an array like a multi-layer bookcase to store into global memory, so that the reading of the database across multiple threads could be coalesced. Writes to global memory were first batched in shared memory for better coalescing.  Due to a reduction in the global memory accesses, they proposed a cell block division method for the task-based parallelization, where the alignment matrix is divided into cell blocks of equal size.
+\citep{SW++} sorts target sequences and arranges in an array like a multi-layer bookcase to store into global memory, so that the reading of the database across multiple threads could be coalesced. Writes to global memory are first batched in shared memory for better coalescing. Due to a reduction in the global memory accesses, they propose a cell block division method for the task-based parallelism, where the alignment matrix is divided into cell blocks of equal size.
+And they utilize the texture memory on the sorted array of target sequences in order to achieve maximum performance on coalesced access patterns. They use a hash table to index the location coordinate in the array and the length of each sequence, which can provide fast access to any sequence.
 
-\citep{Kentie} reduced global memory access by making temporary values interleaved and read/wrote score and Ix temporary values in one access.
+They also exploit constant memory to store the gap penalties, scoring matrix and the query sequence. They load the scoring matrix into shared memory, as the performance of constant memory degrades linearly when threads frequently need to access multiple different addresses in the scoring matrix. They also use the CUDA built-int integer functions max(x, y) and min(x, y) to improve performance further.
 
-\citep{SW++} exploited constant memory to store the gap penalties, scoring matrix and the query sequence. And \citep{Kentie} stored gap penalties in constant memory. \citep{Akoglu} mapped query sequence as well as the substitution matrix to the constant memory.
+\citep{Kentie} reduces global memory access by making temporary values interleaved and reads/writes score and Ix temporary values in one access.
+And Kentie exploits constant memory and shared memory for substitution matrix. Constant memory is fast, but only if all threads read the same address. This is not suited to the substitution matrix. And shared memory also has several disadvantages for the matrix. Finally, he finds texture memory has the ability to fetch four values at a time and is well suitable for random access. He gains a total speedup of 25\% after switching from shared to texture memory.
+He also stores gap penalties in constant memory. 
 
-\citep{Manavski}, \citep{SW++2} used texture memory to store query profiles. And \citep{Kentie} used texture for substitution matrix.
+\citep{Akoglu} stores database sequences in global memory. The cell calculation blocks are used to store temporary calculation values needed for data dependencies for each column and are also stored in global memory. They use the substitution matrix instead of the query profile to save memory size. In order to index the row and column of the matrix in extremely efficient way, they design a simple function for accessing the matrix, which is as follows:
 
-\citep{SW++} loaded the scoring matrix into shared memory.
+$S_{i,j} = (ascii(S_1)-65, ascii(S_2)-65)$
 
-\citep{Ligowski} reduce global memory access only at the loop initialization and for writing the results at the exit. They performed all operations within the loop in fast shared memory and registers.
+$S_1$ is a residue from the query sequence and $S_2$ is a residue from one of the Database sequences.
+They map query sequence as well as the substitution matrix to the constant memory to make access to these values easy.
+They track the highest SW score by a single register in the kernel for each thread, and update on each pass of the inner loop. Then the score is written to the global memory, after the alignment is finished.
+
+Among the 7 articles reviewed here, \citep{Manavski} is the first to study accelerating SW on CUDA-enabled GPU in 2007. They present the query profile as a query-specific substitution matrix computed only once for the entire database. They exploit the cache of texture memory to store query profiles. In this way they replace random accesses to the substitution matrix with sequential ones to the query profile. 
+
+\citep{SW++2} utilizes texture memory to store query profiles. They use shared memory to store the 4 residues of target sequence. 
+
+\citep{SW++3} stores both the query profile and its variant in texture memory. They gain more performance from the query profile variant for short queries,  because it can reduce the number of texture fetches by half. However, for longer queries, a query profile becomes superior due to its much smaller memory footprint and less texture cache miss. They apply a query length threshold Q to decide whether to use the query profile or the variant.
+
+\citep{Ligowski} reduces global memory access only at the loop initialization and for writing the results at the exit. They performed all operations within the loop in fast shared memory and registers.
 
 \subsubsection*{Vector programming model}
 Vector programming model plays important role in operations of array or matrix. On one side, it can reduce greatly the frequency of memory access; on the other side, it can utilize the built-in SIMD vector instructions for parallel computing both on CPU and GPU.
 
-\citep{Manavski} packaged the query profile in texture memory, storing 4 successive values into the 4-byte of a single unsigned integer. And they read at a time 4 H and 4 E values from local memory.
+\citep{Manavski} packs the query profile in texture memory, storing 4 successive values into the 4-byte of a single unsigned integer. To compute a column of alignment matrix, all the H and E values are needed from the previous one. They place them in the two local memory buffer of the thread: one for the previous values and another for the newly computed ones. At the end of each column they swap them. Since local memory is not cached, they use specific access pattern to read 4 H and 4 E values from local memory at a time, which can fully take advantage of the 128 bits memory bandwidth. Thus, each thread can gather all the data needed to compute 4 cells of the alignment matrix with only two read instructions: one from the local buffer and another from the texture.
 
-\citep{Akoglu} calculated the Smith-Waterman score from the query sequence and database sequences by means of columns, four cells at a time.
+Manavski pre-computes a query profile parallel to the query sequence for each possible residue and achieves dynamic load balancing between multiple GPUs according to their computational power at run time.
 
-\citep{SW++2} designed a striped query profile for SIMD vector computation and used a packed data format to store into the CUDA built-in \emph{uchar4} vector data type. They divided a query sequence into a series of non-overlapping, consecutive small partitions with a specified partition length, and then aligned the query sequence to a subject sequence partition by partition. They ported the SIMD CPU algorithm \citep{SW-SSE2} to the GPU, viewing collections of processing elements as part of a single vector.
+\citep{Akoglu} calculates the Smith-Waterman score from the query sequence and database sequences by means of columns, 4 cells at a time for the residue of database sequence aligned with an 8 residue query sequence. The updated values of cells are placed in a temporary location in the global memory. This cell calculation block is updated each time a new column is computed, and is utilized for dependency purposes in computing columns on each pass.
 
-\citep{Kentie} loaded 4 query characters at a time and processed 8 database characters at a time.
+\citep{SW++2} designs a striped query profile for SIMD vector computation and uses a packed data format to store into the CUDA built-in \emph{uchar4} vector data type, instead of the \emph{char} scalar data type. In this way, 4 substitution scores can be accessed with only one texture fetch, thus greatly improving texture memory throughput.
 
-\citep{SW++3} designed a query profile variant data structure and used the built-in \emph{uint4} vector data type to store each sequence profile for quad-lane SIMD computing on GPUs. They used CUDA SIMD Video Instructions in GPU computing and used Intel SSE2 intrinsics in CPU computing.
+Like the query profile, they also construct each target sequence with a packed data format, where 4 successive residues of each target sequence are packed together and placed in \emph{uchar4}. In this case, they utilize shared memory to store the 4 residues loaded by one texture fetch for the use of the inner loop, when using the cell block division method.
 
-\subsubsection*{Miscellaneous techniques}
-\citep{Manavski} pre-computed a query profile parallel to the query sequence for each possible residue and achieved dynamic load balancing between multiple GPUs according to their computational power at run time.
+Since CUDA lacks support for saturation addition and subtraction, they use maximum and minimum operation to artificially implement them. The CUDA built-in integer functions max(x, y) and min(x, y) are utilized to avoid divergence. They implement shift operation on vector using shared memory, where all threads comprising a virtualized vector write their original values to a share memory buffer and then read their resulting values from the buffer as per the number
+of shift elements. 
 
-\citep{Kentie} simplified substitution matrix lookup by using numeric values instead of letters for sequence symbols.
+They divide a query sequence into a series of non-overlapping, consecutive small partitions with a specified partition length, and then align the query sequence to a subject sequence partition by partition. They port the SIMD CPU algorithm \citep{SW-SSE2} to the GPU, viewing collections of processing elements as part of a single vector.
 
-\citep{SW++3} distributed workload between CPU and GPU.
+\citep{Kentie} applies vector data structure to load 4 query characters at a time and processes 8 database characters at a time. He loads query profile values for the 4 current query characters and passes them to the Smith-Waterman function. The 4 query symbols and loaded query profile values are aligned with each loaded database symbol.
+
+And he simplifies substitution matrix lookup by using numeric values instead of letters for sequence symbols.
+
+\citep{SW++3} designs a query profile variant data structure and packs the 4 consecutive elements of variant data into the built-in \emph{short4} vector type. In this way, although the variant data need more memory space compared to the query profile,  they can reduce the number of texture fetches for the variant by half. On the other side, using the variant can save 6 bitwise operations for generating a substitution score vector.
+They also utilize the built-in \emph{uint4} vector data type to store each sequence profile for quad-lane SIMD computing on GPUs. 
+
+They use CUDA SIMD Video Instructions in GPU computing and use Intel SSE2 intrinsic in CPU computing. For CPU SIMD computation, their approach is based on the open-source SWIPE \citep{Rognes}. They compute the SW algorithm by splitting an SSE vector to 16 lanes with 8-bit lane width. Then they re-compute all alignments, whose scores have overflow potential, using 8-lane SSE vectors with 16-bit lane width.
 
 %----------------------------------------------------------------------------------------
 
@@ -662,33 +719,59 @@ HMMER includes a MPI (Message Passing Interface) implementation of the searching
 \subsubsection*{Parallelism strategy applied}
 As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 5 articles reviewed here, 3 articles, i.e. \citep{GPUHMM}, \citep{Quirem} and \citep{Ahmed} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
 
-For data-based parallelism, \citep{Du} divided the basic computational kernel of the Viterbi algorithm of each tile into two parts, independent and dependent parts.
+In \citep{GPUHMM}, Walters et al. port Viterbi function to CUDA-enabled GPU with a variety of optimization approaches. Their implementation operate the GPU kernel on multiple sequences simultaneously, with each thread operating on an independent sequence. They found the number of threads that can be executed in parallel will be limited by two factors: one is GPU memory will limit the number of sequences that can be placed, and another is the number of registers used by each thread will limit the number of threads that can execute in parallel. And registers are the most important resource in their implementation.
 
-\citep{Ganesan} presented a hybrid parallelization strategy by combining task-based and data-based parallelism. They parallelized evaluations of recurrence equations by partitioning the chain of dependencies in a uniform and regular fashion.
+They split the inner loop for computing the dynamic programming matrix into three independent small loops. This approach makes fewer registers be required, resulting in higher GPU utilization. Further, splitting the loop leads an easy mechanism to exploit loop unrolling, which is a classic loop optimization strategy designed to reduce the overhead of inefficient looping. The idea is to replicate the loop’s inner contents such that the percentage of useful instruction to loop extra bound instruction increases. In their experiment, the performance improvement reaches 80\%.
 
-\subsubsection*{HMM-based algorithm researched}
-\citep{GPUHMM}, \citep{Ganesan}, \citep{Du} and \citep{Quirem} parallelized Viterbi algorithm.
+In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore many studies often sorted sequences databases by length of sequences. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp. Walters et al. presort target sequences database in ascending order. This approach is both effective and quite straightforward way of optimization and they gain a nearly 7x performance improvement over the unsorted database without changing the CUDA kernel in any way.
 
-\citep{Ahmed} used Intel® VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms. And they also found data transfer overhead between heterogeneous processors could be a performance bottleneck.
+Walters et al. distribute some tasks to CPU, creating two CPU threads for reading database and post-processing the database hits.
 
-However, our research focus on the MSV algorithm in HMMER3.
+For data-based parallelism, based on the \emph{wave-front} method \citep{Aji}, Du et al. apply a new tile-based mechanism to accelerate the Viterbi algorithm on a single GPU in \citep{Du}. The \emph{wave-front} method compute the cells along anti-diagonal of the dynamic matrix in parallel, which is similar to a frontier of a wave to fill a matrix, where each cell's value in the matrix is computed based on the values of the left, upper, and upper-left cells.
+
+They apply streaming method to process very long sequences. In CUDA, a stream is a set of instructions that execute in order and different streams may execute their instructions asynchronously. This feature enables the execution be overlapped with each other between the host and GPU device.
+
+Since the streaming Viterbi algorithm requires additional storage and communication bandwidth, they design the new tile-based method to simplify the computational model and also handles very long sequences with less memory transfer. The tile-based method handles very long sequence as follows: the large matrix is divided into tiles to ensure that each tile fits in the GPU’s memory as a whole and then compute the tiles in parallel.
+
+Unlike the tiling machanism in \citep{Aji}, which has data dependencies among each tile, they present the \emph{homological segments} concept into their tile-based mechanism to eliminate the data dependency among different tiles. They apply the k-mer based algorithm to find all homological segments. Then the homological segments are used to divide the full dynamic programming matrix into small tiles.
+
+\citep{Ganesan} parallelizes Viterbi algorithm to accelerate hmmsearch. They present a hybrid parallelization strategy by combining task-based and data-based parallelism. They extend the existing task parallelism upon which data parallelism is built. They reassign the computation of a single sequence across multiple threads to implement the data parallelism. In order to accelerate the computation of the dynamic programming matrix rows, they partition each row into equal sized intervals of contiguous cells and calculate the dependencies between the partitions identically and independently in a data parallel setting.
+
+They process the parallel computation of the rows in three phases as follows:
+
+\begin{itemize}
+ \item In Phase 1, they use independent threads to compute the relationship between the beginning and end of each partition, which enables the fast computation of boundary elements between the partitions.
+ \item In Phase 2, by applying the functions relating the boundary elements from Phase 1, they compute the numeric values for each of the boundary elements. This phase executes consecutively, with N partitions requiring N steps.
+ \item In Phase 3, by using the updated numerical values for each of the boundary elements, each partition independently computes the numeric values for all of the elements within the partition in the data parallelism setting.
+\end{itemize}
+
+Phase 1 is the critical phase that construct data parallelism by building the relationship among the different partitions. Phases 2 and 3 are computation phases for the boundary and internal elements of partitions.
+
+They implement the partitioning scheme with storing index data of model positions at regular intervals consecutively to achieve coalesced global memory access. They benchmark the implementation on Tesla C1060, showing a speed-up of 5x-8x compared to \citep{GPUHMM} using unsorted database.
+
+\citep{Ahmed} uses Intel® VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they study CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms. And they found data transfer overhead between heterogeneous processors could be a performance bottleneck.
+
+Based on their experiments, they show that Forward, Backward and Viterbi function take 37\%, 31\% and 20\% respectively for the percentage of the total CPU clock. They tested their CUDA implementation of these three functions. Their results show that about 2.27x, 1.58x and 1.50x speedup over the original CPU-only implementation for Forward, Backward and Viterbi function respectively. And they analyze the reason is coming from hotspot analysis. Since Forward function has highest clock time among the three function, it is the most dominant module and CUDA implementation of Forward shows large impact on speedup. Backward is the second one and Viterbi shows least speedup according to hotspot analysis based partial acceleration. They also combine the three modules and show about 2.10x speedup over the original CPU-only implementation.
+
+However, they did not present how they exactly implement their CUDA programs for the three functions and how they accelerate their programs in \citep{Ahmed}
 
 \subsubsection*{Device memory access pattern}
 As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
 
-\citep{GPUHMM} made use of high speed texture memory to store both the target sequence batch as well as the query profile HMM. Their benchmark result showed that global memory coalescing contributed an improvement of more than 9x for larger HMMs. They also used constant memory to store the HMM and used shared memory to temporarily store the index into each thread’s digitized sequence.
+\citep{GPUHMM} found the most effective optimization for Viterbi algorithm is to optimize CUDA memory layout and usage patterns within the implementation. 
 
-\citep{Ganesan} adopted the partitioning scheme to coalesce memory access by storing lookup data of model positions at regular intervals
-contiguously.
+Since Viterbi algorithm requires only the current and previous rows of the dynamic programming matrices, they reduce the memory requirements of the Viterbi scoring calculation from $3 * M * L + 5 * L$ to $6 * M$ integer array elements, where $M$ and $L$ are the length of the sequence and HMM, respectively.
 
-\citep{Du} reorganized the computational kernel of the Viterbi algorithm, and divided the basic computing unit into two parts: independent and dependent parts. All of the independent parts are executed with a parallel and balanced load in an optimized coalesced global memory access manner, which significantly improves the Viterbi algorithm’s performance on GPU. 
+They utilize high speed texture memory to store the target sequence batch. Because the seqence data are static and read-only through computing. They note that global memory coalesced access can significantly improve hmmsearch overall speedup. Their benchmark results show that this approach contributes an improvement of more than 9x for larger HMMs.
 
-\citep{Quirem} utilized pinned memory to reduce the latency induced by transferring memory from device to host and back.
+They use constant memory and texture memory to store the query profile HMM depending on its size. They place the normal size HMM in constant memory. In cases where the very large HMM exceeds the capacity of constant memory, they switch over to texture memory for the remaining portion of the HMM after exploiting the full constant memory. They utilize shared memory to temporarily store the index into each thread’s digitized sequence.
 
-\subsubsection*{Miscellaneous techniques}
-\begin{itemize}
- \item \citep{GPUHMM} created two CPU threads for reading database and post-processing the database hits.
- \item \citep{GPUHMM} presorted target sequences database in ascending order.
- \item \citep{GPUHMM} applied loop unrolling which is a classic loop optimization strategy designed to reduce the overhead of inefficient looping.
-\end{itemize}
+\citep{Du} reorganizes the computational kernel of the Viterbi algorithm, and divides the basic computing unit into two parts: independent and dependent parts. All of the independent parts are executed with a parallel and balanced load in an optimized coalesced global memory access manner, which significantly improves the Viterbi algorithm’s performance on GPU. 
 
+They implement the \emph{wave-front} pattern using the data skewing strategy. This makes cells in the same parallelizing group be adjacent to each other. In this way, because data accessed by neighbor threads are organized adjacent to each other, threads could access memory in a more efficient manner.
+
+\citep{Quirem} implements Viterbi algorithm being performed on Tesla C1060.
+
+They utilize pinned memory to reduce the latency induced by transferring memory from device to host and back. And they test two different versions of the memory allocation mechanism: one is pageable memory allocation with the standard \emph{malloc} function, another is pinned memory with the \emph{cudaHostAlloc} function. Pinned memory is host memory that can not be paged (swapped) out to disk by the virtual memory management of the OS, and thus reduces the latency induced by transferring memory from device to host and back. Based on their experiments, utilizing pinned memory, the execution of the kernels spends more GPU time relative to the less memory transfer time. Kernel execution time is basically the same for both pageable and pinned memory, because the two versions only relate to the speed of the memory transfer. In their experiments, the performance of pinned memory is improved roughly 20\% over that of pinned memory.
+
+Their implementation gains 10x-15x speedup over the original implementation of the Viterbi function according to the number of queries. They tested up to 16,384 queries because of the limitations of the Tesla C1060 and the speedup increased exponentially as the number of launched threads i.e. number of queries doubled. 
