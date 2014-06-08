@@ -117,7 +117,7 @@ This approach resulted in increased register pressure and gained a huge speed bo
 
 \subsubsection*{coalescing access}
 
-Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine non-contiguous and small reads/writes of global memory, into the single and more efficient contiguous and large memory reads. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure\ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
+Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine several non-contiguous and small reads/writes of global memory, into a single and more efficient contiguous and large memory read/write. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure\ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
 
 \begin{figure}[!htb]
 	\centering
@@ -126,7 +126,7 @@ Coalescing access is the single most important performance consideration in prog
 	\label{fig:coalescing}
 \end{figure}
 
-For coalescing access, the target sequences are arranged in an array like an upside-down bookcase shown in Figure\ref{fig:dbalign}, where all residues of a sequence are restricted to be stored in the same column from top to bottom. And all sequences are arranged in decreasing length order from left to right in the array, which is explained in section\ref{dbsort}. 
+For coalescing access, the target sequences are arranged in a matrix like an upside-down bookcase shown in Figure\ref{fig:dbalign}, where all residues of a sequence are restricted to be stored in the same column from top to bottom. And all sequences are arranged in decreasing length order from left to right in the array, which is explained in section\ref{dbsort}. 
 
 \begin{figure}[!htb]
 	\centering
@@ -194,7 +194,7 @@ However, on the CUDA next-generation architecture Kepler, the texture cache gets
 
 \subsection{Virtualized SIMD vector programming model}
 
-Inspired by the fact that CUDA has optimized the operation fetching a four component RGBA colour in texture memory, the target sequences is re-organized using a packed data format, where four consecutive residues of each sequence are packed together and represented using the \emph{uchar4} vector data type, instead of the \emph{char} scalar data type, as can be seen in Figure\ref{fig:simdvector}(\textit{a}). In this way, four residues are loaded using only one texture fetch, thus significantly improving texture memory throughput. 
+Inspired by the fact that CUDA has optimized the operation fetching a four component RGBA colour in texture memory, the target sequence is re-organized using a packed data format, where four consecutive residues of each sequence are packed together and represented using the \emph{uchar4} vector data type, instead of the \emph{char} scalar data type, as can be seen in Figure\ref{fig:simdvector}(\textit{a}). In this way, four residues are loaded using only one texture fetch, thus significantly improving texture memory throughput. 
 
 \begin{figure}[!htb]
 	\centering
