@@ -431,7 +431,7 @@ This section briefly reviews the all the optimization approaches discussed in th
 \subsection*{Six steps to better performance}
 \begin{enumerate}
  \item Assessing the application\\
- In order to benefit from any modern processor architecture, including GPUs, the first steps are to assess the application to identify the hotspots [MSV filter in Section\ref{hmmsearch}], which type of parallelism [Task-based parallelism in Section\ref{impl}] is better suited to the application.
+ In order to benefit from any modern processor architecture, including GPUs, the first step are to assess the application to identify the hotspots [MSV filter in Section\ref{hmmsearch}], which type of parallelism [Task-based parallelism in Section\ref{impl}] is better suited to the application.
  \item Application Profiling\\
  NVIDIA provides profiling tools to help identify hotspots and compile a list of candidates for parallelization or optimization on CUDA-enabled GPUs [nvprof in Section\ref{dbsort}], as detailed in Section\ref{cudaTools}. 
  Intel provides VTune Amplifier XE to collect a rich set of data to tune CPU \& GPU compute performance at \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe}.
