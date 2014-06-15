@@ -127,12 +127,12 @@
 
 \abstract{\addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-The recent emergence of multicore CPU and manycore GPU architectures has made parallel computing more and more popular. Hundreds of industrial and research applications have been mapped onto GPUs to further utilize the extra GPUs computing resource.
-In bioinformatics, the application of Smith-Waterman algorithm and HMMER's hmmsearch are two important applications for finding similarity among protein sequences with dynamic programming method. Both applications are particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
+The recent emergence of multicore CPU and manycore GPU architectures has made parallel computing more accessible. Hundreds of industrial and research applications have been mapped onto GPUs to further utilize the extra computing resource.
+In bioinformatics, HMMER is a set of widely used applications for sequence analysis based on Hidden Markov Model. One of the tools in HMMER, \emph{hmmsearch} and the Smith-Waterman algorithm are two important tools for finding similarity among protein sequences using dynamic programming. Both tools are particularly well-suited for many-core GPU architecture due to the parallel nature of sequence database searches. 
 
-After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key MSV algorithm in HMMER3. A fully-featureed CUDA-enabled protein database search tool \emph{cudaHmmsearch} was designed, implemented and optimized. We demonstrated a variety of optimization strategies that are useful for general purpose GPU-based applications. Based on our optimization experience in parallel computing, 6 steps were summarized for better performance of CUDA programming. 
+After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key Multiple Segment Viterbi algorithm in HMMER version 3. A fully-featureed CUDA-enabled protein database search tool \emph{cudaHmmsearch} was designed, implemented and optimized. We demonstrated a variety of optimization strategies that are useful for general purpose GPU-based applications. Based on our optimization experience in parallel computing, six steps were summarized for optimizing performance using CUDA programming. 
 
-We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of each approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory. The results show that our implementation achieved 2.5x speedup over the single-threaded HMMER3 CPU SSE2 implementation on average.
+We made comprehensive tests and analysis for multiple enhancements in our GPU kernels in order to demonstrate the effectiveness of selected approaches. The performance analysis showed that GPUs are able to deal with intensive computations, but are very sensitive to random accesses to the global memory. The results show that our implementation achieved 2.5x speedup over the single-threaded HMMER3 CPU SSE2 implementation on average.
 
 }
 \clearpage % Start a new page

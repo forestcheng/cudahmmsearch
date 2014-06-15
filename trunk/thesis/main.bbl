@@ -7,7 +7,7 @@
 
 
 \bibitem[Ahmed et~al.(2012)]{Ahmed}
-[Ahmed et al., 2012] Fahian Ahmed, Saddam Quirem, Gak Min and Byeong Kil Lee
+[Ahmed et al., 2012] Fahian Ahmed, Saddam Quirem, Gak Min and Byeong Kil Lee.
 \newblock \emph{Hotspot Analysis Based Partial CUDA Acceleration of HMMER 3.0 on GPGPUs}.
 \newblock International Journal of Soft Computing and Engineering (IJSCE) ISSN: 2231-2307, Volume-2, Issue-4, September 2012.
 
@@ -17,7 +17,7 @@
 \newblock Proceedings of the 2008 ACM International Conference on Computing Frontiers 13-22.
 
 \bibitem[Akoglu and Striemer(2009)]{Akoglu}
-[Akoglu and Striemer, 2009] Ali Akoglu and Gregory M. Striemer
+[Akoglu and Striemer, 2009] Ali Akoglu and Gregory M. Striemer.
 \newblock \emph{Scalable and highly parallel implementation of Smith-Waterman on graphics processing unit using CUDA}.
 \newblock Springer Science+Business Media, LLC 2009.
 
@@ -43,7 +43,7 @@
 \newblock Springer Science+Business Media, LLC, New York, USA, 2007.
 
 \bibitem[Du et~al.(2010)]{Du}
-[Du et al., 2010] Zhihui Du, Zhaoming Yin, and David A. Bader
+[Du et al., 2010] Zhihui Du, Zhaoming Yin, and David A. Bader.
 \newblock \emph{A Tile-based Parallel Viterbi Algorithm for Biological Sequence Alignment on GPU with CUDA}.
 \newblock Parallel \& Distributed Processing, Workshops and Phd Forum (IPDPSW), 2010 IEEE International Symposium on , vol., no., pp.1,8, 19-23 April 2010.
 
@@ -67,18 +67,18 @@
 \newblock John Wiley \& Sons, New Jersey, USA, 2004.
 
 \bibitem[Farrar(2007)]{SW-SSE2}
-[Farrar, 2007] Farrar M.
+[Farrar, 2007] Michael Farrar.
 \newblock \emph{Striped Smith-Waterman speeds database searches six times
 over other SIMD implementations}.
-\newblock Bioinformatics 23: 156–161 2007.
+\newblock Bioinformatics 23: 156-161 2007.
 
 \bibitem[Ganesan et~al.(2010)]{Ganesan}
-[Ganesan et al., 2010] Narayan Ganesan, Roger D. Chamberlain, Jeremy Buhler, and Michela Taufer
+[Ganesan et al., 2010] Narayan Ganesan, Roger D. Chamberlain, Jeremy Buhler, and Michela Taufer.
 \newblock \emph{Accelerating HMMER on GPUs by Implementing Hybrid Data and Task Parallelism}.
 \newblock Proc. of ACM International Conference on Bioinformatics and Computational Biology, August 2010, pp. 418-421.
 
 \bibitem[Gotoh(1982)]{Gotoh}
-[Gotoh, 1982] Gotoh O.
+[Gotoh, 1982] O. Gotoh. 
 \newblock \emph{An improved algorithm for matching biological sequences}.
 \newblock J. Mol. Biol 1982, 162:705-708.
 
@@ -88,7 +88,7 @@ over other SIMD implementations}.
 \newblock John Wiley \& Sons, New Jersey, USA, 2004.
 
 \bibitem[Henikoff and Henikoff(1992)]{Henikoff}
-[Henikoff and Henikoff, 1992] S. Henikoff and J.G. Henikoff
+[Henikoff and Henikoff, 1992] S. Henikoff and J.G. Henikoff.
 \newblock \emph{Amino Acid Substitution Matrices from Protein Blocks}.
 \newblock PNAS 89 (22): 10915-10919. doi:10.1073/pnas.89.22.10915. PMC 50453. PMID 1438297, 1992.
 
@@ -111,7 +111,7 @@ over other SIMD implementations}.
 \newblock URL \url{http://selab.janelia.org/software/hmmer/2.3.2/hmmer-2.3.2.tar.gz}.
 
 \bibitem[Horn et~al.(2005)]{ClawHMMER}
-[Horn et al., 2005] Daniel Horn, Mike Houston, and Pt Hanrahan
+[Horn et al., 2005] Daniel Horn, Mike Houston, and Pt Hanrahan.
 \newblock \emph{ClawHMMER: A Streaming HMMer-Search Implementation}.
 \newblock presented at Supercomputing 2005, Washington, D.C., 2005.
 
@@ -122,12 +122,12 @@ over other SIMD implementations}.
 \newblock URL \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe/}. 
 
 \bibitem[Kentie(2010)]{Kentie}
-[Kentie, 2010] M.A. Kentie
+[Kentie, 2010] M.A. Kentie.
 \newblock \emph{Biological Sequence Alignment Using Graphics Processing Units}.
 \newblock Master thesis (2010), Delft University of Technology.
 
 \bibitem[Kirk and Hwu(2010)]{Kirk}
-[Kirk and Hwu, 2010] David B. Kirk and Wen-mei W. Hwu
+[Kirk and Hwu, 2010] David B. Kirk and Wen-mei W. Hwu.
 \newblock \emph{Programming Massively Parallel Processors : A Hands-on Approach}.
 \newblock Published by Elsevier Inc. 2010.  
 
@@ -137,35 +137,35 @@ over other SIMD implementations}.
 \newblock Oxford University Press, New York, USA, 3rd edition, 2008.
 
 \bibitem[Ligowski and Rudnicki(2009)]{Ligowski}
-[Ligowski and Rudnicki, 2009] Lukasz Ligowski and Witold Rudnicki
+[Ligowski and Rudnicki, 2009] Lukasz Ligowski and Witold Rudnicki.
 \newblock \emph{An Efficient Implementation Of Smith Waterman Algorithm On GPU Using CUDA, For Massively Parallel Scanning Of Sequence Databases}.
 \newblock IEEE 2009.
 
 \bibitem[Liu et~al.(2009)]{SW++}
-[Liu et al., 2009] Yongchao Liu, Douglas Maskell and Bertil Schmidt
+[Liu et al., 2009] Yongchao Liu, Douglas Maskell and Bertil Schmidt.
 \newblock \emph{CUDASW++: optimizing smith-waterman sequence database searches for cuda-enabled graphics processing units}.
 \newblock BMC Research Notes 2, no. 1, 73. 2009.
 \newblock URL \url{http://www.biomedcentral.com/1756-0500/2/73}.
 
 \bibitem[Liu et~al.(2010)]{SW++2}
-[Liu et al., 2010] Yongchao Liu, Bertil Schmidt, and Douglas Maskell
+[Liu et al., 2010] Yongchao Liu, Bertil Schmidt, and Douglas Maskell.
 \newblock \emph{cudasw++2.0: enhanced smith-waterman protein database search on cuda-enabled gpus based on simt and virtualized simd abstractions}.
 \newblock BMC Research Notes 2010.
 \newblock URL \url{http://www.biomedcentral.com/1756-0500/3/93}.
 
 \bibitem[Liu et~al.(2013)]{SW++3}
-[Liu et al., 2013] Yongchao Liu, Adrianto Wirawan and Bertil Schmidt
+[Liu et al., 2013] Yongchao Liu, Adrianto Wirawan and Bertil Schmidt.
 \newblock \emph{CUDASW++ 3.0: accelerating Smith-Waterman protein database search by coupling CPU and GPU SIMD instructions}.
 \newblock BMC Bioinformatics 2013.
 \newblock URL \url{http://www.biomedcentral.com/1471-2105/14/117}.
 
 \bibitem[Loewy et~al.(1991)]{Loewy}
-[Loewy et al., 1991] Ariel G. Loewy, Philip Siekevitz, John R. Menninger and Jonathan A. N. Gallant
+[Loewy et al., 1991] Ariel G. Loewy, Philip Siekevitz, John R. Menninger and Jonathan A. N. Gallant.
 \newblock \emph{Cell Structure \& Function : An Integrated Approach}.
 \newblock Saunders College Publishing, 3rd edition, 1991.
 
-\bibitem[M.Isa et~al.(2012)]{FPGA}
-[M.Isa et al., 2012] M.Nazrin M.Isa, Khaled Benkrid and Thomas Clayton
+\bibitem[Isa et~al.(2012)]{FPGA}
+[Isa et al., 2012] M. Nazrin M. Isa, Khaled Benkrid and Thomas Clayton.
 \newblock \emph{A Novel Efficient FPGA Architecture for HMMER Acceleration}.
 \newblock IEEE, 2012.
 
@@ -176,7 +176,7 @@ over other SIMD implementations}.
 \newblock URL \url{http://icl.cs.utk.edu/magma/software/}. 
 
 \bibitem[Manavski(2008)]{Manavski}
-[Manavski, 2008] Svetlin A Manavski and Giorgio Valle
+[Manavski, 2008] Svetlin A Manavski and Giorgio Valle.
 \newblock \emph{CUDA compatible GPU cards as efficient hardware accelerators for Smith-Waterman sequence alignment}.
 \newblock BMC Bioinformatics 2008.
 \newblock URL \url{http://www.biomedcentral.com/1471-2105/9/S2/S10}.
@@ -284,24 +284,24 @@ over other SIMD implementations}.
 \newblock URL \url{ftp://ftp.sanger.ac.uk/pub/databases/Pfam/releases/Pfam27.0/Pfam-A.hmm.gz}.
 
 \bibitem[Quirem et~al.(2011)]{Quirem}
-[Quirem et al., 2011] Saddam Quirem, Fahian Ahmed, and Byeong Kil Lee
+[Quirem et al., 2011] Saddam Quirem, Fahian Ahmed, and Byeong Kil Lee.
 \newblock \emph{CUDA Acceleration of P7Viterbi Algorithm in HMMER 3.0}.
 \newblock 30th IEEE Internationa Performance Computing and Communications Conference (IPCCC), 2011.
 
 \bibitem[Rognes and Seeberg(2000)]{SW-SIMD}
-[Rognes and Seeberg, 2000] Rognes T and Seeberg E.
+[Rognes and Seeberg, 2000] T. Rognes and E. Seeberg.
 \newblock \emph{Six-fold speed-up of Smith-Waterman sequence 
 database searches using parallel processing on common microprocessors}.
 \newblock Bioinformatics 16: 699-706 2000.
 
 \bibitem[Rognes(2011)]{Rognes}
-[Rognes, 2011] Rognes T.
+[Rognes, 2011] T. Rognes.
 \newblock \emph{Faster Smith-Waterman database searches with inter-sequence
 SIMD parallelization}.
 \newblock BMC Bioinformatics 2011, 12:221.
 
 \bibitem[Saeed et~al.(2010)]{Saeed}
-[Saeed et al., 2010] Ali Khajeh-Saeed, Stephen Poole and J. Blair Perot
+[Saeed et al., 2010] Ali Khajeh Saeed, Stephen Poole and J. Blair Perot.
 \newblock \emph{Acceleration of the Smith-Waterman algorithm using single and multiple graphics processors}.
 \newblock Journal of Computational Physics 229 (2010) 4247-4258.
 
@@ -311,7 +311,7 @@ SIMD parallelization}.
 \newblock NVIDIA Corporation 2011.
 
 \bibitem[Smith and Waterman(1981)]{SW}
-[Smith and Waterman, 1981] Smith TF. and Waterman MS.
+[Smith and Waterman, 1981] TF. Smith and MS. Waterman.
 \newblock \emph{Identification of common molecular subsequences}.
 \newblock J Mol Biol 1981, 147:195-197.
 
@@ -342,12 +342,12 @@ SIMD parallelization}.
   \url{http://www.uniprot.org/help/about}.
 
 \bibitem[Walters et~al.(2006)]{Walters2006}
-[Walters et al., 2006] J. P. Walters, B. Qudah, and V. Chaudhary
+[Walters et al., 2006] J. P. Walters, B. Qudah, and V. Chaudhary.
 \newblock \emph{Accelerating the HMMER Sequence Analysis Suite Using Conventional Processors}.
 \newblock In AINA'6: Proceedings of the 20th International Conference on Advanced Information Networking and Applications, pages 289-294, Washington, DC, USA, 2006. IEEE Computer Society.
 
 \bibitem[Walters et~al.(2009)]{GPUHMM}
-[Walters et al., 2009] J. P. Walters, V. Balu, S. Kompalli, and V. Chaudhary
+[Walters et al., 2009] J. P. Walters, V. Balu, S. Kompalli, and V. Chaudhary.
 \newblock \emph{Evaluating the use of GPUs in Liver Image Segmentation and HMMER Database Searches}.
 \newblock International Parallel and Distributed Processing Symposium (IPDPS), 2009.
 
@@ -375,7 +375,7 @@ SIMD parallelization}.
 \newblock Pearson Education, Inc. 2013.
 
 \bibitem[Wun et~al.(2005)]{Wun}
-[Wun et al., 2005] Wun, B., Buhler, J., and Crowley, P.
+[Wun et al., 2005] B. Wun, J. Buhler, and P. Crowley.
 \newblock \emph{Exploiting coarsegrained parallelism to accelerate protein motif finding with a network processor}.
 \newblock In PACT '05: Proceedings of the 2005 International Conference on Parallel Architectures and Compilation Techniques, 2005.
 
