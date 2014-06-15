@@ -14,7 +14,7 @@ The background of this thesis is concerned with the algorithms related to our wo
 
 In 1665, Robert Hooke discovered the cell \citep{Cell}. The cell theory, first developed in 1839 by Matthias Jakob Schleiden and Theodor Schwann, generalized the view that \emph{all living organisms are composed of cells and of cell products} \citep{Loewy}. As workhorses of the cell, proteins not only constitute the major component in the cell, but they also regulate almost all activities that occurs in living cells.
 
-Proteins are complex chains of small organic molecules known as \emph{amino acids}. In this thesis, \emph{residue} is used to refer to amino acids for protein. The 20 amino acids detailed in Table\ref{tab.amino} have been found within proteins and they convey a vast array of chemical versatility. So proteins can be viewed as sequences of an alphabet of the 20 amino acids \{A,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S,T,V,W,Y\}.
+Proteins are complex chains of small organic molecules known as \emph{amino acids}. In this thesis, \emph{residue} is used to refer to amino acids for protein. The 20 amino acids detailed in Table \ref{tab.amino} have been found within proteins and they convey a vast array of chemical versatility. So proteins can be viewed as sequences of an alphabet of the 20 amino acids \{A,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S,T,V,W,Y\}.
 
 \begin{table}[H]
 \centering
@@ -35,7 +35,7 @@ W & Tryptophan & Y & Tyrosine  \\\hline
 \end{table}
 
 \subsection{Sequence alignment}
-In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve with accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps}. Table\ref{tab.sa} shows the sequence alignment of human beta globin (the \emph{query} sequence) and myoglobin (the \emph{target} sequence) and an internal gap is indicated by two dashes \citep{BioFunc}.
+In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve with accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps}. Table \ref{tab.sa} shows the sequence alignment of human beta globin (the \emph{query} sequence) and myoglobin (the \emph{target} sequence) and an internal gap is indicated by two dashes \citep{BioFunc}.
 
 \begin{table}[H]
 \centering
@@ -49,7 +49,7 @@ In bioinformatics, a sequence alignment is a way of arranging the sequences of p
 \caption{\fontfamily{pag}\selectfont \textbf{Sequence alignment} \\sum of \emph{match}: +51\\sum of \emph{mismatch}: -9\\sum of gap penalties: -12\\total raw score: 51 - 9 -12 = 30\label{tab.sa}}
 \end{table}
 
-To establish the degree of homology, the two sequences are aligned: lined up in such a way that the degree of similarity also referred as score is maximized. Table\ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure\ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example of Table\ref{tab.sa}) and one for \emph{gap extend} (-1 in Table\ref{tab.sa}).
+To establish the degree of homology, the two sequences are aligned: lined up in such a way that the degree of similarity also referred as score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example of Table \ref{tab.sa}) and one for \emph{gap extend} (-1 in Table \ref{tab.sa}).
 
 \begin{figure}[!htb]
 \centering
@@ -160,7 +160,7 @@ The dynamics of the system is based on Markov Chain, meaning that only the curre
 
 Profile HMM is a variant of HMM and can be constructed from an initial multiple sequence alignment to define a set of probabilities. The symbol sequence of an HMM is an observed sequence that resembles a consensus for the multiple sequence alignment. And a protein family can be defined by profile HMMs.
 
-In Figure\ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insert} state and one \emph{delete} state. 
+In Figure \ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insert} state and one \emph{delete} state. 
 \begin{itemize}
 \item \textbf{\emph{match state}} matches and emits a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
 \item \textbf{\emph{insert state}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
@@ -233,7 +233,7 @@ Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence
    \end{cases}  
 \end{equation*}
 
-Based on the above equations, we can write the efficient pseudo code of Viterbi algorithm, as shown in Algorithm\ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
+Based on the above equations, we can write the efficient pseudo code of Viterbi algorithm, as shown in Algorithm \ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
 
 \renewcommand{\thepseudonum}{\roman{pseudonum}}
 \begin{pseudocode}{Viterbi}{ }
@@ -289,7 +289,7 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
-From Algorithm\ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for Biological Sequence Alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure\ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for Biological Sequence Alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
 
 \begin{figure}[!htb]
 \centering
@@ -311,9 +311,9 @@ HMMER3 is near rewrite of the earlier HMMER2 package, with the aim of improving 
 	\label{fig:pMSV}
 \end{figure}
 
-Figure\ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Figure\ref{fig:pHMM}, the MSV corresponds to the virtual removal of the delete and insert states. All match-match transition probabilities are treated as 1.0. The rest parameters remains unchanged. So this model generates sequences containing one or more ungapped local alignment segments. The pseudo code of MSV score algorithm is simplified and shown in Algorithm\ref{MSV}.
+Figure \ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Figure \ref{fig:pHMM}, the MSV corresponds to the virtual removal of the delete and insert states. All match-match transition probabilities are treated as 1.0. The rest parameters remains unchanged. So this model generates sequences containing one or more ungapped local alignment segments. The pseudo code of MSV score algorithm is simplified and shown in Algorithm \ref{MSV}.
 
-Figure\ref{fig:dpMSV} illustrates an example of an alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence (length $L_t=22$). A path to generate the target sequence with the profile HMM model is shown through a dynamic programming (DP) matrix. The model identifies two high-scoring ungapped alignment segments, as shown in black dots, indicating residues aligned to profile match states. All other residues are assigned to N, J, and C states in the model, as shown in orange dots. Unfilled dot indicates a ``mute'' non-emitting state or state transition.
+Figure \ref{fig:dpMSV} illustrates an example of an alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence (length $L_t=22$). A path to generate the target sequence with the profile HMM model is shown through a dynamic programming (DP) matrix. The model identifies two high-scoring ungapped alignment segments, as shown in black dots, indicating residues aligned to profile match states. All other residues are assigned to N, J, and C states in the model, as shown in orange dots. Unfilled dot indicates a ``mute'' non-emitting state or state transition.
 
 \begin{figure}[!htb]
 \centering
@@ -375,7 +375,7 @@ In 2007, Farrar presented an efficient vector-parallel approach called striped l
 
 Inspired by Farrar, in HMMER3\citep{HMMER3}, Sean R. Eddy used a remarkably efficient stripped vector-parallel approach to calculate MSV alignment scores. To maximize parallelism, he implemented MSV as a 16-fold parallel calculation with score values stored as 8-bit byte integers. He used SSE2 instructions on Intel-compatible systems and Altivec/VMX instructions on PowerPC systems.
 
-Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of length $L_q$ is divided into vectors with equal length $L_v$. The vector length $L_v$ is equal to the number of elements being processed in the 128-bit SIMD register. MSV processes 8-bit byte integer with $L_v$ = 128/8 = 16. In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. The dp stores $L_q$ cells in $L_Q$ vectors which is numbered as $q = 1...L_Q$, where $L_Q = (L_q+L_v-1)/L_v$. Figure\ref{fig:strip} illustrates $L_q$ cells assigned to $L_Q$ vectors in a non-sequential way. For simple illustration, $L_v = 4, L_q = 14$, and $L_Q = 4$.
+Figure \ref{fig:strip} shows the stripped pattern. The query profile HMM of length $L_q$ is divided into vectors with equal length $L_v$. The vector length $L_v$ is equal to the number of elements being processed in the 128-bit SIMD register. MSV processes 8-bit byte integer with $L_v$ = 128/8 = 16. In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. The dp stores $L_q$ cells in $L_Q$ vectors which is numbered as $q = 1...L_Q$, where $L_Q = (L_q+L_v-1)/L_v$. Figure \ref{fig:strip} illustrates $L_q$ cells assigned to $L_Q$ vectors in a non-sequential way. For simple illustration, $L_v = 4, L_q = 14$, and $L_Q = 4$.
 
 \begin{figure}[!htb]
 	\includegraphics{Figures/msv_vector.jpg}
@@ -383,9 +383,9 @@ Figure\ref{fig:strip} shows the stripped pattern. The query profile HMM of lengt
 	\label{fig:strip}
 \end{figure}
 
-In Smith-Waterman and Viterbi dynamic programming, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in MSV algorithm, the \emph{delete} and \emph{insert} states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure\ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
+In Smith-Waterman and Viterbi dynamic programming, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in MSV algorithm, the \emph{delete} and \emph{insert} states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure \ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
 
-Striping method can remove the SIMD register data dependencies. As can be seen in the Figure\ref{fig:strip}, with striped indexing, vector $q-1$ contains exactly the four $j-1$ cells needed to calculate the four cells $j$ in a new vector $q$ on a new blue row of the dp matrix. For example, when we calculate cells $j=(2,6,10,14)$ in vector $q=2$, we access the previous row’s vector $q-1=1$ which contains the cells we need in the order we need them, $j-1=(1,5,9,13)$ (the vector above). 
+Striping method can remove the SIMD register data dependencies. As can be seen in the Figure \ref{fig:strip}, with striped indexing, vector $q-1$ contains exactly the four $j-1$ cells needed to calculate the four cells $j$ in a new vector $q$ on a new blue row of the dp matrix. For example, when we calculate cells $j=(2,6,10,14)$ in vector $q=2$, we access the previous row’s vector $q-1=1$ which contains the cells we need in the order we need them, $j-1=(1,5,9,13)$ (the vector above). 
 
 \begin{figure}[!htb]
 \centering
@@ -394,9 +394,9 @@ Striping method can remove the SIMD register data dependencies. As can be seen i
 	\label{fig:nostrip}
 \end{figure}
 
-Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure\ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. Outside the inner loop(for $q = 1$ to $L_Q$), the last vector on each finished row is right-shifted (mpv, in grey with red cell $j$ indices) and used to initialize the next row calculation.
+Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure \ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. Outside the inner loop(for $q = 1$ to $L_Q$), the last vector on each finished row is right-shifted (mpv, in grey with red cell $j$ indices) and used to initialize the next row calculation.
 
-The pseudo code for the implementation is shown in Algorithm\ref{MSV-SIMD}
+The pseudo code for the implementation is shown in Algorithm \ref{MSV-SIMD}
 
 \begin{pseudocode}{MSV-SIMD}{ }
 \label{MSV-SIMD}
@@ -468,7 +468,7 @@ $\begin{cases}
 \shortstack{\textbf{v = vec\_max(v1, v2)} \\ v = \_mm\_max\_epu8(v1, v2)} & max & $v[z] = max(v1[z], v2[z])$\\\hline
 \shortstack{\textbf{x = vec\_hmax(v)} \\ -} & horizontal max & $x = max(v[z]),z=0...15$\\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont\textbf{SSE2 intrinsics for pseudocode in Algorithm\ref{MSV-SIMD}} The first column is pseudocode and its corresponding SSE2 intrinsic in C language. Because x86 and x86-64 use little endian, \textbf{vec\_rightshift()} means using a left bit shift intrinsic \textbf{\_mm\_slli\_si128()} to do right shift. No SSE2 intrinsic is corresponding to \textbf{vec\_hmax()}. Shuffle intrinsic \textbf{\_mm\_shuffle\_epi32} and \textbf{\_mm\_max\_epu8} can be combined to implement \textbf{vec\_hmax()}.\label{tab.SSE2}}
+\caption{\fontfamily{pag}\selectfont\textbf{SSE2 intrinsics for pseudocode in Algorithm \ref{MSV-SIMD}} The first column is pseudocode and its corresponding SSE2 intrinsic in C language. Because x86 and x86-64 use little endian, \textbf{vec\_rightshift()} means using a left bit shift intrinsic \textbf{\_mm\_slli\_si128()} to do right shift. No SSE2 intrinsic is corresponding to \textbf{vec\_hmax()}. Shuffle intrinsic \textbf{\_mm\_shuffle\_epi32} and \textbf{\_mm\_max\_epu8} can be combined to implement \textbf{vec\_hmax()}.\label{tab.SSE2}}
 \end{table}
 
 
@@ -493,7 +493,7 @@ A GPU consists of one or more SMs(Streaming Multiprocessors). Quadro K4000 used 
  \item A warp scheduler to coordinate instruction dispatch to the execution units
 \end{itemize}
 
-The SM has been evolving rapidly since the introduction of the first CUDA-enabled GPU device in 2006, with three major Compute Capability 1.x, 2.x, and 3.x, corresponding to Tesla-class, Fermi-class, and Kepler-class hardware respectively. Table\ref{tab.sm} summarizes the features introduced in each generation of the SM hardware \citep{CUDAHand}.
+The SM has been evolving rapidly since the introduction of the first CUDA-enabled GPU device in 2006, with three major Compute Capability 1.x, 2.x, and 3.x, corresponding to Tesla-class, Fermi-class, and Kepler-class hardware respectively. Table \ref{tab.sm} summarizes the features introduced in each generation of the SM hardware \citep{CUDAHand}.
 
 \begin{table}[H]
 \begin{tabular}[t]{|c|c|}\hline
@@ -506,7 +506,7 @@ SM 3.x & \shortstack[l]{SIMD Video Instructions; Increase maximum grid size; war
 \end{table}
 
 \subsubsection{CUDA thread hierarchy}
-The execution of a typical CUDA program is illustrated in Figure\ref{fig:exeCUDA} The CPU host invokes a GPU kernel in-line with the triple angle-bracket $<<<$  $>>>$ syntax from CUDA C/C++ extension code. The kernel is executed N times in parallel by N different CUDA threads. All the threads that are generated by a kernel during an invocation are collectively called a \emph{grid}. Figure\ref{fig:exeCUDA} shows the execution of two grids of threads.
+The execution of a typical CUDA program is illustrated in Figure \ref{fig:exeCUDA} The CPU host invokes a GPU kernel in-line with the triple angle-bracket $<<<$  $>>>$ syntax from CUDA C/C++ extension code. The kernel is executed N times in parallel by N different CUDA threads. All the threads that are generated by a kernel during an invocation are collectively called a \emph{grid}. Figure \ref{fig:exeCUDA} shows the execution of two grids of threads.
 
 \begin{figure}[!htb]
 	\centering
@@ -515,7 +515,7 @@ The execution of a typical CUDA program is illustrated in Figure\ref{fig:exeCUDA
 	\label{fig:exeCUDA}
 \end{figure}
 
-Threads in a grid are organized into a two-level hierarchy, as illustrated in Figure\ref{fig:grid}. At the top level, each grid consists of one or more thread blocks. All blocks in a grid have the same number of threads and are organized into a one, two, or three-dimensional \emph{grid} of thread blocks.
+Threads in a grid are organized into a two-level hierarchy, as illustrated in Figure \ref{fig:grid}. At the top level, each grid consists of one or more thread blocks. All blocks in a grid have the same number of threads and are organized into a one, two, or three-dimensional \emph{grid} of thread blocks.
 
 \begin{figure}[!htb]
 	\centering
@@ -530,7 +530,7 @@ The threads in a block are executed by the same multiprocessor within a GPU. The
 
 \subsubsection{CUDA memory hierarchy}
 \label{cudaMemH}
-Besides the threading model, another thing that makes CUDA programming different from a general purpose CPU is its memory spaces, including registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}
+Besides the threading model, another thing that makes CUDA programming different from a general purpose CPU is its memory spaces, including registers, local, shared, global, constant and texture, as shown in Figure \ref{fig:cudaMem}
 
 \begin{figure}[!htb]
 	\centering
@@ -539,7 +539,7 @@ Besides the threading model, another thing that makes CUDA programming different
 	\label{fig:cudaMem}
 \end{figure}
 
-CUDA memory spaces have different characteristics that reflect their distinct usages in CUDA applications as summarized in Table\ref{tab.mem} \citep{CUDABest}.
+CUDA memory spaces have different characteristics that reflect their distinct usages in CUDA applications as summarized in Table \ref{tab.mem} \citep{CUDABest}.
 
 \begin{table}[H]
 \centering
@@ -608,7 +608,7 @@ The Smith-Waterman algorithm for sequence alignment uses dynamic programming met
 \subsubsection*{Parallelism strategy applied}
 \textbf{1) Task-based parallelism}
 
-As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
+As explained in Section \ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
 
 Liu et al. have been studying accelerating Smith-Waterman sequence database searches for CUDA-enabled GPU since 2009. Here are their 3 articles from 2009 to 2013: \citep{SW++}, \citep{SW++2} and \citep{SW++3}. They present many approaches for optimization. They use task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. 
 
@@ -657,7 +657,7 @@ To maximize performance and to reduce the bandwidth demand of global memory, the
 They apply data-based parallelism to support longest query/target sequences. Each task is assigned to one thread block and all threads in the thread block cooperate to perform the task in parallel, exploiting the parallel characteristics of cells in the minor diagonals of similarity matrix. 
 
 \subsubsection*{Device memory access pattern}
-As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
+As described in Section \ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure \ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
 
 \citep{SW++} sorts target sequences and arranges in an array like a multi-layer bookcase to store into global memory, so that the reading of the database across multiple threads could be coalesced. Writes to global memory are first batched in shared memory for better coalescing. Due to a reduction in the global memory accesses, they propose a cell block division method for the task-based parallelism, where the alignment matrix is divided into cell blocks of equal size.
 And they utilize the texture memory on the sorted array of target sequences in order to achieve maximum performance on coalesced access patterns. They use a hash table to index the location coordinate in the array and the length of each sequence, which can provide fast access to any sequence.
@@ -717,7 +717,7 @@ They use CUDA SIMD Video Instructions in GPU computing and use Intel SSE2 intrin
 HMMER includes a MPI (Message Passing Interface) implementation of the searching algorithms, which uses conventional CPU clusters for parallel computing. ClawHMMer \citep{ClawHMMER} is the first GPU-enabled \emph{hmmsearch} implementation. Their implementation is based on the BrookGPU stream programming language, not CUDA programming model. Since ClawHMMer, there has been several researches on accelerating HMMER for CUDA-enabled GPU. The following is the summary of techniques applied by 5 research work.
 
 \subsubsection*{Parallelism strategy applied}
-As explained in Section\ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 5 articles reviewed here, 3 articles, i.e. \citep{GPUHMM}, \citep{Quirem} and \citep{Ahmed} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
+As explained in Section \ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. Among 5 articles reviewed here, 3 articles, i.e. \citep{GPUHMM}, \citep{Quirem} and \citep{Ahmed} used task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. This approach was taken by most of studies and more efforts were put on optimizing CUDA kernel execution.
 
 In \citep{GPUHMM}, Walters et al. port Viterbi function to CUDA-enabled GPU with a variety of optimization approaches. Their implementation operate the GPU kernel on multiple sequences simultaneously, with each thread operating on an independent sequence. They found the number of threads that can be executed in parallel will be limited by two factors: one is GPU memory will limit the number of sequences that can be placed, and another is the number of registers used by each thread will limit the number of threads that can execute in parallel. And registers are the most important resource in their implementation.
 
@@ -756,7 +756,7 @@ Based on their experiments, they show that Forward, Backward and Viterbi functio
 However, they did not present how they exactly implement their CUDA programs for the three functions and how they accelerate their programs in \citep{Ahmed}
 
 \subsubsection*{Device memory access pattern}
-As described in Section\ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure\ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
+As described in Section \ref{cudaMemH}, CUDA memory hierarchy includes registers, local, shared, global, constant and texture, as shown in Figure \ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is the reviewing of how these studies applied different device memory access pattern to optimize their implementations.
 
 \citep{GPUHMM} found the most effective optimization for Viterbi algorithm is to optimize CUDA memory layout and usage patterns within the implementation. 
 

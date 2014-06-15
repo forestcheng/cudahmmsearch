@@ -11,6 +11,18 @@
 %----------------------------------------------------------------------------------------
 \section{Problem Statement}
 
+What problem is being solved with the software HMMER3?
+
+Why is the problem important?
+
+Why is an optimized implementation needed?
+
+What is a protein sequence profile HMM, etc
+
+What are the common use cases
+
+
+
 HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
 It is an open source implementation of HMM algorithms for use with protein databases.
 
@@ -31,7 +43,7 @@ GPUs have been shown to provide very attractive compute resources in addition to
 
 [Ahmed et al., 2012]\citep{Ahmed} used Intel VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms.
 
-As shown in Figure\ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of ``acceleration pipeline" and is the key hotspot of the whole process. Therefore, this thesis concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
+As shown in Figure \ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of ``acceleration pipeline" and is the key hotspot of the whole process. Therefore, this thesis concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
 
 \section{Research Contributions}
 The contribution of this thesis can be classified as follows:

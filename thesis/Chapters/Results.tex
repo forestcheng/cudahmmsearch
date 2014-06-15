@@ -21,7 +21,7 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
  \item Target sequences database\\
  One was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. Another was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
  \item Query profile HMMs\\
- We tested 5 profile HMMs of length 149, 255, 414, 708 and 1111 states, detailed in Table\ref{tab.phmms}. Globin4 with length of 149 states was distributed with the HMMER source \citep{Hsource}. Other 4 HMMs were taken directly from the Pfam database \citep{Pfam} that vary in length from 255 to 1111 states.\\
+ We tested 5 profile HMMs of length 149, 255, 414, 708 and 1111 states, detailed in Table \ref{tab.phmms}. Globin4 with length of 149 states was distributed with the HMMER source \citep{Hsource}. Other 4 HMMs were taken directly from the Pfam database \citep{Pfam} that vary in length from 255 to 1111 states.\\
  \begin{table}[H]
  \centering
  \begin{tabular}{|c|c|c|c|c|c|}\hline
@@ -47,7 +47,7 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
 \subsection{Comparison with less optimized approaches}
 To show the performance impact of several selected optimization approaches, the performance of the implementation was compared with that of previous approach.
 
-Table\ref{tab.opt} shows the approaches taken in optimizing performance. All tests are taken against the Swiss-Prot database. The query HMM used was globin4. The fourth column `Improvement' is measured in percentage compared with the previous approach.
+Table \ref{tab.opt} shows the approaches taken in optimizing performance. All tests are taken against the Swiss-Prot database. The query HMM used was globin4. The fourth column `Improvement' is measured in percentage compared with the previous approach.
 
 \begin{table}[H]
 \centering
@@ -65,12 +65,12 @@ Distributing workload & 1.650 & 17.357 & 42 \\\hline
 \caption{\fontfamily{pag}\selectfont \textbf{Performance of optimization approaches.} The fourth column \textbf{Improvement} is measured in percentage compared with the previous approach. The row `Coalescing of global memory' is benchmarked only for the $dp$ matrix. The row `Texture memory' is benchmarked only for the query profile texOMrbv 2D texture. \label{tab.opt}}
 \end{table}
 
-The graphic view corresponding to Table is shown in Figure\ref{fig:imp}. 
+The graphic view corresponding to Table is shown in Figure \ref{fig:imp}. 
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.28\textheight]{Figures/improve.png}
-	\caption{\fontfamily{pag}\selectfont \textbf{Performance of optimization approaches.} The data of this chart come from Table\ref{tab.opt}. The blue bar is Performance (in GCUPS) of each approach, corresponding to the left Y axis. The red bar is Improvement in \% corresponding to the right Y axis.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Performance of optimization approaches.} The data of this chart come from Table \ref{tab.opt}. The blue bar is Performance (in GCUPS) of each approach, corresponding to the left Y axis. The red bar is Improvement in \% corresponding to the right Y axis.}
 	\label{fig:imp}
 \end{figure}
 
@@ -78,7 +78,7 @@ From the chart, it can be seen that several factors are related to global memory
 
 \subsection{Practical benchmark}
 \label{Pbench}
-The final cudaHmmsearch implementation, with the optimization discussed in Chapter\ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for the 5 profile HMMs with various lengths, as detailed in Table\ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core. The result of this benchmark is shown in the following table.
+The final cudaHmmsearch implementation, with the optimization discussed in Chapter \ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for the 5 profile HMMs with various lengths, as detailed in Table \ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core. The result of this benchmark is shown in the following table.
 
 \begin{table}[H]
 \centering
@@ -91,16 +91,16 @@ The final cudaHmmsearch implementation, with the optimization discussed in Chapt
 \caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
 \end{table}
 
-The results of the benchmarks are shown in graphical form in Figure\ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.5x than hmmsearch. 
+The results of the benchmarks are shown in graphical form in Figure \ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.5x than hmmsearch. 
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.36\textheight]{Figures/lengths.png}
-	\caption{\fontfamily{pag}\selectfont \textbf{Practical benchmarks.} The data of this chart come from Table\ref{tab.pb}. The blue and red bar is Performance (in GCUPS) of hmmsearch and cudaHmmsearch respectively, corresponding to the left Y axis. The green dot line is Speedup (in times) of cudaHmmsearch performance over that of hmmsearch, corresponding to the right Y axis.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Practical benchmarks.} The data of this chart come from Table \ref{tab.pb}. The blue and red bar is Performance (in GCUPS) of hmmsearch and cudaHmmsearch respectively, corresponding to the left Y axis. The green dot line is Speedup (in times) of cudaHmmsearch performance over that of hmmsearch, corresponding to the right Y axis.}
 	\label{fig:len}
 \end{figure}
 
-Figure\ref{fig:len} shows that the performance of both GPU and CPU searching for AAA\_27 dropped greatly. The reason can be seen from the table\ref{tab.sta} listing the internal pipeline statistics summary for searching globin4 and AAA\_27. For every filter, the count of passed sequences for searching AAA\_27 with 1111 states is much more than that of globin4 with 149 states. This means that for searching AAA\_27, much more target sequences than searching globin4 are needed calculating in each filter after MSV filter. And at the same time, each filter is more time-consuming than MSV filter. All of these result in the AAA\_27 performance dropping greatly.
+Figure \ref{fig:len} shows that the performance of both GPU and CPU searching for AAA\_27 dropped greatly. The reason can be seen from the table \ref{tab.sta} listing the internal pipeline statistics summary for searching globin4 and AAA\_27. For every filter, the count of passed sequences for searching AAA\_27 with 1111 states is much more than that of globin4 with 149 states. This means that for searching AAA\_27, much more target sequences than searching globin4 are needed calculating in each filter after MSV filter. And at the same time, each filter is more time-consuming than MSV filter. All of these result in the AAA\_27 performance dropping greatly.
 
 \begin{table}[H]
 \centering
@@ -132,12 +132,12 @@ hmmsearch & 11.72 & 23.28 & 29.22 & 44.15 & 46.19 & 44.69 \\\hline
 \caption{\fontfamily{pag}\selectfont {Result of Comparison with multicore CPU.} \label{tab.mcpu}}
 \end{table}
 
-The graphic view of the benchmark is shown in Figure\ref{fig:cpuCores}. The number above each bar is the Performance in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
+The graphic view of the benchmark is shown in Figure \ref{fig:cpuCores}. The number above each bar is the Performance in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.25\textheight]{Figures/cpuCores.png}
-	\caption{\fontfamily{pag}\selectfont \textbf{Comparison with multicore CPU.} The data of this chart come from Table\ref{tab.mcpu}. The number above each bar is the Performance in GCUPS.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Comparison with multicore CPU.} The data of this chart come from Table \ref{tab.mcpu}. The number above each bar is the Performance in GCUPS.}
 	\label{fig:cpuCores}
 \end{figure}
 
@@ -155,7 +155,7 @@ All tests are taken searching against the Swiss-Prot database for the globin4 pr
 \caption{\fontfamily{pag}\selectfont {Result of Comparison with other implementations.} \label{tab.hmms}}
 \end{table}
 
-As seen from the Figure\ref{fig:hmms}, since the release of HMMER2.3.2 in Oct 2003, accelerating hmmsearch researches on both CPU and GPU have achieved excellent improvement.
+As seen from the Figure \ref{fig:hmms}, since the release of HMMER2.3.2 in Oct 2003, accelerating hmmsearch researches on both CPU and GPU have achieved excellent improvement.
 
 \begin{figure}[!htb]
 	\centering
@@ -193,7 +193,7 @@ The solutions in this thesis were designed and customized for current GPUs, but 
 \section{Limitations of Work}
 There are some weak points in our work summarized as follows:
 
-Although our \emph{cudaHmmsearch} can search against unsorted protein sequence database, it can gain 129\% improvement searching against sorted database according to benchmark Table\ref{tab.opt}. And although the extra sorting database program is provided, user may be unaware of this and run \emph{cudaHmmsearch} against an unsorted database. It is better for the program to evaluate the database automatically and prompt user to sort if necessary.
+Although our \emph{cudaHmmsearch} can search against unsorted protein sequence database, it can gain 129\% improvement searching against sorted database according to benchmark Table \ref{tab.opt}. And although the extra sorting database program is provided, user may be unaware of this and run \emph{cudaHmmsearch} against an unsorted database. It is better for the program to evaluate the database automatically and prompt user to sort if necessary.
 
 We use block reading method to process very large database. However, the number of sequences for each block reading is fixed. So the number of threads launched in GPU kernel is also fixed. For those sequences with shorter lengths, it is better to use dynamic block reading to get more sequences, so as to increase the occupancy of GPU threads and achieve better performance.
 
@@ -203,7 +203,7 @@ We use block reading method to process very large database. However, the number 
 The limitations noted in the last section call attention to several areas that we deem worthy of further improvement and investigation. The suggested topics are placed under the following headings.
 
 \subsection*{Forward filter for no threshold}
-By default, the top-scoring of target sequences are expected to pass each filter. Alternatively, the -\emph{-max} option is available for those who want to make a search more sensitive to get maximum expected accuracy alignment. The option causes all filters except Forward/Backward algorithm to be bypassed. And according to practical benchmarking in Section\ref{Pbench}, the performance decreased greatly due to much more calculation in Forward algorithm. So our next research should be focused on accelerating Forward algorithm on CUDA-enabled GPU.
+By default, the top-scoring of target sequences are expected to pass each filter. Alternatively, the -\emph{-max} option is available for those who want to make a search more sensitive to get maximum expected accuracy alignment. The option causes all filters except Forward/Backward algorithm to be bypassed. And according to practical benchmarking in Section \ref{Pbench}, the performance decreased greatly due to much more calculation in Forward algorithm. So our next research should be focused on accelerating Forward algorithm on CUDA-enabled GPU.
 
 \subsection*{Multiple GPUs approach}
 Since currently we don't have multiple GPUs within a single workstation, we didn't research on multiple GPUs approach. However, CUDA already provides specific facilities for multi-GPU programming, including threading models, peer-to-peer, dynamic parallelism and inter-GPU synchronization, etc. Almost all PCs support at least two PCI-E slots, allowing at least two GPU cards to insert almost any PC. Looking forward, we should also investigate multi-GPU solutions.
