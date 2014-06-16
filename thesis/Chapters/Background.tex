@@ -289,7 +289,7 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
-From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for Biological Sequence Alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
 
 \begin{figure}[!htb]
 \centering

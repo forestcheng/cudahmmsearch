@@ -23,11 +23,23 @@ What are the common use cases
 
 
 
-HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
-It is an open source implementation of HMM algorithms for use with protein databases.
+In Bioinformatics, HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
+HMMER is used to search sequence databases identify homologous protein, which means to identify regions of similarity that may be a consequence of functional, structural, or evolutionary relationships between the protein sequences.
 
-One of its more widely used applications, \emph{hmmsearch} is to identify homologous protein. It does this with Viterbi algorithm described in subsection \ref{ViterbiSub} by comparing a profile HMM to each protein sequence in a large database, evaluating the path that has the maximum probability of the HMM generating the sequence.
-This search requires a computationally intensive procedure.
+HMMER applies the profile HMM(Hidden Markov Model), which is a promising approach to improve the sensitivity of database-searching. The profile HMM is statistical models of multiple sequence alignment, or even of single sequence. The main strength of a profile HMM is that it is probabilistic finite state machine. This means that it assesses the probability of match, insert and delete at a given position of an alignment.
+
+Unlike conventional pairwise comparisons, a consensus profile HMM model can in principle utilize additional statistical information, such as the position and identity of residues that are more or less conserved throughout the family, as well as variable insertion and deletion probabilities. By developing a statistical model that is based on known sequences in a protein family, a profile HMM can be used to model the protein sequence family.
+
+Based on the strength of its underlying profile HMMs, HMMER aims to be significantly more accurate and more able to detect remote homologs, compared to BLAST, FASTA, and other sequence alignment and database search tools based on older scoring methodology.
+
+In HMMER, the application \emph{hmmbuild} is used to build a profile HMM using a multiple sequence alignment, or single sequence as input. 
+
+The widely used application \emph{hmmsearch} in HMMER, is used to search a profile HMM against a sequence database, finding whether a sequence is member of the family described by a profile HMM. \emph{hmmsearch} output ranked list of the sequences with the most significant matches to the profile. Another similar application in HMMER, \emph{hmmscan} is the query of a single protein sequence of interest against a database of profile HMMs.
+
+To compare a profile HMM with a protein sequence, HMMER uses Viterbi algorithm described in subsection \ref{ViterbiSub}, which evaluates the path that has the maximum probability of the profile HMM generating the sequence. Viterbi is a dynamic programming algorithm.
+The fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each element value in DP matrix is dependent on the value of previous element.
+
+Viterbi requires a computationally intensive procedure.
 
 There has been a great deal of work on optimizing HMMER for both CPUs and GPUs. 
 
@@ -58,7 +70,7 @@ The rest of this thesis is organized as follows:
 
 Chapter \ref{Background} introduces the background necessary for understanding the work in this thesis.
 
-Then Chapter \ref{CUDAHMMER3} presents the details of our \emph{cudaHmmsearch} implementation and optimization approaches. And 6 steps are summarized for better performance of CUDA programming at the end of this Chapter.
+Then Chapter \ref{CUDAHMMER3} presents the details of our \emph{cudaHmmsearch} implementation and optimization approaches. The six steps are summarized for better performance of CUDA programming at the end of this Chapter.
 
 Comprehensive benchmarks were performed and analyzed in Chapter \ref{Results}. 
 
