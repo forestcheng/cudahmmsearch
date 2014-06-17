@@ -131,6 +131,11 @@ over other SIMD implementations}.
 \newblock \emph{Programming Massively Parallel Processors : A Hands-on Approach}.
 \newblock Published by Elsevier Inc. 2010.  
 
+\bibitem[Krogh et~al.(1994)]{Krogh}
+[Krogh et al., 1994] A. Krogh, M. Brown, I. S. Mian, K. Sjolander and D. Haussler.
+\newblock \emph{Hidden Markov models in computational biology: Applications to protein modeling}.
+\newblock J. Mol. Biol., 235:1501-1531. 1994.
+
 \bibitem[Lesk(2008)]{IntroBio}
 [Lesk, 2008] Arthur~M. Lesk.
 \newblock \emph{Introduction to Bioinformatics}.
