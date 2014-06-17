@@ -30,6 +30,10 @@ Unlike conventional pairwise comparisons, a consensus profile HMM model can in p
 
 Based on the strength of its underlying profile HMMs, HMMER aims to be significantly more accurate and more able to detect remote homologs, compared to BLAST, FASTA, and other sequence alignment and database search tools based on older scoring methodology {HMMER}.
 
+The most widely used implementations of profile HMM technology, have been slow and computationally expensive, on the order of more than 100 times slower than BLAST for a comparably sized search. In an era of enormous sequence databases, this speed disadvantage outweighs any advantage of HMM methods.
+
+
+
 In HMMER, the application \emph{hmmbuild} is used to build a profile HMM using a multiple sequence alignment, or single sequence as input. 
 
 The widely used application \emph{hmmsearch} in HMMER, is used to search a profile HMM against a sequence database, finding whether a sequence is member of the family described by a profile HMM. \emph{hmmsearch} output ranked list of the sequences with the most significant matches to the profile. Another similar application in HMMER, \emph{hmmscan} is the query of a single protein sequence of interest against a database of profile HMMs.
@@ -47,10 +51,11 @@ From 1998 to 2003, HMMER2 series introduced the ``Plan 7" profile HMM architectu
 
 In 2010, HMMER3.0 was released. The most significant difference between HMMER3 and HMMER2 is that HMMER3 uses a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi to accelerate profile HMM searches. By using Intel SSE2 intrinsics to implement programs, HMMER3 is substantially more sensitive and 100 to 1000 times faster than HMMER2 \citep{HMMER3}. HMMER3.1 beta was released in 2013. It has several new features that did not make it into 3.0, including \emph{nhmmer} program for DNA homology searches with profile HMMs, the parallel search daemon \emph{hmmpgmd} program underlying HMMER Web Services, and a new HMM file format called 3/f format.
 
+Although HMMER3 is much faster than HMMER2 and about as fast as BLAST for protein searches, it is still time-consuming. According to the CPU Benchmarks \citep{cpus} updated on 17th of June 2014, Intel Core i7-3930K @ 3.20GHz ranks as the 2nd among `Common CPUs' and as 23rd among `High End CPUs'. Even run by this high power CPU, HMMER3 needs about 5 minutes to search a profile HMM with normal length 255 against NCBI NR database.
 
 JackHMMer \citep{Wun} uses the Intel IXP 2850 network processor to accelerate Viterbi algorithm. The processor is used as a single-chip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
-MPI-HMMER \citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel. And it is responsible for collecting the results.
+MPI-HMMER \citep{Walters2006} is a wellknown and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel and is responsible for collecting the results.
 
 HMMER3 \citep{HMMER3} is the most significant acceleration of hmmsearch. The main performance gain is due to a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi, as described in Section\ref{MSVsub}. MSV is implemented in SIMD vector parallelization instructions and is about 100-fold faster than HMMER2.
 
@@ -60,7 +65,12 @@ GPUs have been shown to provide very attractive compute resources in addition to
 
 [Ahmed et al., 2012]\citep{Ahmed} used Intel VTune Analyzer \citep{Intel} to investigate performance hotspot functions in HMMER3. Based on hotspot analysis, they studied CUDA acceleration for three individual algorithm: Forward, Backward and Viterbi algorithms.
 
-As shown in Figure \ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. And the MSV algorithm is the first filter of ``acceleration pipeline" and is the key hotspot of the whole process. Therefore, this thesis concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
+As shown in Figure \ref{fig:hmmsearch}, the MSV and Viterbi algorithms are implemented in the so-called ``acceleration pipeline" at the core of the HMMER3 software package \citep{HMMER3}. The MSV algorithm is the first filter of ``acceleration pipeline" and is the key hotspot of the whole process. Therefore, this thesis concentrate on porting the MSV onto CUDA-enabled GPU to accelerate hmmsearch application.
+
+\section{Research Objectives}
+The overall of this research is to \emph{implement and accelerate hmmsearch of HMMER3 on CUDA-enabled GPU}. Our acceleration implementation will be based on HMMER3 MSV algorithm so that the result will be same as \emph{hmmsearch} of HMMER3. Central to this goal is understanding the MSV algorithm and CUDA multi-thread parallel programming. 
+
+In Bioinformatics, Smith-Waterman algorithm is also famous for sequence alignment using dynamic programming. Instead of looking at the total sequence, the Smith–Waterman algorithm compares segments of all possible lengths and optimizes the similarity measure. Similar to MSV algorithm, the Smith–Waterman algorithm is also fairly demanding of time: to align two sequences of lengths m and n, \emph{O}(mn) time is required. There has been a great deal of research on accelerating Smith-Waterman algorithm on CUDA-enabled GPU. From studying these research, we can learn many optimization approaches to apply into our research.
 
 \section{Research Contributions}
 The contribution of this thesis can be classified as follows:
