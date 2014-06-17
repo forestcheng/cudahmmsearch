@@ -21,8 +21,6 @@ What is a protein sequence profile HMM, etc
 
 What are the common use cases
 
-
-
 In Bioinformatics, HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
 HMMER is used to search sequence databases identify homologous protein, which means to identify regions of similarity that may be a consequence of functional, structural, or evolutionary relationships between the protein sequences.
 
@@ -30,7 +28,7 @@ HMMER applies the profile HMM(Hidden Markov Model), which is a promising approac
 
 Unlike conventional pairwise comparisons, a consensus profile HMM model can in principle utilize additional statistical information, such as the position and identity of residues that are more or less conserved throughout the family, as well as variable insertion and deletion probabilities. By developing a statistical model that is based on known sequences in a protein family, a profile HMM can be used to model the protein sequence family.
 
-Based on the strength of its underlying profile HMMs, HMMER aims to be significantly more accurate and more able to detect remote homologs, compared to BLAST, FASTA, and other sequence alignment and database search tools based on older scoring methodology.
+Based on the strength of its underlying profile HMMs, HMMER aims to be significantly more accurate and more able to detect remote homologs, compared to BLAST, FASTA, and other sequence alignment and database search tools based on older scoring methodology {HMMER}.
 
 In HMMER, the application \emph{hmmbuild} is used to build a profile HMM using a multiple sequence alignment, or single sequence as input. 
 
@@ -41,7 +39,14 @@ The fundamental task of the Viterbi algorithm for biological sequence alignment 
 
 Viterbi requires a computationally intensive procedure.
 
-There has been a great deal of work on optimizing HMMER for both CPUs and GPUs. 
+There has been a great deal of work on optimizing HMMER for CPUs or GPUs. 
+
+From 1992 to 1998, HMMER1 series was developed based on the original conception of profile HMMs introduced by Anders Krogh, David Haussler \citep{Krogh}. It includes a feature that is missing in HMMER2 and HMMER3: the \emph{hmmt} program for training HMMs from initially unaligned sequences and hence creating multiple alignments. The final stable version of HMMER1 was released as 1.8.5 in 2006. 
+
+From 1998 to 2003, HMMER2 series introduced the ``Plan 7" profile HMM architecture, which is still shared with HMMER3, and was the basic foundation for Pfam and other protein domain databases. It includes local and global alignment modes that HMMER3 lacks, because HMMER3 currently implements only fully local alignment. HMMER2 lacks DNA comparison that was present in HMMER1. The final stable version of HMMER2 was released as 2.3.2 in 2003.
+
+In 2010, HMMER3.0 was released. The most significant difference between HMMER3 and HMMER2 is that HMMER3 uses a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi to accelerate profile HMM searches. By using Intel SSE2 intrinsics to implement programs, HMMER3 is substantially more sensitive and 100 to 1000 times faster than HMMER2 \citep{HMMER3}. HMMER3.1 beta was released in 2013. It has several new features that did not make it into 3.0, including \emph{nhmmer} program for DNA homology searches with profile HMMs, the parallel search daemon \emph{hmmpgmd} program underlying HMMER Web Services, and a new HMM file format called 3/f format.
+
 
 JackHMMer \citep{Wun} uses the Intel IXP 2850 network processor to accelerate Viterbi algorithm. The processor is used as a single-chip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
 
