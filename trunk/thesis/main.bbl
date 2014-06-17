@@ -277,6 +277,13 @@ over other SIMD implementations}.
 \newblock Website, 2014.
 \newblock URL \url{https://www.khronos.org/opencl/}.
 
+\bibitem[PassMark(2014)]{cpus}
+[PassMark, 2014] PassMark Software.
+\newblock CPU Benchmarks.
+\newblock Website, 2014-06.
+\newblock URL
+  \url{http://www.cpubenchmark.net/high_end_cpus.html}.
+  
 \bibitem[Pevsner(2009)]{BioFunc}
 [Pevsner, 2009] Jonathan Pevsner.
 \newblock \emph{Bioinformatics and Functional Genomics}.

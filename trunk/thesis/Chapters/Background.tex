@@ -34,8 +34,33 @@ W & Tryptophan & Y & Tyrosine  \\\hline
 \caption{\fontfamily{pag}\selectfont The 20 amino acids\label{tab.amino}}
 \end{table}
 
+The following is the protein sequence of human beta globin taken from Swiss-Prot database. The sequence has a entry name HBB\_HUMAN in Swiss-Prot database. The number beside the residue indicates the position of the residue.
+
+\begin{verbatim}
+   HBB_HUMAN   1 MVHLTPEEKS AVTALWGKVN VDEVGGEALG RLLVVYPWTQ RFFESFGDLS 50
+   HBB_HUMAN  51 TPDAVMGNPK VKAHGKKVLG AFSDGLAHLD NLKGTFATLS ELHCDKLHVD 100 
+   HBB_HUMAN 101 PENFRLLGNV LVCVLAHHFG KEFTPPVQAA YQKVVAGVAN ALAHKYH 147
+\end{verbatim}
+
 \subsection{Sequence alignment}
-In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve with accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps}. Table \ref{tab.sa} shows the sequence alignment of human beta globin (the \emph{query} sequence) and myoglobin (the \emph{target} sequence) and an internal gap is indicated by two dashes \citep{BioFunc}.
+In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve by accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps}. Table \ref{tab.sa} shows the sequence alignment of human beta globin (the \emph{query} sequence) and myoglobin (the \emph{target} sequence) and an internal gap is indicated by two dashes \citep{BioFunc}.
+
+In the pairwise alignment shown in .., globins4 is on top and HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned. These are \emph{conservative substitutions}.
+
+\begin{verbatim}
+    globins4   1 VVLSEAEKTKVKAVWAKVEADVEESGADILVRLFKSTPATQEFFEKFKDL 50
+                 V+L+++EK++V+A+W+KV  +V+E+G+++L RL++++P+TQ+FFE+F+DL
+   HBB_HUMAN   2 VHLTPEEKSAVTALWGKV--NVDEVGGEALGRLLVVYPWTQRFFESFGDL 49
+  
+    globins4  51 STEDELKKSADVKKHGKKVLDALSDALAKLDEKLEAKLKDLSELHAKKLK 100 
+                 ST+D+++++++VK+HGKKVL+A+SD+LA+LD +L++++++LSELH++KL+
+   HBB_HUMAN  50 STPDAVMGNPKVKAHGKKVLGAFSDGLAHLD-NLKGTFATLSELHCDKLH 98 
+
+    globins4 101 VDPKYFKLLSEVLVDVLAARLPKEFTADVQAALEKLLALVAKLLASKYK 149
+                 VDP++F+LL++VLV+VLA++++KEFT++VQAA++K++A VA++LA+KY+
+   HBB_HUMAN  99 VDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH 147
+\end{verbatim}
+
 
 \begin{table}[H]
 \centering
@@ -49,7 +74,7 @@ In bioinformatics, a sequence alignment is a way of arranging the sequences of p
 \caption{\fontfamily{pag}\selectfont \textbf{Sequence alignment} \\sum of \emph{match}: +51\\sum of \emph{mismatch}: -9\\sum of gap penalties: -12\\total raw score: 51 - 9 -12 = 30\label{tab.sa}}
 \end{table}
 
-To establish the degree of homology, the two sequences are aligned: lined up in such a way that the degree of similarity also referred as score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example of Table \ref{tab.sa}) and one for \emph{gap extend} (-1 in Table \ref{tab.sa}).
+To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example of Table \ref{tab.sa}) and one for \emph{gap extend} (-1 in Table \ref{tab.sa}).
 
 \begin{figure}[!htb]
 \centering
@@ -58,7 +83,7 @@ To establish the degree of homology, the two sequences are aligned: lined up in 
 	\label{fig:blo}
 \end{figure}
 
-Sorts of sequence alignment algorithms have been studied. Next chapter will introduce two sorts of algorithms: Smith-Waterman algorithm and HMM-based algorithms. They share a very general optimization technique called dynamic programming for finding optimal alignments.
+Next chapter will introduce two sequence alignment algorithms: Smith-Waterman algorithm and HMM-based algorithm. These two algorithms share a very general optimization technique called dynamic programming for finding optimal alignments.
 
 \subsection{Bioinformatics protein databases}
 This part is a brief introduction of two protein sequence databases used in this thesis.
@@ -66,7 +91,7 @@ This part is a brief introduction of two protein sequence databases used in this
 \subsubsection*{NCBI NR databse}
 The NCBI (National Center for Biotechnology Information) houses a series of databases relevant to Bioinformatics. Major databases include GenBank for DNA sequences and PubMed, a bibliographic database for the biomedical literature. Other databases include the NCBI Epigenomics database. All these databases are updated daily and available online: \url{http://www.ncbi.nlm.nih.gov/guide/all/\#databases\_}.
 
-The NR (Non-Redundant) protein database maintained by NCBI as a target for their BLAST search services is a composite of SwissProt, SwissProt updates, PIR(Protein Information Resource), PDB(Protein Data Bank). Entries with absolutely identical sequences have been merged into NR database. The PIR produces the largest, most comprehensive, annotated protein sequence database in the public domain. The PDB is a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids and is maintained by Brookhaven National Laboratory, USA.
+The NR (Non-Redundant) protein database maintained by NCBI as a target for their BLAST search services is a composite of Swiss-Prot, Swiss-Prot updates, PIR(Protein Information Resource), PDB(Protein Data Bank). Entries with absolutely identical sequences have been merged into NR database. The PIR produces the largest, most comprehensive, annotated protein sequence database in the public domain. The PDB is a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids and is maintained by Brookhaven National Laboratory, USA.
 
 Release 2014\_04 of NCBI NR databse contains 38,442,706 sequence entries, comprising 13,679,143,700 amino acids, more than 24GB in file size \citep{NCBI}.
 
@@ -603,12 +628,12 @@ The NVIDIA System Management Interface (nvidia-smi) is a command line utility th
 %----------------------------------------------------------------------------------------
 
 \subsection{CUDA accelerated Smith-Waterman}
-The Smith-Waterman algorithm for sequence alignment uses dynamic programming method for sequence alignment, which is also the characteristic of HMM-based algorithms. In this section, we review the techniques used in parallelizing Smith-Waterman on a CUDA-enabled GPU and these techniques will be evaluated for accelerating MSV algorithm in Chapter \ref{CUDAHMMER3}.
+The Smith-Waterman algorithm exploits dynamic programming for sequence alignment, which is also the characteristic of HMM-based algorithms. In this section, we review the techniques used in parallelizing Smith-Waterman on a CUDA-enabled GPU and these techniques will be evaluated for accelerating MSV algorithm in Chapter \ref{CUDAHMMER3}.
 
 \subsubsection*{Parallelism strategy applied}
 \textbf{1) Task-based parallelism}
 
-As explained in Section \ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming method. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
+As explained in Section \ref{impl}, parallel computing has two types of parallelism: task-based and data-based parallelism. SW algorithm is used for finding similarity among protein sequence database with dynamic programming. The application is particularly well-suited for many-core architectures due to the parallel nature of sequence database searches. 
 
 Liu et al. have been studying accelerating Smith-Waterman sequence database searches for CUDA-enabled GPU since 2009. Here are their 3 articles from 2009 to 2013: \citep{SW++}, \citep{SW++2} and \citep{SW++3}. They present many approaches for optimization. They use task-based parallelism to process each target sequence independently with a single GPU thread. Task-based parallelism removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. This also simplifies implementation and testing. 
 
@@ -762,7 +787,7 @@ As described in Section \ref{cudaMemH}, CUDA memory hierarchy includes registers
 
 Since Viterbi algorithm requires only the current and previous rows of the dynamic programming matrices, they reduce the memory requirements of the Viterbi scoring calculation from $3 * M * L + 5 * L$ to $6 * M$ integer array elements, where $M$ and $L$ are the length of the sequence and HMM, respectively.
 
-They utilize high speed texture memory to store the target sequence batch. Because the seqence data are static and read-only through computing. They note that global memory coalesced access can significantly improve hmmsearch overall speedup. Their benchmark results show that this approach contributes an improvement of more than 9x for larger HMMs.
+They utilize high speed texture memory to store the target sequence batch. Because the sequence data are static and read-only through computing. They note that global memory coalesced access can significantly improve hmmsearch overall speedup. Their benchmark results show that this approach contributes an improvement of more than 9x for larger HMMs.
 
 They use constant memory and texture memory to store the query profile HMM depending on its size. They place the normal size HMM in constant memory. In cases where the very large HMM exceeds the capacity of constant memory, they switch over to texture memory for the remaining portion of the HMM after exploiting the full constant memory. They utilize shared memory to temporarily store the index into each thread’s digitized sequence.
 
