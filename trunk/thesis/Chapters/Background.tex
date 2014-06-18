@@ -43,9 +43,9 @@ The following is the protein sequence of human beta globin taken from Swiss-Prot
 \end{verbatim}
 
 \subsection{Sequence alignment}
-In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve by accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps}. Table \ref{tab.sa} shows the sequence alignment of human beta globin (the \emph{query} sequence) and myoglobin (the \emph{target} sequence) and an internal gap is indicated by two dashes \citep{BioFunc}.
+In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve by accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps} \citep{BioFunc}. 
 
-In the pairwise alignment shown in .., globins4 is on top and HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned. These are \emph{conservative substitutions}.
+In the pairwise alignment shown in the following segment, globins4 is on top and HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned in the same way. These are \emph{conservative substitutions}. At the postion 20 of HBB_HUMAN, an internal gap open and gap extend is indicated by two dashes.
 
 \begin{verbatim}
     globins4   1 VVLSEAEKTKVKAVWAKVEADVEESGADILVRLFKSTPATQEFFEKFKDL 50
@@ -61,6 +61,19 @@ In the pairwise alignment shown in .., globins4 is on top and HBB\_HUMAN is belo
    HBB_HUMAN  99 VDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH 147
 \end{verbatim}
 
+\begin{verbatim}
+globins4   15 W A K V E A D V E E S G A D I L V R 32
+              W + K V     + V + E + G + + + L   R
+HBB_HUMAN  16 W G K V - - N V D E V G G E A L G R 31
+match         11  5 4       4   5   6       4   5
+mismatch        0         1   2   -2  0 2 -1  -3
+gap open             -11
+gap extend             -1
+sum of match: 11+5+4+4+5+6+4+5 = 44
+sum of mismatch: 0+1+2-2+0+2-1-3 = -1
+sum of gap penalties: -11-1 = -12
+total raw score: sum of match, mismatch and gap penalties = 44-1-12 = 31
+\end{verbatim}
 
 \begin{table}[H]
 \centering
@@ -74,7 +87,9 @@ In the pairwise alignment shown in .., globins4 is on top and HBB\_HUMAN is belo
 \caption{\fontfamily{pag}\selectfont \textbf{Sequence alignment} \\sum of \emph{match}: +51\\sum of \emph{mismatch}: -9\\sum of gap penalties: -12\\total raw score: 51 - 9 -12 = 30\label{tab.sa}}
 \end{table}
 
-To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example of Table \ref{tab.sa}) and one for \emph{gap extend} (-1 in Table \ref{tab.sa}).
+To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. For example, the match score for W-W is 11, K-K is 5; the mismatch score for A-G is 0, D-N is 1.
+
+In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example) and one for \emph{gap extend} (-1 in the example).
 
 \begin{figure}[!htb]
 \centering
