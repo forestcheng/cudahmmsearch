@@ -21,6 +21,11 @@
 \newblock \emph{Scalable and highly parallel implementation of Smith-Waterman on graphics processing unit using CUDA}.
 \newblock Springer Science+Business Media, LLC 2009.
 
+\bibitem[Altschul et~al.(1990)]{Altschul}
+[Altschul et al., 1990] S. F. Altschul, W. Gish, W. Miller, E. W. Myers and D. J. Lipman. 
+\newblock \emph{Basic local alignment search tool}.
+\newblock Journal of Molecular Biology, 215(3):403–10, October 1990.
+
 \bibitem[ArrayFire(2014)]{ArrayFire}
 [ArrayFire, 2014] AccelerEyes.
 \newblock Comprehensive GPU function library.
@@ -211,6 +216,11 @@ over other SIMD implementations}.
 \newblock Website, 2014-4-7.
 \newblock URL \url{ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz}.
 
+\bibitem[Needleman and Wunsch(1970)]{Needleman}
+[Needleman and Wunsch, 1970] S. B. Needleman and C. D. Wunsch.
+\newblock \emph{A general method applicable to the search for similarities in the amino acid sequence of two proteins}.
+\newblock Journal of Molecular Biology, 48(3):443–53, March 1970.
+
 \bibitem[NVIDIA(2013-05)]{CUDA-C}
 [NVIDIA, 2013-05] NVIDIA.
 \newblock {CUDA} C PROGRAMMING GUIDE.
@@ -325,7 +335,7 @@ SIMD parallelization}.
 \bibitem[Smith and Waterman(1981)]{SW}
 [Smith and Waterman, 1981] TF. Smith and MS. Waterman.
 \newblock \emph{Identification of common molecular subsequences}.
-\newblock J Mol Biol 1981, 147:195-197.
+\newblock Journal of Molecular Biology 1981, 147:195-197.
 
 \bibitem[UniProtSP(2014-05)]{Swiss-Prot}
 [UniProtSP, 2014-05] SIB Bioinformatics Resource Portal.

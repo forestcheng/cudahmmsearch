@@ -21,6 +21,15 @@ What is a protein sequence profile HMM, etc
 
 What are the common use cases
 
+Biological protein can be viewed as a sequence of amino acid residues. In Bioinformatics, the purpose of protein sequence search against databases is to identify regions of similarity that may be a consequence of functional, structural, or evolutionary relationships between the protein sequences.
+Such a similarity search produces an alignment, i.e. seeks to align similar substrings of the sequences being compared.
+
+Sequence alignment algorithms such as Needleman-Wunsch \citep{Needleman}, Smith-Waterman \citep{SW}, and the BLAST family of programs \citep{Altschul} have long been used for protein motif-
+?nding by performing pairwise alignment of each query against every sequence in
+the database, thus identifying those sequences in the database that are most closely
+related to various regions of the query. 
+
+
 In Bioinformatics, HMMER \citep{HMMER} is a free and commonly used software package for sequence analysis written by Sean Eddy. 
 HMMER is used to search sequence databases identify homologous protein, which means to identify regions of similarity that may be a consequence of functional, structural, or evolutionary relationships between the protein sequences.
 
@@ -51,6 +60,8 @@ From 1998 to 2003, HMMER2 series introduced the ``Plan 7" profile HMM architectu
 
 In 2010, HMMER3.0 was released. The most significant difference between HMMER3 and HMMER2 is that HMMER3 uses a heuristic algorithm called MSV filter, for Multiple (local, ungapped) Segment Viterbi to accelerate profile HMM searches. By using Intel SSE2 intrinsics to implement programs, HMMER3 is substantially more sensitive and 100 to 1000 times faster than HMMER2 \citep{HMMER3}. HMMER3.1 beta was released in 2013. It has several new features that did not make it into 3.0, including \emph{nhmmer} program for DNA homology searches with profile HMMs, the parallel search daemon \emph{hmmpgmd} program underlying HMMER Web Services, and a new HMM file format called 3/f format.
 
+With the exponential growth of protein databases, there is an increasing demand for acceleration of such techniques.
+
 Although HMMER3 is much faster than HMMER2 and about as fast as BLAST for protein searches, it is still time-consuming. According to the CPU Benchmarks \citep{cpus} updated on 17th of June 2014, Intel Core i7-3930K @ 3.20GHz ranks as the 2nd among `Common CPUs' and as 23rd among `High End CPUs'. Even run by this high power CPU, HMMER3 needs about 5 minutes to search a profile HMM with normal length 255 against NCBI NR database.
 
 JackHMMer \citep{Wun} uses the Intel IXP 2850 network processor to accelerate Viterbi algorithm. The processor is used as a single-chip cluster with the XScale CPU functioning as the head node. Like a typical cluster, the XScale CPU is responsible for distributing jobs to the individual microengines. 
@@ -70,7 +81,7 @@ As shown in Figure \ref{fig:hmmsearch}, the MSV and Viterbi algorithms are imple
 \section{Research Objectives}
 The overall of this research is to \emph{implement and accelerate hmmsearch of HMMER3 on CUDA-enabled GPU}. Our acceleration implementation will be based on HMMER3 MSV algorithm so that the result will be same as \emph{hmmsearch} of HMMER3. Central to this goal is understanding the MSV algorithm and CUDA multi-thread parallel programming. 
 
-In Bioinformatics, Smith-Waterman algorithm is also famous for sequence alignment using dynamic programming. Instead of looking at the total sequence, the Smith–Waterman algorithm compares segments of all possible lengths and optimizes the similarity measure. Similar to MSV algorithm, the Smith–Waterman algorithm is also fairly demanding of time: to align two sequences of lengths m and n, \emph{O}(mn) time is required. There has been a great deal of research on accelerating Smith-Waterman algorithm on CUDA-enabled GPU. From studying these research, we can learn many optimization approaches to apply into our research.
+In Bioinformatics, Smith-Waterman algorithm is also famous for sequence alignment using dynamic programming. Instead of looking at the total sequence, the Smith-Waterman algorithm compares segments of all possible lengths and optimizes the similarity measure. Similar to MSV algorithm, the Smith-Waterman algorithm is also fairly demanding of time: to align two sequences of lengths m and n, \emph{O}(mn) time is required. There has been a great deal of research on accelerating Smith-Waterman algorithm on CUDA-enabled GPU. From studying these research, we can learn many optimization approaches to apply into our research.
 
 \section{Research Contributions}
 The contribution of this thesis can be classified as follows:
