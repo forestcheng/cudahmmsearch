@@ -42,6 +42,11 @@
 \newblock \emph{Bioinformatics: The Machine Learning Approach}.
 \newblock The MIT Press, England, 2nd edition, 2001.
 
+\bibitem[Derrien and Quinton(2007)]{Derrien}
+[Derrien and Quinton, 2007] S. Derrien and P. Quinton.
+\newblock \emph{Parallelizing HMMER for hardware acceleration on FPGAs}.
+\newblock Proceedings of the 18th IEEE International Conference on Application-Specific Systems, Architectures, and Processors; 9–11 July 2008.
+
 \bibitem[Dong and Pei(2007)]{SeqData}
 [Dong and Pei, 2007] Guozhu Dong and Jian Pei.
 \newblock \emph{Sequence Data Mining}.
@@ -126,6 +131,11 @@ over other SIMD implementations}.
 \newblock Website, 2013.
 \newblock URL \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe/}. 
 
+\bibitem[Jacob et~al.(2007)]{Jacob}
+[Jacob et al., 2007] A. Jacob, J. Lancaster, J. Buhler, R.D. Chamberlain.
+\newblock \emph{Preliminary results in accelerating profile HMM search on FPGAs}.
+\newblock Proceedings of the 21st IEEE International Parallel and Distributed Processing Symposium; 26–30; California, USA. IPDPS 2007.
+
 \bibitem[Kentie(2010)]{Kentie}
 [Kentie, 2010] M.A. Kentie.
 \newblock \emph{Biological Sequence Alignment Using Graphics Processing Units}.
@@ -140,6 +150,12 @@ over other SIMD implementations}.
 [Krogh et al., 1994] A. Krogh, M. Brown, I. S. Mian, K. Sjolander and D. Haussler.
 \newblock \emph{Hidden Markov models in computational biology: Applications to protein modeling}.
 \newblock J. Mol. Biol., 235:1501-1531. 1994.
+
+\bibitem[Landman et~al.(2006)]{Landman}
+[Landman et~al., 2006] J. Landman, J. Ray, J.P. Walters.
+\newblock \emph{Accelerating HMMer searches on Opteron processors with minimally invasive recoding}.
+\newblock Proceedings of the 20th International Conference on Advanced Information Networking and Applications; 18–20; Vienna, Austria. AINA 2006.
+\newblock URL \url{http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1620450}.
 
 \bibitem[Lesk(2008)]{IntroBio}
 [Lesk, 2008] Arthur~M. Lesk.
@@ -178,6 +194,11 @@ over other SIMD implementations}.
 [Isa et al., 2012] M. Nazrin M. Isa, Khaled Benkrid and Thomas Clayton.
 \newblock \emph{A Novel Efficient FPGA Architecture for HMMER Acceleration}.
 \newblock IEEE, 2012.
+
+\bibitem[Maddimsetty(2006)]{Maddimsetty}
+[Maddimsetty, 2006] R.P. Maddimsetty.
+\newblock \emph{Acceleration of Profile-HMM Search for Protein Sequences in Reconfigurable Hardware}.
+\newblock [Master’s thesis]. Washington University in St.Louis.
 
 \bibitem[MAGMA(2014)]{MAGMA}
 [MAGMA, 2014] The University of Tennesse.
@@ -281,6 +302,11 @@ over other SIMD implementations}.
 \newblock Website, 2014.
 \newblock URL \url{https://developer.nvidia.com/thrust}.  
 
+\bibitem[Oliver et~al.(2007)]{Oliver}
+[Oliver et~al., 2007] T. Oliver, L.Y. Yeow, B. Schmidt.
+\newblock \emph{High performance database searching with HMMer on FPGAs}.
+\newblock Proceedings of the 21st IEEE International Parallel and Distributed Processing Symposium; 26–30; California, USA. IPDPS 2007.
+
 \bibitem[OpenCL(2014)]{OpenCL}
 [OpenCL, 2014] Khronos Group.
 \newblock The open standard for parallel programming of heterogeneous systems.
@@ -321,6 +347,12 @@ database searches using parallel processing on common microprocessors}.
 \newblock \emph{Faster Smith-Waterman database searches with inter-sequence
 SIMD parallelization}.
 \newblock BMC Bioinformatics 2011, 12:221.
+
+\bibitem[Sachdeva et~al.(2008)]{Sachdeva}
+[Sachdeva et al., 2008] Vipin Sachdeva, Michael Kistler, Evan Speight, Tzy-Hwa Kathy Tzeng.
+\newblock \emph{Exploring the viability of the Cell Broadband Engine for bioinformatics applications}.
+\newblock Parallel Computing, High-Performance Computational Biology 34:616–626.
+\newblock URL \url{http://www.sciencedirect.com/science/article/pii/S0167819108000501}.
 
 \bibitem[Saeed et~al.(2010)]{Saeed}
 [Saeed et al., 2010] Ali Khajeh Saeed, Stephen Poole and J. Blair Perot.

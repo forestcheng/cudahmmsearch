@@ -36,18 +36,18 @@ W & Tryptophan & Y & Tyrosine  \\\hline
 
 The following is the protein sequence of human beta globin taken from Swiss-Prot database. The sequence has a entry name HBB\_HUMAN in Swiss-Prot database. The number beside the residue indicates the position of the residue.
 
-\begin{verbatim}
+\begin{lstlisting}[caption={\fontfamily{pag}\selectfont HBB\_HUMAN protein sequence taken from Swiss-Prot}]
    HBB_HUMAN   1 MVHLTPEEKS AVTALWGKVN VDEVGGEALG RLLVVYPWTQ RFFESFGDLS 50
    HBB_HUMAN  51 TPDAVMGNPK VKAHGKKVLG AFSDGLAHLD NLKGTFATLS ELHCDKLHVD 100 
    HBB_HUMAN 101 PENFRLLGNV LVCVLAHHFG KEFTPPVQAA YQKVVAGVAN ALAHKYH 147
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{Sequence alignment}
 In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve by accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps} \citep{BioFunc}. 
 
-In the pairwise alignment shown in the following segment, globins4 is on top and HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned in the same way. These are \emph{conservative substitutions}. At the postion 20 of HBB_HUMAN, an internal gap open and gap extend is indicated by two dashes.
+In the pairwise alignment shown in Listing \ref{gh}, sequence globins4 is on top and sequence HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned in the same way. These are \emph{conservative substitutions}. At the position 20 of HBB\_HUMAN, an internal gap open and gap extend is indicated by two dashes.
 
-\begin{verbatim}
+\begin{lstlisting}[caption={\fontfamily{pag}\selectfont Pairwise alignment of globins4 and HBB\_HUMAN}, label=gh]
     globins4   1 VVLSEAEKTKVKAVWAKVEADVEESGADILVRLFKSTPATQEFFEKFKDL 50
                  V+L+++EK++V+A+W+KV  +V+E+G+++L RL++++P+TQ+FFE+F+DL
    HBB_HUMAN   2 VHLTPEEKSAVTALWGKV--NVDEVGGEALGRLLVVYPWTQRFFESFGDL 49
@@ -59,37 +59,28 @@ In the pairwise alignment shown in the following segment, globins4 is on top and
     globins4 101 VDPKYFKLLSEVLVDVLAARLPKEFTADVQAALEKLLALVAKLLASKYK 149
                  VDP++F+LL++VLV+VLA++++KEFT++VQAA++K++A VA++LA+KY+
    HBB_HUMAN  99 VDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH 147
-\end{verbatim}
+\end{lstlisting}
 
-\begin{verbatim}
-globins4   15 W A K V E A D V E E S G A D I L V R 32
-              W + K V     + V + E + G + + + L   R
-HBB_HUMAN  16 W G K V - - N V D E V G G E A L G R 31
-match         11  5 4       4   5   6       4   5
-mismatch        0         1   2   -2  0 2 -1  -3
-gap open             -11
-gap extend             -1
-sum of match: 11+5+4+4+5+6+4+5 = 44
-sum of mismatch: 0+1+2-2+0+2-1-3 = -1
-sum of gap penalties: -11-1 = -12
-total raw score: sum of match, mismatch and gap penalties = 44-1-12 = 31
-\end{verbatim}
+To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Listing \ref{rawscore} illustrates how raw scores are calculated, using the result of pairwise alignment with just residues 15-32 of globins4 in Listing \ref{gh}.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}\hline
-\textbf{Query} & V T A L W & G K V N V & D -\hspace{6pt}-\hspace{6pt}E V & G G E A L \\\hline
-\textbf{Target} & V L N V W & G K V E A & D I P G H & G Q E V L \\\hline
-\emph{match} & 4\hspace{36pt} 11 & 6\hspace{8pt}5\hspace{8pt}4\hspace{19pt} & 6\hspace{44pt} & 6\hspace{18pt}5\hspace{18pt}4 \\\hline
-\emph{mismatch} &-1-2 1 & \hspace{40pt}0\hspace{7pt}0 & \hspace{28pt}-2 -3 & -2\hspace{15pt} 0 \\\hline
-\shortstack{\emph{gap open}\\ \emph{gap extend}} & & & \shortstack{-11\hspace{26pt} \\ -1} & \\\hline
-\end{tabular}
-\caption{\fontfamily{pag}\selectfont \textbf{Sequence alignment} \\sum of \emph{match}: +51\\sum of \emph{mismatch}: -9\\sum of gap penalties: -12\\total raw score: 51 - 9 -12 = 30\label{tab.sa}}
-\end{table}
+\begin{lstlisting}[caption={\fontfamily{pag}\selectfont {Calculation of raw score}.}, label=rawscore]
+   globins4   15 W A K V E A D V E E S G A D I L V R 32
+                 W + K V     + V + E + G + + + L   R
+   HBB_HUMAN  16 W G K V - - N V D E V G G E A L G R 31
+   ....................................................
+   match         11  5 4       4   5   6       4   5
+   mismatch        0         1   2   -2  0 2 -1  -3
+   gap open             -11
+   gap extend             -1
+   sum of match: 11+5+4+4+5+6+4+5 = 44
+   sum of mismatch: 0+1+2-2+0+2-1-3 = -1
+   sum of gap penalties: -11-1 = -12
+   total raw score: match + mismatch + gap penalties = 44-1-12 = 31
+\end{lstlisting}
 
-To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Table \ref{tab.sa} illustrates how raw scores are calculated. The scores in the table for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. For example, the match score for W-W is 11, K-K is 5; the mismatch score for A-G is 0, D-N is 1.
+The scores in the Listing \ref{rawscore} for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. For example, the match score for W-W is 11, K-K is 5; the mismatch score for A-G is 0, D-N is 1.
 
-In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 in the example) and one for \emph{gap extend} (-1 in the example).
+In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 for the position 19 of globins4 in Listing \ref{rawscore}) and one for \emph{gap extend} (-1 for the position 20 of globins4 in Listing \ref{rawscore}).
 
 \begin{figure}[!htb]
 \centering
@@ -329,7 +320,7 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
-From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[{ }]$ for Match state, $I[{ }]$ for Insert state and $D[{ }]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[~]$ for Match state, $I[~]$ for Insert state and $D[~]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
 
 \begin{figure}[!htb]
 \centering
