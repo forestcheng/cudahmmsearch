@@ -117,7 +117,7 @@ This approach resulted in increased register pressure and gained a huge speed bo
 
 \subsubsection*{coalescing access}
 
-Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine several non-contiguous and small reads/writes of global memory, into a single and more efficient contiguous and large memory read/write. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure \ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
+Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine several small and non-contiguous access of global memory, into a single large and more efficient contiguous memory access. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure \ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
 
 \begin{figure}[!htb]
 	\centering
@@ -216,10 +216,10 @@ The basic syntax of an \emph{asm}() statement is:
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
- asm(``template-string" : ``constraint''(output) : ``constraint"(input));
+ asm(``template-string" : ``constraint"(output) : ``constraint"(input));
 \end{quote}
 
-The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(“op1” and “op2”) and destination operand(“rv”) are all unsigned 32-bit registers(“u32”), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(“sat”) have been used to clamp the values to their appropriate unsigned ranges.
+The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(``op1"� and ``op2"�) and destination operand(``rv"�) are all unsigned 32-bit registers(``u32"�), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(``sat"�) have been used to clamp the values to their appropriate unsigned ranges.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{mc}\selectfont
@@ -234,7 +234,7 @@ The following three instructions are used in the implementation. Every instructi
 
 Switching to the SIMD video instructions also achieved a large speedup of nearly 2 times.
 
-From here and the acceleration of HMMER3, we can see the parallel vector instructions can greatly improve computing for array or matrix. We can also see the limitation of GPU computing: GPU can only support 32-bit operations, much lower than SSE2 128-bit operations.
+From here and the acceleration of HMMER3, we can see the parallel vector instructions can greatly improve computing for array or matrix. We can also see the limitation of GPU SIMD computing compared to CPU: GPU can only support 32-bit register operations, 4 times lower than CPU SSE2 128-bit register operations.
 
 \subsection{Pinned (non-pageable) Memory}
 \label{pin}
