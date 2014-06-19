@@ -1,3 +1,8 @@
+This is CUDA version of hmmsearch : cudaHmmsearch 
+developed by Lin CHENG (forestcheng@gmail.com) for the Master thesis.
+
+hmmsort is used for sorting protein database from GPU-HMMER-0.92.
+
 HMMER - profile hidden Markov models for biological sequence analysis
 http://hmmer.org/
 Version 3.1b1; May 2013

@@ -10,6 +10,9 @@ Starting from a source distribution, hmmer-3.1b1.tar.gz:
  uncompress:                uncompress hmmer-3.1b1.tar.gz  
  unpack:                    tar xf hmmer-3.1b1.tar
  move into new directory:   cd hmmer-3.1b1
+
+check the CUDA install path is /usr/local/cuda
+if not, modify CUDA_PATH in line 47 of src/Makefile.in 
  configure:                 ./configure
  build:                     make
  automated tests:           make check
