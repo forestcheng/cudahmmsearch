@@ -20,6 +20,7 @@ man1dir     = ${mandir}/man1
 man1ext     = .1
 
 CC        = @CC@
+CXX       = g++
 CFLAGS    = @CFLAGS@ @PTHREAD_CFLAGS@ @PIC_FLAGS@
 SIMDFLAGS = @SIMD_CFLAGS@
 CPPFLAGS  = @CPPFLAGS@
@@ -43,6 +44,14 @@ MYINCDIRS = -I../${ESLDIR} \
 	    -I. \
 	    -I${srcdir}
 
+CUDA_PATH       = /usr/local/cuda
+CUDA_INC_PATH   = $(CUDA_PATH)/include
+CUDA_BIN_PATH   = $(CUDA_PATH)/bin
+CUDA_LIB_PATH   = $(CUDA_PATH)/lib64
+CUDALIBS        = -lcudart
+
+NVCC         = $(CUDA_BIN_PATH)/nvcc
+NVCCFLAGS    = -O3 -arch sm_30 --ptxas-options=-v -use_fast_math -Xcompiler -funroll-loops -Xcompiler -msse2
 
 PROGS = alimask\
 	hmmalign\
@@ -63,6 +72,11 @@ PROGS = alimask\
 	hmmpgmd\
 	hmmc2
 
+CXXPROGS = hmmsort
+
+CUDAPROGS = cudaHmmsearch
+
+CUDAOBJS = GPUFunction.o
 
 PROGOBJS =\
 	alimask.o\
@@ -144,7 +158,7 @@ OBJS =  build.o\
 	p7_scoredata.o\
     hmmpgmd2msa.o
 #	island.o\
-
+/
 STATS = \
 	evalues_stats
 
@@ -221,7 +235,7 @@ endif
 
 .PHONY: all dev tests check install uninstall distclean clean TAGS
 
-all:   ${PROGS} .FORCE
+all:   ${PROGS} ${CXXPROGS} ${CUDAPROGS} .FORCE
 
 dev:   ${PROGS} ${UTESTS} ${ITESTS} ${STATS} ${BENCHMARKS} ${EXAMPLES} .FORCE
 	${QUIET_SUBDIR0}${IMPLDIR} ${QUIET_SUBDIR1} dev
@@ -251,6 +265,16 @@ ${PROGS}: @EXEC_DEPENDENCY@  libhmmer.a ../${ESLDIR}/libeasel.a
 
 .c.o:
 	${QUIET_CC}${CC} ${CFLAGS} ${SIMDFLAGS} ${DEFS} ${CPPFLAGS} ${MYINCDIRS} -o $@ -c $<
+
+${CUDAPROGS}: @EXEC_DEPENDENCY@  ${OBJS} ${CUDAOBJS}
+	${CC} ${CFLAGS} ${SIMDFLAGS} ${DEFS} ${LDFLAGS} ${MYLIBDIRS} -L${CUDA_LIB_PATH} -o $@ $@.o ${CUDAOBJS} ${LIBS} ${CUDALIBS} 
+
+%.o : %.cu
+	${NVCC} ${NVCCFLAGS} ${MYINCDIRS} -I${CUDA_INC_PATH} -o $@ -c $<
+
+${CXXPROGS}:
+	${CXX} -o $@ $@.cpp
+
 
 ${ITESTS}: @EXEC_DEPENDENCY@ libhmmer.a ${HDRS} p7_config.h
 	${QUIET_GEN}${CC} ${CFLAGS} ${SIMDFLAGS} ${DEFS} ${LDFLAGS} ${MYLIBDIRS} -o $@ $@.o ${MPILIBS} ${LIBS}
