@@ -20,7 +20,7 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
  \item Software system\\
  The operating system used was Ubuntu 64 bit Linux v12.10; the CUDA toolkit used was version 5.5.
  \item Target sequences database\\
- Two target sequences databases was used in the benchmark experiments: SP201309 and N201404. SP201309 was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. N201404 was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
+ Two target sequences databases was used in the benchmark experiments: \textbf{SP201309} and \textbf{N201404}. SP201309 was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. N201404 was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
  \item Query profile HMMs\\
  We tested 5 profile HMMs of length 149, 255, 414, 708 and 1111 states, detailed in Table \ref{tab.phmms}. Globin4 with length of 149 states was distributed with the HMMER source \citep{Hsource}. Other 4 HMMs were taken directly from the Pfam database \citep{Pfam} that vary in length from 255 to 1111 states.\\
  \begin{table}[H]
@@ -45,19 +45,13 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
 
 \section{Performance Results}
 We did four experiments for our implementation cudaHmmsearch benchmarking. Each experiment was done in the same benchmarking environment as described in section \ref{bench}. This section will explain each experiment and show the results and the related analysis of these experiments.
- 
-\subsection{Benchmark experiments}
-as follows:
-\begin{enumerate}
- \item ExperimentA \\
- 
 
 \subsection{Comparison with less optimized approaches}
 This experiment is identified as ExperimentA, testing the performance of cudaHmmsearch with several selected approaches. To show the performance impact of the selected optimization approaches, the performance of the corresponding implementation was benchmarked and the corresponding improvement was measured in percentage compared with that of previous approach.
 
-All tests are taken searching the globin4 profile HMM against the SP201309 database.
+All tests were taken searching the globin4 profile HMM against the SP201309 database.
 
-Table \ref{tab.opt} shows the testing results of this experiment. The fourth column `Improvement' is measured in percentage compared with the previous approach.
+Table \ref{tab.opt} shows the testing results of this ExperimentA. The fourth column `Improvement' is measured in percentage compared with the previous approach.
 
 \begin{table}[H]
 \centering
@@ -88,17 +82,21 @@ From the chart, it can be seen that several factors are related to global memory
 
 \subsection{Practical benchmark}
 \label{Pbench}
-The final cudaHmmsearch implementation, with the optimization discussed in Chapter \ref{CUDAHMMER3}, was benchmarked to determine its real-world performance. This was done by searching the much large NCBI NR database for the 5 profile HMMs with various lengths, as detailed in Table \ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core. The result of this benchmark is shown in the following table.
+This experiment is identified as ExperimentB, testing the real-world performance of the final cudaHmmsearch implementation, with the optimization discussed in Chapter \ref{CUDAHMMER3}. 
+
+This was done by using the fully optimized cudaHmmsearch to search the much large N201404 database for the 5 profile HMMs with various lengths, as detailed in Table \ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on 1 CPU core. The result of this ExperimentB is shown in the following table.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|}\hline
 \shortstack{\textbf{Profile HMM} \\ \textbf{(length)}} & \shortstack{\textbf{globins4} \\ (149)} & \shortstack{\textbf{120\_Rick\_ant}\\ (255)} & \shortstack{\textbf{2HCT}\\ (414)} & \shortstack{\textbf{ACC\_central} \\ (708)} & \shortstack{\textbf{AAA\_27} \\ (1111)} \\\hline
+\shortstack{Running time \\ of hmmsearch \\ (s) } & 217.54 & 297.52 & 484.68 & 809.97 & 2203.36 \\\hline
 \shortstack{Performance of \\ hmmsearch \\ (GCUPS)} & 9.37 & 11.72 & 11.68 & 11.96 & 6.90 \\\hline
+\shortstack{Running time of \\ cudaHmmsearch \\ (s) } & 88.63 & 108.42 & 188.72 & 295.02 & 1034.96 \\\hline
 \shortstack{Performance of \\ cudaHmmsearch \\ (GCUPS)} & 23.00 & 32.17 & 30.01 & 32.83 & 14.68 \\\hline
 \shortstack{Speedup \\ (times)} & 2.45 & 2.74 & 2.57 & 2.75 & 2.13 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
+\caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} The table shows the result of ExperimentB, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 5 profile HMMs against the N201404 database. Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
 \end{table}
 
 The results of the benchmarks are shown in graphical form in Figure \ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.5x than hmmsearch. 
@@ -110,7 +108,7 @@ The results of the benchmarks are shown in graphical form in Figure \ref{fig:len
 	\label{fig:len}
 \end{figure}
 
-Figure \ref{fig:len} shows that the performance of both GPU and CPU searching for AAA\_27 dropped greatly. The reason can be seen from the table \ref{tab.sta} listing the internal pipeline statistics summary for searching globin4 and AAA\_27. For every filter, the count of passed sequences for searching AAA\_27 with 1111 states is much more than that of globin4 with 149 states. This means that for searching AAA\_27, much more target sequences than searching globin4 are needed calculating in each filter after MSV filter. And at the same time, each filter is more time-consuming than MSV filter. All of these result in the AAA\_27 performance dropping greatly.
+Figure \ref{fig:len} also shows that the performance of both GPU and CPU searching for AAA\_27 dropped significantly compared with other searches. The reason can be seen from the table \ref{tab.sta} listing the internal pipeline statistics summary for searching globin4 and AAA\_27. The table shows the total number of target sequences in the N201404 database and the number of passed sequences after each filter. After every filter, the number of passed sequences for searching AAA\_27 with 1111 states is much more than that of globin4 with 149 states. This means that for searching AAA\_27, much more target sequences than searching globin4 are needed calculating in each filter after MSV filter. And at the same time, each filter is more time-consuming than MSV filter. All of these result in the AAA\_27 performance dropping significantly.
 
 \begin{table}[H]
 \centering
@@ -122,15 +120,15 @@ Passed bias filter & 973354 & 1671084 \\\hline
 Passed Viterbi filter & 70564 & 322206 \\\hline
 Passed Forward filter & 7145 & 17719 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont Internal pipeline statistics summary\label{tab.sta}}
+\caption{\fontfamily{pag}\selectfont \textbf{Internal pipeline statistics summary.}\label{tab.sta} The table shows the total number of target sequences in the N201404 database and the number of passed sequences after each filter for searching globin4 and AAA\_27 in the ExperimentB.}
 \end{table}
 
 \subsection{Comparison with multicore CPU}
-Since multicore processors were developed in the early 2000s by Intel, AMD and others, nowadays CPU has become multicore with two cores, four cores, six cores and more. The Kronos \ref{Kronos} experiment system has CPU with six cores. This section presents the benchmarks of cudaHmmsearch running with multiple CPU cores.
+Since multicore processors were developed in the early 2000s by Intel, AMD and others, nowadays CPU has become multicore with two cores, four cores, six cores and more. The Kronos \ref{Kronos} experiment system has CPU with six cores. This experiment is identified as ExperimentC, testing the performance of cudaHmmsearch and hmmsearch of HMMER3 running with multiple CPU cores.
 
-The experiment was done by executing cudaHmmsearch and hmmsearch with 1, 2...6 CPU cores, searching the NCBI NR database for the HMM with 255-state length.
+The benchmark has not been used in the articles cited in this thesis. The purpose of this benchmark is to show how the performance increase or decrease with more CPU cores involved in computing. 
 
-The benchmark has not been used in the articles cited in this thesis. The purpose of this benchmark is to show how the performance increase or decrease with more CPU cores involved in computing. The result of this benchmark is shown in the following table.
+The experiment was done by executing the fully optimized cudaHmmsearch and hmmsearch of HMMER3 with 1, 2...6 CPU cores involved in computing, searching the N201404 database for the 120\_Rick\_ant profile HMM with 255-state length. The result of this ExperimentC is shown in the following table.
 
 \begin{table}[H]
 \centering
@@ -139,7 +137,7 @@ The benchmark has not been used in the articles cited in this thesis. The purpos
 cudaHmmsearch & 32.17 & 50.22 & 57.70 & 59.14 & 59.39 & 59.29 \\\hline
 hmmsearch & 11.72 & 23.28 & 29.22 & 44.15 & 46.19 & 44.69 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont {Result of Comparison with multicore CPU.} \label{tab.mcpu}}
+\caption{\fontfamily{pag}\selectfont \textbf{Result of Comparison with multicore CPU.} \label{tab.mcpu} The table shows the result of ExperimentC, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 120\_Rick\_ant profile HMM against the N201404 database with 1, 2...6 CPU cores involved in computing. }
 \end{table}
 
 The graphic view of the benchmark is shown in Figure \ref{fig:cpuCores}. The number above each bar is the Performance in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance go up almost linearly. From then on, due to complex schedule among CPU cores, the extra CPU core will not contribute much to both cudaHmmsearch and hmmsearch execution. Even worse, it will have negative effect as shown clearly in the `6 CPU' case.
@@ -152,9 +150,9 @@ The graphic view of the benchmark is shown in Figure \ref{fig:cpuCores}. The num
 \end{figure}
 
 \subsection{Comparison with other implementations}
-The performance of cudaHmmsearch was also compared to the previous HMMER solutions: HMMER2.3.2 \citep{HMMER2}, GPU-HMMER2.3.2 \citep{GPUHMM} and HMMER3 \citep{Hsource}.
+This experiment is identified as ExperimentD, testing the performance comparison of cudaHmmsearch with the previous hmmsearch solutions: HMMER2.3.2 \citep{HMMER2}, GPU-HMMER2.3.2 \citep{GPUHMM} and HMMER3 \citep{Hsource}.
 
-All tests are taken searching against the Swiss-Prot database for the globin4 profile HMM. The result of this benchmark is shown in the following table.
+All tests were taken using the fully optimized cudaHmmsearch and the hmmsearch in HMMER2.3.2, GPU-HMMER2.3.2 and HMMER3 to search against the SP201309 database for the globin4 profile HMM. The hmmsearch in HMMER2.3.2 and HMMER3 were executed on 1 CPU core. The hmmsearch in GPU-HMMER2.3.2 was executed on GPU. The result of this ExperimentD is shown in the following table.
 
 \begin{table}[H]
 \centering
@@ -162,15 +160,15 @@ All tests are taken searching against the Swiss-Prot database for the globin4 pr
 \shortstack{Application \\ (Device)} & \shortstack{HMMER2.3.2 \\ (CPU)} & \shortstack{GPU-HMMER2.3.2 \\ (GPU)} & \shortstack{HMMER3 \\ (CPU)} & \shortstack{cudaHmmsearch \\ (GPU)} \\\hline
 \shortstack{Performance\\ (GCUPS)} & 0.14 & 0.95 & 8.47 & 17.36 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont {Result of Comparison with other implementations.} \label{tab.hmms}}
+\caption{\fontfamily{pag}\selectfont \textbf{Result of Comparison with other implementations.} \label{tab.hmms} The table shows the result of ExperimentD, searching against the SP201309 database for the globin4 profile HMM. The hmmsearch in HMMER2.3.2 and HMMER3 were executed on 1 CPU core. The hmmsearch in GPU-HMMER2.3.2 and the fully optimized cudaHmmsearch was executed on GPU.}
 \end{table}
 
-As seen from the Figure \ref{fig:hmms}, since the release of HMMER2.3.2 in Oct 2003, accelerating hmmsearch researches on both CPU and GPU have achieved excellent improvement.
+As seen from the Figure \ref{fig:hmms}, since the release of HMMER2.3.2 in Oct 2003, accelerating hmmsearch researches on both CPU and GPU have achieved significant improvement.
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.28\textheight]{Figures/manyhmms.png}
-	\caption{\fontfamily{pag}\selectfont Comparison with other implementations.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Comparison with other implementations}. The data of this chart come from Table \ref{tab.hmms}}
 	\label{fig:hmms}
 \end{figure}
 
