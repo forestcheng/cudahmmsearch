@@ -9,6 +9,7 @@ Chapter \ref{CUDAHMMER3} described several approaches to optimize the cudaHmmsea
 %----------------------------------------------------------------------------------------
 
 \section{Benchmarking environment}
+\label{bench}
 The benchmarking environment were set up in Kronos machine \label{Kronos}as follows:
  
 \begin{itemize}
@@ -19,7 +20,7 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
  \item Software system\\
  The operating system used was Ubuntu 64 bit Linux v12.10; the CUDA toolkit used was version 5.5.
  \item Target sequences database\\
- One was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. Another was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
+ Two target sequences databases was used in the benchmark experiments: SP201309 and N201404. SP201309 was Swiss-Prot database in fasta format released in September 2013 \citep{UniProt} containing 540,958 sequences with length varying from 2 $\sim$ 35,213 amino acids, comprising 192,206,270 amino acids in total, more than 258MB in file size. N201404 was much larger NCBI NR database in fasta format released in April 2014 \citep{NCBI} containing 38,442,706 sequences with length varying from 6 $\sim$ 41,943 amino acids, comprising 13,679,143,700 amino acids in total, more than 24GB in file size.
  \item Query profile HMMs\\
  We tested 5 profile HMMs of length 149, 255, 414, 708 and 1111 states, detailed in Table \ref{tab.phmms}. Globin4 with length of 149 states was distributed with the HMMER source \citep{Hsource}. Other 4 HMMs were taken directly from the Pfam database \citep{Pfam} that vary in length from 255 to 1111 states.\\
  \begin{table}[H]
@@ -43,11 +44,20 @@ The benchmarking environment were set up in Kronos machine \label{Kronos}as foll
 %----------------------------------------------------------------------------------------
 
 \section{Performance Results}
+We did four experiments for our implementation cudaHmmsearch benchmarking. Each experiment was done in the same benchmarking environment as described in section \ref{bench}. This section will explain each experiment and show the results and the related analysis of these experiments.
+ 
+\subsection{Benchmark experiments}
+as follows:
+\begin{enumerate}
+ \item ExperimentA \\
+ 
 
 \subsection{Comparison with less optimized approaches}
-To show the performance impact of several selected optimization approaches, the performance of the implementation was compared with that of previous approach.
+This experiment is identified as ExperimentA, testing the performance of cudaHmmsearch with several selected approaches. To show the performance impact of the selected optimization approaches, the performance of the corresponding implementation was benchmarked and the corresponding improvement was measured in percentage compared with that of previous approach.
 
-Table \ref{tab.opt} shows the approaches taken in optimizing performance. All tests are taken against the Swiss-Prot database. The query HMM used was globin4. The fourth column `Improvement' is measured in percentage compared with the previous approach.
+All tests are taken searching the globin4 profile HMM against the SP201309 database.
+
+Table \ref{tab.opt} shows the testing results of this experiment. The fourth column `Improvement' is measured in percentage compared with the previous approach.
 
 \begin{table}[H]
 \centering
@@ -62,10 +72,10 @@ Texture memory & 5.370 & 5.333 & 22 \\\hline
 Sorting Database & 2.346 & 12.207 & 129 \\\hline
 Distributing workload & 1.650 & 17.357 & 42 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont \textbf{Performance of optimization approaches.} The fourth column \textbf{Improvement} is measured in percentage compared with the previous approach. The row `Coalescing of global memory' is benchmarked only for the $dp$ matrix. The row `Texture memory' is benchmarked only for the query profile texOMrbv 2D texture. \label{tab.opt}}
+\caption{\fontfamily{pag}\selectfont \textbf{Performance of optimization approaches.} The table shows the result of ExperimentA, using cudaHmmsearch to search the globin4 profile HMM against the SP201309 database. The fourth column \textbf{Improvement} is measured in percentage compared with the previous approach. The row `Coalescing of global memory' is benchmarked only for the $dp$ matrix. The row `Texture memory' is benchmarked only for the query profile texOMrbv 2D texture. \label{tab.opt}}
 \end{table}
 
-The graphic view corresponding to Table is shown in Figure \ref{fig:imp}. 
+The graphic view corresponding to the above table is shown in Figure \ref{fig:imp}. 
 
 \begin{figure}[!htb]
 	\centering
