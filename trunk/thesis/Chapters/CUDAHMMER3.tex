@@ -13,16 +13,16 @@
 The following are the requirements for a CUDA accelerated HMMER3 protein sequence search tool:
 
 \begin{itemize}
-\item A HMMER3 protein sequence search tool, named cudaHmmsearch, will be implemented to run on CUDA-enabled GPU and several optimization will be taken to accelerate the computation. The cudaHmmsearch will be tested and compared with other CPU and GPU implementations.
-\item The cudaHmmsearch will be based on HMMER3 algorithm so that the result will be same as hmmsearch of HMMER3.
-\item The cudaHmmsearch will be completely usable under various GPU devices and sequence database size. This means that cudaHmmsearch is not just for research purpose or just a proof of concept.
+\item A HMMER3 protein sequence search tool, named \emph{cudaHmmsearch}, will be implemented to run on CUDA-enabled GPU and several optimization will be taken to accelerate the computation. The cudaHmmsearch will be tested and compared with other CPU and GPU implementations.
+\item The cudaHmmsearch will be based on the HMMER3 algorithm so that the result will be the same as hmmsearch of HMMER3.
+\item The cudaHmmsearch will be completely usable under various GPU devices and sequence database sizes. This means that cudaHmmsearch is not just for research purpose or just a proof of concept.
 \end{itemize}
 
 \subsubsection*{Implementation toolkit and language}
 
 NVIDIA CUDA \citep{CUDAzone} was chosen as the toolkit to be used in the implementation phase. Since its introduction in 2006, CUDA has been widely deployed through thousands of applications and published research papers, and supported by an installed base of over 500 million CUDA-enabled GPUs in notebooks, workstations, compute clusters and supercomputers \citep{CUDAwhat}. As of writing, CUDA is the most mature and popular GPU programming toolkit. 
 
-HMMER3 is implemented in C programming language. CUDA provides a comprehensive development environment for C and C++ developers. However, some advanced features of CUDA, such as texture, are only supported in C++ template programming. So C++ has to be used, and some compatible problems when compiling and programming between C and C++ have also to be dealt with accordingly.
+HMMER3 is implemented in the C programming language. CUDA provides a comprehensive development environment for C and C++ developers. However, some advanced features of CUDA, such as texture, are only supported in C++ template programming. So C++ has to be used, and some compatibility problems when compiling and programming between C and C++ have also to be dealt with accordingly.
 
 \subsubsection*{Implementation methods}
 \label{impl}
@@ -34,14 +34,14 @@ The following two approaches have been explored for parallelizing the protein se
  \item \textbf{Data-based parallelism} Each task is assigned to one or many thread block(s) and all threads in the thread block(s) cooperate to perform the task in parallel.
 \end{itemize}
 
-Task-based parallelism has some advantages over data-based parallelism. On one side, it removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. As described before, the thread or processing elements of one CUDA multiprocessor can communicate by using shared memory, while slow global memory must be used to transfer data between multiprocessors. At the same time, data-based also needs to take time on synchronizing and cooperating among threads. On the other side, to task-based, performing one sequence on each thread results in a kernel where each processing element is doing the exact same thing independently. This also simplifies implementation and testing. Although task-based parallelism needs more device memory than data-based, it can achieve better performance \citep{SW++}. Thus, the approach of task-based parallelism is taken and more efforts are put on optimizing CUDA kernel execution.
+Task-based parallelism has some advantages over data-based parallelism. On one hand, it removes the need for inter-thread communications or, even worse, inter-multiprocessor communications. As described before, the thread or processing elements of one CUDA multiprocessor can communicate by using shared memory, while slow global memory must be used to transfer data between multiprocessors. At the same time, data-based parallelism also needs to take time on synchronizing and cooperating among threads. On the other hand, task-based parallelism is processing one sequence on each thread which results in a kernel where each processing element is doing the exact same thing independently. This also simplifies implementation and testing. Although task-based parallelism needs more device memory than data-based parallelism, it can achieve better performance \citep{SW++}. Thus, the approach of task-based parallelism is taken and efforts are focused on optimizing CUDA kernel execution.
 
-Since data-based parallelism occupies significantly less device memory, \citep{SW++} uses it to support longest query/subject sequences. However, different strategy here is applied to work around this problem and is discussed in details in subsection \ref{workload} on workload distribution.
+Since data-based parallelism occupies significantly less device memory, \citep{SW++} uses it to support the longest query/subject sequences. However, a different strategy here is applied to work around this problem and is discussed in detail in subsection \ref{workload} on workload distribution.
 
 %----------------------------------------------------------------------------------------
 
 \section{A straightforward implementation}
-
+\label{Aimpl}
 This section describes a straightforward, mostly un-optimized implementation of the protein database search tool. First, a simple serial CPU implementation of hmmsearch is presented, with no GPU specific traits. Next, the MSV filter is ported to the GPU. This implementation is then optimized in the next section.
 
 \subsection{CPU serial version of hmmsearch}
@@ -56,11 +56,11 @@ The CPU serial version of hmmsearch in HMMER3 is shown in Figure \ref{fig:hmmsea
 \end{figure}
 
 \label{hmmsearch}
-After each filter step, the pipeline either accepts or rejects the entire comparison, based on the P-value of the score calculated in each filter. For example, as can be seen in Figure \ref{fig:hmmsearch}, by default a target sequence can pass the MSV filter if its comparison gets a P-value of less than 0.02. By this way, in practice about 2\% of the top-scoring target sequences are expected to pass the filter. So, much fewer target sequence can pass one filter and need further computing. In consequence, the comparison is accelerated. Thus, the first MSV filter is typically the run time bottleneck for hmmsearch. Therefore, the key to parallelizing hmmsearch tool is to offload the MSV filter function to multiple computing elements on GPU, while ensuring that the code shown in Figure \ref{MSV-SIMD} is as efficient as possible.
+After each filter step, the pipeline either accepts or rejects the entire comparison, based on the P-value of the score calculated in each filter. For example, as can be seen in Figure \ref{fig:hmmsearch}, by default a target sequence can pass the MSV filter if its comparison gets a P-value of less than 0.02. In practice about 2\% of the top-scoring target sequences are expected to pass the filter. So, much fewer target sequences can pass one filter and hence need further computing. In consequence, the comparison is accelerated. Thus, the first MSV filter is typically the run time bottleneck for hmmsearch. Therefore, the key to parallelizing hmmsearch tool is to offload the MSV filter function to multiple computing elements on the GPU, while ensuring that the code shown in Figure \ref{MSV-SIMD} is as efficient as possible.
 
 \subsection{GPU implementation of MSV filter}
 
-A basic flow of the GPU implementation for MSV filter is shown in Figure \ref{fig:gpuMSV}. As can be seen, the code must be split up into two parts, with the left \emph{host} part running on CPU and the right \emph{device} part running on GPU. Some redundancy as data needed by GPU to compute will be copied around the memories in host and device.
+A basic flow of the GPU implementation for the MSV filter is shown in Figure \ref{fig:gpuMSV}. The code is split up into two parts, with the left \emph{host} part running on the CPU and the right \emph{device} part running on the GPU. There is some redundancy as data needed by the GPU will be copied between the memories in the host and the device.
 
 \begin{figure}[!htb]
  \centering
@@ -69,26 +69,26 @@ A basic flow of the GPU implementation for MSV filter is shown in Figure \ref{fi
  \label{fig:gpuMSV}
 \end{figure}
 
-The CPU code mainly concerns about allocating data structures on GPU, loading data, copying them to GPU, launching the GPU kernel and copying back the result for further steps.
+The CPU code mainly concerns allocating data structures on the GPU, loading data, copying data to the GPU, launching the GPU kernel and copying back the results for further steps.
 
-The GPU kernel code is corresponding to the MSV filter Algorithm \ref{MSV-SIMD} and some more explanation are worth for it. First, the thread's current database sequence is set to the thread id. By this way each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on GPU kernel is halted when every thread finishes its sequence.
+The GPU kernel code corresponds to the MSV filter Algorithm \ref{MSV-SIMD}. First, the thread's current database sequence is set to the thread id. Hence each thread begins processing a different neighbouring sequence. This thread id is a unique numeric identifier for each thread and the id numbers of threads in a warp are consecutive. Next, the location where each thread can store and compute its dp matrix is determined in the global memory. This is calculated also using the thread id for each thread. When processing the sequence, successive threads access the successive addresses in the global memory for the sequence data and dp matrix, i.e. using a coalesced access pattern. Execution on the GPU kernel is halted when every thread finishes its sequence.
 
 %----------------------------------------------------------------------------------------
 
 \section{Optimizing the implementation}
 
-Although a fully functioning GPU MSV filter has been presented, its simple implementation is quite slow: more than 227 seconds to search the test database Swiss-Prot with 540,958 query sequences, as shown in Table{tab.opt}.
+Although a fully functioning GPU MSV filter has been presented, its simple implementation is quite slow: more than 227 seconds to search the test database Swiss-Prot with 540,958 query sequences, as shown in Table \ref{tab.opt}.
 
 This section discusses the optimization steps taken to eventually reach a benchmark database search time of 1.65 seconds: an almost 137 times speedup.
 
 \subsection{Global Memory Accesses}
 \label{global}
 
-The global memory is used to store most of data on GPU. A primary in the optimization is to improve the efficiency of accessing global memory as much as possible. One way of course is to reduce the frequency of access. Another way is coalescing access.
+The global memory is used to store most of data on the GPU. A primary concern in the optimization is to improve the efficiency of accessing global memory. One way is to reduce the frequency of access. Another way is coalescing access.
 
 \subsubsection*{Access frequency}
-
-The elements of the \emph{dp} matrix and the query profile matrix are 8-bit value.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit value residing in global memory, compared with using 8-bit \emph{char} type.
+\label{Afre}
+The elements of the \emph{dp} matrix and the query profile matrix are 8-bit values.  The \emph{uint4} and \emph{ulong2} (see the code below) are 128-bit CUDA built-in vector types. So the access frequency would be decreased 16 times by using \emph{uint4} or \emph{ulong2} to fetch the 8-bit values residing in global memory, compared with using 8-bit \emph{char} type.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -113,25 +113,25 @@ struct \_\_device\_builtin\_\_ ulong2\\
 % \};
 % \end{Verbatim}
 
-This approach resulted in increased register pressure and gained a huge speed boost of almost 8 times in total.
+This approach is very effective and gained a huge speed boost of almost 8 times in total.
 
-\subsubsection*{coalescing access}
-
-Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine several small and non-contiguous access of global memory, into a single large and more efficient contiguous memory access. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure \ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address.
+\subsubsection*{Coalescing access}
+\label{coal}
+Coalescing access is the single most important performance consideration in programming for CUDA-enabled GPU architectures. Coalescing is a technique applied to combine several small and non-contiguous access of global memory, into a single large and more efficient contiguous memory access. A prerequisite for coalescing is that the words accessed by all threads in a warp must lie in the same segment. As can be seen in Figure \ref{fig:coalescing}, the memory spaces referred to by the same variable names (not referring to the same addresses) for all threads in a warp have to be allocated in the form of an array to keep them contiguous in address space.
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.115\textheight]{Figures/coalesce.png}
-	\caption{\fontfamily{pag}\selectfont Coalescing Global Memory Accesses\citep{Waters}.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Coalescing Global Memory Accesses\citep{Waters}}. A prerequisite for coalescing access global memory: the addresses of global memory being accessed by the threads in a warp must be contiguous and increasing (i.e., offset by the thread ID). }
 	\label{fig:coalescing}
 \end{figure}
 
-For coalescing access, the target sequences are arranged in a matrix like an upside-down bookcase shown in Figure \ref{fig:dbalign}, where all residues of a sequence are restricted to be stored in the same column from top to bottom. And all sequences are arranged in decreasing length order from left to right in the array, which is explained in section \ref{dbsort}. 
+For coalescing access, the target sequences are arranged in a matrix like an upside-down bookcase shown in Figure \ref{fig:dbalign}, where all residues of a sequence are restricted to be stored in the same column from top to bottom. And all sequences are arranged in decreasing length order from left to right in the array, which is explained in Section \ref{dbsort}. 
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/dbalign.png}
-	\caption{\fontfamily{pag}\selectfont Alignment of target sequences.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Alignment of target sequences} For coalescing access, all residues of a target sequence are stored in the same column of the data matrix from top to bottom. Each thread is in charge of processing a sequence in a column.}
 	\label{fig:dbalign}
 \end{figure}
 
@@ -140,7 +140,7 @@ Figure \ref{fig:dp} presents the similar global memory allocation pattern of \em
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.2\textheight]{Figures/dp.png}
-	\caption{\fontfamily{pag}\selectfont The dp matrix in global memory.}
+	\caption{\fontfamily{pag}\selectfont \textbf{The allocation pattern of dp matrix in global memory}. Each thread is in charge of processing a sequence in a column. The sequences are indexed from $Seq0$ to $Seq_{M-1}$. $M$ is the number of target sequences. The dp matrix has $Q$ rows which corresponds to the profile length.}
 	\label{fig:dp}
 \end{figure}
 
@@ -157,7 +157,7 @@ At the beginning, since \emph{uint4} is 16-bytes data block, the traditional C/C
  memcpy(dp, \&sv, sizeof(uint4));
 \end{quote}
 
-However, in practice of CUDA kernel execution, the above \emph{memcpy} involves $16 = sizeof(uint4)$ reads/writes from/to global memory respectively, not 1 read/write. Switching to the following direct assignment instruction will be 1 read/write and fully coalesce access global memory, with 81\% improvement over the above \emph{memcpy}().
+However, in practice during CUDA kernel execution, the above \emph{memcpy} involves $16 = sizeof(uint4)$ reads/writes from/to global memory respectively, not one read/write. Switching to the following direct assignment instruction will be one read/write and fully coalesce access global memory, with 81\% improvement over the above \emph{memcpy}().
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -165,25 +165,25 @@ However, in practice of CUDA kernel execution, the above \emph{memcpy} involves 
  *(dp) = sv;
 \end{quote}
 
-\subsection{texture memory}
+\subsection{Texture memory}
 \label{tex}
 
 The read-only texture memory space is a cached window into global memory that offers much lower latency and does not require coalescing for best performance. Therefore, a texture fetch costs one device memory read only on a cache miss; otherwise, it just costs one read from the texture cache. The texture cache is optimized for 2D spatial locality, so threads of the same warp that read texture addresses that are close together will achieve best performance \citep{CUDA-C}.
 
-Texture memory is well suited to random access. CUDA has optimized the operation fetching 4 values (RGB colors and alpha component, a typical graphics usage) at a time in texture memory. And this mechanism is applied to fetch 4 read-only values from the query profile matrix \emph{texOMrbv} with the \emph{uint4} built-in type. Since the data of target sequences is read-only, it can also use texture for better performance.
+Texture memory is well suited to random access. CUDA has optimized the operation fetching 4 values (RGB colors and alpha component, a typical graphics usage) at a time in texture memory. This mechanism is applied to fetch 4 read-only values from the query profile matrix \emph{texOMrbv} with the \emph{uint4} built-in type. Since the data of target sequences is read-only, it can also use texture memory for better performance.
 
 Switching to texture memory for the query profile texOMrbv resulted in about 22\% performance improvement.
 
 \subsubsection*{Restrictions using texture memory}
 
-Texture memory come from the GPU graphics and therefore are less flexible than the CUDA standard types. It must be declared at compile time as a fixed type, for example \emph{uint4} for the query profile in our case:
+Texture memory is designed for the GPU graphics processing and therefore is less flexible than the CUDA standard types. It must be declared at compile time as a fixed type, for example \emph{uint4} for the query profile in our case:
 
 \begin{quote}
 \fontfamily{phv}\fontseries{mc}\selectfont
  texture$<$uint4, cudaTextureType2D, cudaReadModeElementType$>$ \emph{texOMrbv};
 \end{quote}
 
-How the values are interpreted is specified at run time. Texture memory is read-only to CUDA kernel and must be explicitly accessed via a special texture API (e.g. tex2D(), tex1Dfetch(), etc) and arrays bound to textures.
+How the values are interpreted is specified at run time. Texture memory is read-only to the CUDA kernel and must be explicitly accessed via a special texture API (e.g. tex2D(), tex1Dfetch(), etc) and arrays must be bound to textures.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
@@ -191,19 +191,6 @@ How the values are interpreted is specified at run time. Texture memory is read-
 \end{quote}
 
 However, on the CUDA next-generation architecture Kepler, the texture cache gets a special compute path, removing the complexity associated with programming it \citep{Kepler}.
-
-\subsection{Virtualized SIMD vector programming model}
-
-Inspired by the fact that CUDA has optimized the operation fetching a four component RGBA colour in texture memory, the target sequence is re-organized using a packed data format, where four consecutive residues of each sequence are packed together and represented using the \emph{uchar4} vector data type, instead of the \emph{char} scalar data type, as can be seen in Figure \ref{fig:simdvector}(\textit{a}). In this way, four residues are loaded using only one texture fetch, thus significantly improving texture memory throughput. 
-
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[totalheight=0.2\textheight]{Figures/simdvector.png}
-	\caption{\fontfamily{pag}\selectfont SIMD vector alignment of data: (\textit{a}) target sequence; (\textit{b}) dp array.}
-	\label{fig:simdvector}
-\end{figure}
-
-Similarly, the dp array and the query profile also use the virtualized SIMD vector allocation pattern, as can be seen in Figure \ref{fig:simdvector}(\textit{b}).
 
 \subsection{SIMD Video Instructions}
 \label{video}
@@ -219,7 +206,7 @@ The basic syntax of an \emph{asm}() statement is:
  asm(``template-string" : ``constraint"(output) : ``constraint"(input));
 \end{quote}
 
-The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands(``op1" and ``op2") and destination operand(``rv") are all unsigned 32-bit registers(``u32"), which is different from 128-bit in SSE2. For additions and subtractions, saturation instructions(``sat") have been used to clamp the values to their appropriate unsigned ranges.
+The following three instructions are used in the implementation. Every instruction operates on quads of 8-bit signed values. The source operands (``op1" and ``op2") and destination operand (``rv") are all unsigned 32-bit registers (``u32"), which is different from 128-bit CPU registers in SSE2. For additions and subtractions, saturation instructions (``sat") have been used to clamp the values to their appropriate unsigned ranges.
 
 \begin{quote}
 \fontfamily{phv}\fontseries{mc}\selectfont
@@ -234,12 +221,27 @@ The following three instructions are used in the implementation. Every instructi
 
 Switching to the SIMD video instructions also achieved a large speedup of nearly 2 times.
 
-From here and the acceleration of HMMER3, we can see the parallel vector instructions can greatly improve computing for array or matrix. We can also see the limitation of GPU SIMD computing compared to CPU: GPU can only support 32-bit register operations, 4 times lower than CPU SSE2 128-bit register operations.
+These results, as well as the acceleration of HMMER3, show that the parallel vector instructions can greatly improve computing for array or matrix operations. We can also see the limitation of GPU SIMD computing compared to CPU SIMD computing: the GPU can only support 32-bit register operations, which are 4 times less in data bandwidth than that CPU SSE2 128-bit register operations.
+
+\subsection{Virtualized SIMD vector programming model}
+
+Vector programming model plays an important role in operations of array or matrix. On one hand, it can reduce significantly the frequency of memory access. On the other hand, it can utilize the SIMD vector instructions for parallel computing on the CPU or the GPU.
+
+Inspired by the fact that CUDA has optimized the operation fetching a four component RGBA colour in texture memory, the target sequence is re-organized using a packed data format, where four consecutive residues of each sequence are packed together and represented using the \emph{uchar4} vector data type, instead of the \emph{char} scalar data type, as can be seen in Figure \ref{fig:simdvector}(\textit{a}). In this way, four residues are loaded using only one texture fetch, thus significantly improving texture memory throughput. 
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[totalheight=0.2\textheight]{Figures/simdvector.png}
+	\caption{\fontfamily{pag}\selectfont \textbf{SIMD vector alignment pattern}: (\textit{a}) For a target sequence, four consecutive residues which are indexed from 0 are packed together and represented using the uchar4 vector data type. (\textit{b}) For a dp array, 16 consecutive bytes which are indexed from 0 are packed together and represented using the uint4 vector data type. A dp array has $Q$ elements which corresponds to the profile length.}
+	\label{fig:simdvector}
+\end{figure}
+
+Similarly, the dp array and the query profile also use the virtualized SIMD vector allocation pattern, as can be seen in Figure \ref{fig:simdvector}(\textit{b}). The reason why the target sequence only use 4-byte uchar4, not 16-byte uint4 as the dp array is because it will demand much more register memory. And the dp array has been packed in this pattern in HMMER3.
 
 \subsection{Pinned (non-pageable) Memory}
 \label{pin}
 
-It is necessary to transfer data to the GPU over the PCI-E data bus. Compared to access to CPU host memory, this bus is very slow. Pinned memory is memory that cannot be paged (swapped) out to disk by the virtual memory management of the OS. In fact, PCI-E transfer can only be done using pinned memory, and if the application does not allocate pinned memory, the CUDA driver does this in the background for us. Unfortunately, this results in a needless copy operation from the regular (paged) memory to or from pinned memory. We can of course eliminate this by allocating pinned memory ourselves.
+It is necessary to transfer data to the GPU over the PCI-E data bus. Compared to the access to CPU host memory, this bus is very slow. Pinned memory is memory that cannot be paged (swapped) out to disk by the virtual memory management of the OS. In fact, PCI-E transfer can only be done using pinned memory, and if the application does not allocate pinned memory, the CUDA driver does this in the background for us. Unfortunately, this results in a needless copy operation from the regular (paged) memory to or from pinned memory. We can of course eliminate this by allocating pinned memory ourselves.
 
 In the application, we simply replace \emph{malloc/free} when allocating/freeing memory in the host application with \emph{cudaHostAlloc/cudaFreeHost}.
 
@@ -258,17 +260,17 @@ Even when operating on pinned memory, such as memory allocated with \emph{cudaMa
 
 When possible, synchronous memory copy should be avoided for performance reasons. Keeping all operations asynchronous improves performance by enabling the CPU and GPU to run concurrently. Asynchronous memory copy functions have the suffix \emph{Async}(). For example, the CUDA runtime function for asynchronous host to device memory copy is \emph{cudaMemcpyAsync}().
 
-It works well only where either the input or output of the GPU workload is small in comparison to one another and the total transfer time is less than the kernel execution time. By this means we have the opportunity to hide the input transfer time and only suffer the output transfer time.
+Asynchronous memory copy works well only where either the input or output of the GPU workload is small and the total transfer time is less than the kernel execution time. By this means we have the opportunity to hide the input transfer time and only suffer the output transfer time.
 
 \subsubsection*{Multiple streams}
-A CUDA stream represents a queue of GPU operations that get executed in a specific order. We can add operations such as kernel launches, memory copies, and event starts and stops into a stream. The order in which operations are added to the stream specifies the order in which they will be executed. CUDA streams enable CPU/GPU and memory copy/kernel processing concurrency. For GPUs that have one or more copy engines, host $\longleftrightarrow$ device memory copy can be performed while the SMs are processing kernels. Within a given stream, operations are performed in sequential order, but operations in different streams may be performed in parallel \citep{CUDAintro}.
+A CUDA stream represents a queue of GPU operations that get executed in a specific order. We can add operations such as kernel launches, memory copies, and event starts and stops into a stream. The order in which operations are added to the stream specifies the order in which they will be executed. CUDA streams enable CPU/GPU and memory copy/kernel processing concurrency. For GPUs that have one or more copy engines, host to/from device memory copy can be performed while the SMs are processing kernels. Within a given stream, operations are performed in sequential order, but operations in different streams may be performed in parallel \citep{CUDAintro}.
 
-To take advantage of CPU/GPU concurrency as depicted in Figure \ref{fig:cpu_gpu}, when performing memory copies as well as kernel launches, asynchronous memory copy must be used. And Mapped pinned memory can be used to overlap PCI Express transfers and kernel processing.
+To take advantage of CPU/GPU concurrency as depicted in Figure \ref{fig:cpu_gpu}, when performing memory copies as well as kernel launches, asynchronous memory copy must be used. Mapped pinned memory can be used to overlap PCI Express transfers and kernel processing.
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.3\textwidth]{Figures/cpu_gpu.png}
-	\caption{\fontfamily{pag}\selectfont CPU/GPU concurrency.}
+	\caption{\fontfamily{pag}\selectfont CPU/GPU concurrency \citep{CUDAHand}.}
 	\label{fig:cpu_gpu}
 \end{figure}
 
@@ -306,25 +308,25 @@ By using multiple streams, we broke the kernel computation into chunks and overl
 % cudaMemcpyAsync(hostSC1, cudaSC1, num1 * sizeof(float), cudaMemcpyDeviceToHost, stream[1]);
 % \end{lstlisting}
 
-Running the improved program using pinned memory, asynchronous memory copy and two streams reveals the time drops from 16.45s to just 9.46s, a quite significant drop of over 73.8\% in execution time.
+Running the improved program using pinned memory, asynchronous memory copy and two streams reveals the time drops from 16.45s to just 9.46s; a quite significant drop of over 73.8\% in execution time.
 
-\subsection{Sorting database}
+\subsection{Sorting the database}
 \label{dbsort}
-As described in Section \ref{MSVsub}, MSV filter function is sensitive to the length of a target sequence, which determines the execution times of main \emph{for} loop in Algorithm \ref{MSV-SIMD}. 
+As described in Section \ref{MSVsub}, the MSV filter function is sensitive to the length of a target sequence, which determines the execution times of the main \emph{for} loop in Algorithm \ref{MSV-SIMD}. 
 
-Target sequence database could contain many sequences with different lengths. The NCBI NR database used in this thesis consists of over 38 million sequences with sequence lengths varying from 6 $\sim$ 41,943 amino acids \citep{NCBI}.
+The target sequence database could contain many sequences with different lengths. The NCBI NR database used in this thesis consists of over 38 million sequences with sequence lengths varying from 6 to 41,943 amino acids \citep{NCBI}.
 
-This brings a problem for parallel processing of threads on GPU: one thread could be processing a sequence of several thousands of residues while another might be working on a sequence of just a few. As a result, the thread that finishes first might be idle while the long sequence is being handled. Furthermore, unless care is taken when assigning sequences to threads, this effect might be compounded by the heavily unbalanced workload among threads.
+This brings a problem for parallel processing of threads on the GPU: one thread could be processing a sequence of several thousands of residues while another might be working on a sequence of just a few. As a result, the thread that finishes first might be idle while the long sequence is being handled. Furthermore, unless care is taken when assigning sequences to threads, this effect might be compounded by the heavily unbalanced workload among threads.
 
 In order to achieve high efficiency for task-based parallelism, the run time of all threads in a thread block should be roughly identical. Therefore the database is converted with sequences being sorted by length. Thus, for two adjacent threads in a thread warp, the difference value between the lengths of the associated sequences is minimized, thereby balancing a similar workload over threads in a warp.
 
 \subsubsection*{Block reading}
-Many research implementation were not concerned with practical matters. They just loaded the whole database data into memories of CPU host and GPU device. Large database, like NCBI NR database, is more than 24GB in size and is still increasing, being too large to load into memories of most machines.
+Many research implementations were not concerned with practical matters. They simply loaded the whole database data into the memories of the CPU host and the GPU device. A large database, like NCBI NR database, is more than 24GB in size, being too large to load into memory of most machines.
 
-Given GPU global memory is much less than CPU host, we use the size of GPU global memory as the basis to decide the size of sequence block while reading the database.
+Given that the GPU global memory is much less than the CPU host, we use the size of the GPU global memory as the basis to decide the size of the sequence block while reading the database.
 
 \subsubsection*{Descending order}
-The memory pools for database sequences both in CPU host and GPU device are dynamically allocated at run time. The pools may be required to reallocated due to more space needed for the current data block than the last one. If the pool allocated at the first time is the largest one during execution, then the overhead of reallocation will be saved. Hence, the descending order is used for sorting the database.
+The memory pools for database sequences both in the CPU host and the GPU device are dynamically allocated at run time. The pools may be required to be reallocated due to more space needed for the current data block than the last one. If the pool allocated at the first time is the largest one during execution, then the overhead of reallocation will be saved. Hence, the descending order is used for sorting the database.
 
 \subsubsection*{Performance improved}
 The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optimize the performance of the MSV GPU application cudaHmmsearch. The nvprof command was used as follows:
@@ -334,7 +336,7 @@ The CUDA profiling tool nvprof \citep{Profiler} was used to understand and optim
  \# nvprof  ./cudaHmmsearch globins4.hmm uniprot\_sprot.fasta
 \end{quote}
 
-The table \ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of before and after the target database was sorted.
+We used the above command twice for profiling cudaHmmsearch execution before and after the target database was sorted. Table \ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results respectively. The experiments were done in the environment described in Section \ref{bench}. The globins4.hmm is the Globin4 profile HMM and uniprot\_sprot.fasta is the SP201309 database, which are also described in Section \ref{bench}.
 
 \begin{table}[H]
 \centering
@@ -357,7 +359,7 @@ The table \ref{tab.nvprof1} and \ref{tab.nvprof2} list the profiling results of 
 0.03\% & 550.53us & 134 & 4.1080us & 1.6640us & 4.6720us& [CUDA memcpy DtoH]\\\hline
 0.02\% & 474.90us & 134 & 3.5440us & 672ns& 4.0320us& [CUDA memset]\\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont\textbf{Profiling result of after sorting database.} The meaning of each column is same as Table \ref{tab.nvprof1}\label{tab.nvprof2}}
+\caption{\fontfamily{pag}\selectfont\textbf{Profiling result of after sorting database.} The meaning of each column is the same as Table \ref{tab.nvprof1}\label{tab.nvprof2}}
 \end{table}
 
 From the result of profiling, we can see the performance has been increased, which is clearly shown in two ways:
@@ -370,15 +372,15 @@ This approach has the advantage of being both effective and quite straightforwar
 
 \subsection{Distributing workload}
 \label{workload}
-After launching GPU kernel, CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}( \emph{stream} ). We can get further improvement by distribute some work from GPU to CPU while CPU is waiting. In protein database, the sequences with the longest or the shortest length are very few. According to Swiss-Prot database statistics \citep{Swiss-Prot}, the percentage of sequences with length $>$ 2500 is only 0.2\%. Considering the length distribution of database sequences and based on the descending sorted database discussed in section \ref{dbsort}, we assigned the first part of data with longer lengths to CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
+After launching the GPU kernel, the CPU must wait for the GPU to finish before copying back the result. This is accomplished by calling \emph{cudaStreamSynchronize}(\emph{stream}). We can get further improvement by distribute some work from the GPU to the CPU while the CPU is waiting. In a protein database, the sequences with the longest or the shortest length are very few. According to Swiss-Prot database statistics \citep{Swiss-Prot}, the percentage of sequences with length $>$ 2500 is only 0.2\%. Considering the length distribution of database sequences and based on the descending sorted database discussed in Section \ref{dbsort}, we assigned the first part of data with longer lengths to the CPU. By this way, we can save both the GPU global memory allocated for sequences and the overheads of memory transfer.
 
-The compute power of CPU and GPU should be taken into consideration in order to balance the workload distribution between CPU and GPU. The distribution policy calculates a ratio \emph{R} of the number of database sequences assigned to GPU, which is calculated as
+The compute power of the CPU and the GPU should be taken into consideration in order to balance the workload distribution between them. The distribution policy calculates a ratio \emph{R} of the number of database sequences assigned to the CPU, which is calculated as
 
 \begin{equation*}
-   R = \frac{N_Gf_G}{N_Gf_G + f_C}
+   R = \frac{f_C}{N_Gf_G + f_C}
 \end{equation*}
 
-where $f_G$ and $f_C$ are the core frequencies of GPU and CPU, $N_G$ is the number of GPU Multiprocessors.
+where $f_G$ and $f_C$ are the core frequencies of the GPU and the CPU respectively, $N_G$ is the number of GPU multiprocessors.
 
 %----------------------------------------------------------------------------------------
 
@@ -387,9 +389,9 @@ This sections discusses various small-scale optimization and explains some techn
 
 \subsection*{Data type for register memory}
 \label{register}
-In order to reduce the register pressure in CUDA kernel, we may consider using unsigned 8-bit char type (u8) instead of 32-bit int type (u32). Declaring the registers as u8 results in sections of code to shift and mask data. The extract data macros are deliberately written to mask off the bits that are not used, so this is entirely unnecessary. In fact, around four times the amount of code will be generated if using an u8 type instead of an u32 type.
+In order to reduce the register pressure in the CUDA kernel, we may consider using unsigned 8-bit char type (u8) instead of 32-bit int type (u32). Declaring the registers as u8 results in sections of code to shift and mask data. The extract data macros are deliberately written to mask off the bits that are not used, so this is entirely unnecessary. In fact, around four times the amount of code will be generated if using an u8 type instead of an u32 type.
 
-Changing the u8 definition to an u32 definition benefits from eliminating huge numbers of instructions. It seems potentially wasting some register space. In practice, CUDA implements u8 registers as u32 registers, so this does not actually cost anything extra in terms of register space \citep{cook}.
+Changing the u8 definition to an u32 definition benefits from eliminating huge numbers of instructions. It seems potentially to waste some register space. In practice, CUDA implements u8 registers as u32 registers, so this does not actually cost anything extra in terms of register space \citep{cook}.
 
 \subsubsection*{Branch divergence}
 \label{branch}
@@ -416,7 +418,7 @@ Because of these disadvantages, the MSV implementation does not use shared memor
 
 \subsubsection*{Kernel launch configuration}
 \label{launch}
-Since the MSV implementation does not use shared memory explained above, the following dynamic kernel launch configuration is used to prefer larger L1 cache and smaller shared memory so as to further improve memory throughput.
+Since the MSV implementation does not use shared memory (as explained above), the following dynamic kernel launch configuration is used to prefer the larger L1 cache and smaller shared memory so as to further improve memory throughput.
 \begin{quote}
 \fontfamily{phv}\fontseries{m}\selectfont
  cudaFuncSetCacheConfig(msvSIMDKernel, cudaFuncCachePreferL1);
@@ -431,24 +433,23 @@ This section briefly reviews the all the optimization approaches discussed in th
 \subsection*{Six steps to better performance}
 \begin{enumerate}
  \item Assessing the application\\
- In order to benefit from any modern processor architecture, including GPUs, the first step are to assess the application to identify the hotspots [MSV filter in Section \ref{hmmsearch}], which type of parallelism [Task-based parallelism in Section \ref{impl}] is better suited to the application.
- \item Application Profiling\\
+ In order to benefit from any modern processor architecture, including GPUs, the first step is to assess the application to identify the hotspots [MSV filter in Section \ref{hmmsearch}], and to identify which type of parallelism [Task-based parallelism in Section \ref{impl}] is better suited to the application.
+ 
+ \item Profiling the application\\
  NVIDIA provides profiling tools to help identify hotspots and compile a list of candidates for parallelization or optimization on CUDA-enabled GPUs [nvprof in Section \ref{dbsort}], as detailed in Section \ref{cudaTools}. 
- Intel provides VTune Amplifier XE to collect a rich set of data to tune CPU \& GPU compute performance at \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe}.
+ Intel provides VTune Amplifier XE to collect a rich set of data to tune CPU and GPU compute performance at \url{https://software.intel.com/en-us/intel-vtune-amplifier-xe}.
  
  \item Optimizing memory usage\\
- Optimizing memory usage starts with minimizing data transfers both in size [Data-base sorted in Section \ref{dbsort}, workload distribution in Section \ref{workload}] and time [Pinned Memory in Section \ref{pin}] between the host and the device [Asynchronous memory copy in Section \ref{asyn}]. Be careful with CUDA memory hierarchy: register memory [Section \ref{register}], local memory, shared memory [Section \ref{shared}], global memory, constant memory [Section \ref{constant}] and texture memory [Section \ref{tex}], and combine these memories to best suit the application [Kernel launch configuration in Section \ref{launch}]. Sometimes, the best optimization might even be to avoid any data transfer in the first place by simply recomputing the data whenever it is needed.\\
+ Optimizing memory usage starts with minimizing data transfers both in size [Data-base sorted in Section \ref{dbsort}, workload distribution in Section \ref{workload}] and time [Pinned Memory in Section \ref{pin}] between the host and the device [Asynchronous memory copy in Section \ref{asyn}]. Be careful with the CUDA memory hierarchy: register memory [Section \ref{register}], local memory, shared memory [Section \ref{shared}], global memory, constant memory [Section \ref{constant}] and texture memory [Section \ref{tex}], and combine these memories to best suit the application [Kernel launch configuration in Section \ref{launch}]. Sometimes, the best optimization might even be to avoid any data transfer in the first place by simply recomputing the data whenever it is needed.\\
  The next step in optimizing memory usage is to organize memory accesses according to the optimal memory access patterns. This optimization is especially important for coalescing global memory accesses [Section \ref{global}].
  
  \item Optimizing instruction usage\\
- This suggests using SIMD Video Instructions [Section \ref{video}] and trading precision for speed when it does not affect the end result, such as using intrinsic instead of regular functions or single precision instead of double precision [HMMER3 in Section \ref{SSE2}]. Particular attention should be paid to control flow instructions [Branch divergence in Section \ref{branch}].
+ This principle suggests using SIMD Video Instructions [Section \ref{video}] and trading precision for speed when it does not affect the end result, such as using intrinsic instead of regular functions or single precision instead of double precision [HMMER3 in Section \ref{SSE2}]. Particular attention should be paid to the control flow instructions [Branch divergence in Section \ref{branch}].
  
- \item Maximizing parallel execution
- 
+ \item Maximizing parallel execution\\ 
  The application should maximize parallel execution at a higher level by explicitly exposing concurrent execution on the device through streams [Section \ref{asyn}], as well as maximizing concurrent execution between the CPU host  [Database sorted in Section \ref{dbsort}] and the GPU device [Workload distribution in Section \ref{workload} and SIMD Video Instructions in Section \ref{video}].
  
- \item Considering the existing libraries
- 
+ \item Considering the existing libraries\\ 
  Many existing GPU-optimized libraries \citep{CUDAlibs} such as cuBLAS \citep{cuBLAS}, MAGMA \citep{MAGMA}, ArrayFire \citep{ArrayFire}, or Thrust \citep{thrust}, are available to make the expression of parallel code as simple as possible.
  
 \end{enumerate}
