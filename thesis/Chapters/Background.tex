@@ -5,7 +5,7 @@
 
 \lhead{Chapter \ref{Background}. \emph{Background}} % This is for the header on each page - perhaps a shortened title
 
-The background of this thesis is concerned with the algorithms related to our work and how they were accelerated by many studies on CUDA-enabled GPUs.
+The background of this thesis is concerned with the algorithms related to our work and how they were accelerated by many studies on CUDA-enabled GPUs. The first section briefly introduces the basic concepts about sequence alignment and protein database. The second section shows how the Smith-Waterman algorithms and the HMM-based algorithms use dynamic programming for sequence alignment and database searches. The third section overviews CUDA programming model and reviews recent studies on accelerating the Smith-waterman algorithm and the HMM-based algorithms on CUDA-enabled GPU.
 
 %----------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ The background of this thesis is concerned with the algorithms related to our wo
 
 In 1665, Robert Hooke discovered the cell \citep{Cell}. The cell theory, first developed in 1839 by Matthias Jakob Schleiden and Theodor Schwann, generalized the view that \emph{all living organisms are composed of cells and of cell products} \citep{Loewy}. As workhorses of the cell, proteins not only constitute the major component in the cell, but they also regulate almost all activities that occurs in living cells.
 
-Proteins are complex chains of small organic molecules known as \emph{amino acids}. In this thesis, \emph{residue} is used to refer to amino acids for protein. The 20 amino acids detailed in Table \ref{tab.amino} have been found within proteins and they convey a vast array of chemical versatility. So proteins can be viewed as sequences of an alphabet of the 20 amino acids \{A,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S,T,V,W,Y\}.
+Proteins are complex chains of small organic molecules known as \emph{amino acids}. In this thesis, \emph{residue} is used to refer to the amino acids of a protein. The 20 amino acids detailed in Table \ref{tab.amino} have been found within proteins and they convey a vast array of chemical versatility. Hence proteins can be viewed as sequences of an alphabet of the 20 amino acids \{A,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S,T,V,W,Y\}.
 
 \begin{table}[H]
 \centering
@@ -43,9 +43,9 @@ The following is the protein sequence of human beta globin taken from Swiss-Prot
 \end{lstlisting}
 
 \subsection{Sequence alignment}
-In bioinformatics, a sequence alignment is a way of arranging the sequences of protein to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationships between them. Protein sequences evolve by accumulating mutations. The basic mutational process are \emph{substitutions} where one residue is replaced by another, \emph{insertions} where a new residue is inserted into the sequence, and \emph{deletions}, the removal of a residue. Insertions and deletions are together referred to as \emph{gaps} \citep{BioFunc}. 
+In bioinformatics, a sequence alignment of proteins is a way of arranging the sequences of the proteins to identify regions of similarity \citep{sa}. If two amino acid sequences are recognized as similar, there is a chance that they are \emph{homologous}. Homologous sequences share a common functional, structural, or evolutionary relationship. Protein sequences evolve by accumulating mutations. The basic mutational processes are \emph{substitution}, where one residue is replaced by another, \emph{insertion}, where a new residue is inserted into the sequence, and \emph{deletion}, the removal of a residue. Insertion and deletion are together referred to as \emph{gap} \citep{BioFunc}. 
 
-In the pairwise alignment shown in Listing \ref{gh}, sequence globins4 is on top and sequence HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical; they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned in the same way. These are \emph{conservative substitutions}. At the position 20 of HBB\_HUMAN, an internal gap open and gap extend is indicated by two dashes.
+In the pairwise alignment shown in Listing \ref{gh}, the sequence globins4 is on top and the sequence HBB\_HUMAN is below. Note that this particular alignment is called \emph{local} because only a subset of the two proteins is aligned: the first residue of HBB\_HUMAN is not displayed. A global pairwise alignment includes all residues of both sequences. An intermediate row indicates the presence of \emph{identical} residues in the alignment. Some of the aligned residues are similar but not identical (as indicated by the plus sign +); they are related to each other because they share similar biochemical properties. \emph{Similar} pairs of residues are structurally or functionally related. For example, on the first part of the alignment we can find V and H connected by a + sign; nearby we can see S and T aligned in the same way. These are \emph{conservative substitutions}. At the position 20 of HBB\_HUMAN, an internal gap open and gap extend is indicated by two dashes.
 
 \begin{lstlisting}[caption={\fontfamily{pag}\selectfont Pairwise alignment of globins4 and HBB\_HUMAN}, label=gh]
     globins4   1 VVLSEAEKTKVKAVWAKVEADVEESGADILVRLFKSTPATQEFFEKFKDL 50
@@ -60,8 +60,6 @@ In the pairwise alignment shown in Listing \ref{gh}, sequence globins4 is on top
                  VDP++F+LL++VLV+VLA++++KEFT++VQAA++K++A VA++LA+KY+
    HBB_HUMAN  99 VDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH 147
 \end{lstlisting}
-
-To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Listing \ref{rawscore} illustrates how raw scores are calculated, using the result of pairwise alignment with just residues 15-32 of globins4 in Listing \ref{gh}.
 
 \begin{lstlisting}[caption={\fontfamily{pag}\selectfont {Calculation of raw score}.}, label=rawscore]
    globins4   15 W A K V E A D V E E S G A D I L V R 32
@@ -78,6 +76,8 @@ To establish the degree of similarity, the two sequences are aligned: lined up i
    total raw score: match + mismatch + gap penalties = 44-1-12 = 31
 \end{lstlisting}
 
+To establish the degree of similarity, the two sequences are aligned: lined up in such a way that the similarity score is maximized. Listing \ref{rawscore} illustrates how raw scores are calculated, using the result of pairwise alignment with just residues 15-32 of globins4 in Listing \ref{gh}.
+
 The scores in the Listing \ref{rawscore} for \emph{match/mismatch} are taken from the scoring matrix BLOSUM62 as shown in Figure \ref{fig:blo}. The BLOSUM62 matrix is a substitution matrix used for sequence alignment of proteins. It were first introduced in a paper by S. Henikoff and J.G. Henikoff \citep{Henikoff}. For example, the match score for W-W is 11, K-K is 5; the mismatch score for A-G is 0, D-N is 1.
 
 In a typical scoring scheme there are two gap penalties: one for \emph{gap open} (-11 for the position 19 of globins4 in Listing \ref{rawscore}) and one for \emph{gap extend} (-1 for the position 20 of globins4 in Listing \ref{rawscore}).
@@ -89,7 +89,7 @@ In a typical scoring scheme there are two gap penalties: one for \emph{gap open}
 	\label{fig:blo}
 \end{figure}
 
-Next chapter will introduce two sequence alignment algorithms: Smith-Waterman algorithm and HMM-based algorithm. These two algorithms share a very general optimization technique called dynamic programming for finding optimal alignments.
+The next chapter will introduce two sequence alignment algorithms: the Smith-Waterman algorithm and two HMM-based algorithms. These algorithms share a very general optimization technique called dynamic programming for finding optimal alignments.
 
 \subsection{Bioinformatics protein databases}
 This part is a brief introduction of two protein sequence databases used in this thesis.
@@ -97,7 +97,7 @@ This part is a brief introduction of two protein sequence databases used in this
 \subsubsection*{NCBI NR databse}
 The NCBI (National Center for Biotechnology Information) houses a series of databases relevant to Bioinformatics. Major databases include GenBank for DNA sequences and PubMed, a bibliographic database for the biomedical literature. Other databases include the NCBI Epigenomics database. All these databases are updated daily and available online: \url{http://www.ncbi.nlm.nih.gov/guide/all/\#databases\_}.
 
-The NR (Non-Redundant) protein database maintained by NCBI as a target for their BLAST search services is a composite of Swiss-Prot, Swiss-Prot updates, PIR(Protein Information Resource), PDB(Protein Data Bank). Entries with absolutely identical sequences have been merged into NR database. The PIR produces the largest, most comprehensive, annotated protein sequence database in the public domain. The PDB is a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids and is maintained by Brookhaven National Laboratory, USA.
+The NR (Non-Redundant) protein database maintained by NCBI as a target for their BLAST search services is a composite of Swiss-Prot, Swiss-Prot updates, PIR (Protein Information Resource), and PDB (Protein Data Bank). Entries with absolutely identical sequences have been merged into NR database. The PIR produces the largest, most comprehensive, annotated protein sequence database in the public domain. The PDB is a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids and is maintained by Brookhaven National Laboratory, USA.
 
 Release 2014\_04 of NCBI NR databse contains 38,442,706 sequence entries, comprising 13,679,143,700 amino acids, more than 24GB in file size \citep{NCBI}.
 
@@ -105,20 +105,20 @@ Release 2014\_04 of NCBI NR databse contains 38,442,706 sequence entries, compri
 The Universal Protein Resource (UniProt) is a comprehensive resource for protein sequence and annotation data and is mainly supported by the National Institutes of Health (NIH) \citep{upr}. The UniProt databases are the UniProt Knowledgebase (UniProtKB), the UniProt Reference Clusters (UniRef), and the UniProt Archive (UniParc). 
 
 The UniProt Knowledgebase is updated every four weeks on average and consists of two sections: 
-\begin{itemize}
+\begin{enumerate}
  \item UniProtKB/Swiss-Prot\\
  This section contains manually-annotated records with information extracted from literature and curator-evaluated computational analysis. It is also highly cross-referenced to other databases. Release 2014\_05 of 14-May-2014 of UniProtKB/Swiss-Prot contains 545,388 sequence entries, comprising 193,948,795 amino acids abstracted from 228,536 references \citep{Swiss-Prot}.
  \item UniProtKB/TrEMBL\\
  This section contains computationally analyzed records that await full manual annotation. Release 2014\_05 of 14-May-2014 of UniProtKB/TrEMBL contains 56,010,222 sequence entries, comprising 17,785,675,050 amino acids \citep{UniProtTr}.
-\end{itemize}
+\end{enumerate}
 
 %----------------------------------------------------------------------------------------
 
 \section{Dynamic programming in Bioinformatics}
-Dynamic Programming (DP) is an optimization technique that recursively breaks down a problem into smaller subproblems, such that the solution to the larger problem can be obtained by piecing together the solutions to the subproblems \citep{BioMach}. This section shows how the Smith-Waterman algorithms and the algorithms in HMMER use DP for sequence alignment and database searches, and then discusses the related work about acceleration on CUDA-enabled GPU.
+Dynamic Programming (DP) is an optimization technique that recursively breaks down a problem into smaller subproblems, such that the solution to the larger problem can be obtained by piecing together the solutions to the subproblems \citep{BioMach}. This section shows how the Smith-Waterman algorithms and the algorithms in HMMER use DP for sequence alignment and database searches.
 
 \subsection{The Smith-Waterman algorithm}
-The Smith-Waterman algorithm is designed to find the optimal local alignment between two sequences. It was proposed by Smith and Waterman \citep{SW} and enhanced by Gotoh \citep{Gotoh}. The alignment of two sequences is based on dynamic programming approach by computing the similarity score which is given in the form of similarity score matrix $H$. 
+The Smith-Waterman algorithm is designed to find the optimal local alignment between two sequences. It was proposed by Smith and Waterman \citep{SW} and enhanced by Gotoh \citep{Gotoh}. The alignment of two sequences is based on the dynamic programming approach by computing the similarity score which is given in the form of similarity score matrix $H$. 
 
 Given a query sequence $Q$ with length $L_q$ and a target sequence $T$ with length $L_t$, let $S$ be the substitution matrix and its element $S[i,j]$ be the similarity score for the combination of the $i^{th}$ residue in $Q$ and the $j^{th}$ residue in $T$. Define $G_e$ as the gap extension penalty, and $G_o$ as the gap opening penalty. These similarity scores and $G_e$, $G_o$ are pre-determined by the life sciences community. The similarity score matrix $H$ for aligning $Q$ and $T$ is calculated as 
 
@@ -155,11 +155,11 @@ The maximum value of the matrix $H$ gives the similarity score between $Q$ and $
 
 \label{HMMERsect}
 
-HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology. The main elements of this HMM-based sequence alignment package are \emph{hmmsearch} and \emph{hmmscan}. The former searches a profile HMM against a sequence database, while the latter searches a sequence against a profile HMMs database.
+HMMER \citep{HMMER} is a set of applications that create a profile Hidden Markov Model (HMM) of a sequence family which can be utilized as a query against a sequence database to identify (and/or align) additional homologs of the sequence family\citep{Seq}. HMMER was developed by Sean Eddy at Washington University and has become one of the most widely used software tools for sequence homology. The main elements of this HMM-based sequence alignment package are \emph{hmmsearch} and \emph{hmmscan}. The former searches a profile HMM against a sequence database, while the latter searches a sequence against a database of profile HMMs .
 
 \subsubsection{HMM and profile HMM}
 
-A hidden Markov model (HMM) is a computational structure for linearly analyzing sequences with a probabilistic method \citep{DicBioinfo}. HMMs have been widely used in speech signal, handwriting and gesture detection problems. In bioinformatics they have been used for applications such as sequence alignment, prediction of protein structure, analysis of chromosomal copy number changes, and gene-finding algorithm, etc \citep{BioFunc}. 
+A hidden Markov model (HMM) is a computational structure for linearly analyzing sequences with a probabilistic method \citep{DicBioinfo}. HMMs have been widely used in speech signal, handwriting and gesture detection problems. In bioinformatics they have been used for applications such as sequence alignment, prediction of protein structure, analysis of chromosomal copy number changes, and gene-finding algorithm \citep{BioFunc}. 
 
 A HMM is a type of a non-deterministic finite state machine with transiting to another state and emitting a symbol under a probabilistic model.
 According to \citep{SeqData}, a HMM can be defined as a 6-tuple ($A$, $Q$, $q_0$, $q_e$, $tr$, $e$) where \\[-1cm]
@@ -179,23 +179,24 @@ According to \citep{SeqData}, a HMM can be defined as a 6-tuple ($A$, $Q$, $q_0$
 \item \textbf{$e$} is the \emph{emission} mapping, which is the emission probabilities of pairs in $Q$ $\times$ $A$, satisfying the following two conditions:
   \begin{enumerate}
    \item[(a)] $0 \leqslant e(q,x) \leqslant 1$, if it is defined, $\forall q \in Q$, and $x \in A$
-   \item[(b)] for any given state $q$, if for any $x \in A$, $e(q, x)$ is defined, then $q$ is an \emph{emitting} state and
+   \item[(b)] for any given state $q$, \\
+   either (i) if for any $x \in A$, $e(q, x)$ is defined, then $q$ is an \emph{emitting} state and
    \begin{equation*}
     \displaystyle\sum_{x \in A}e(q,x) = 1 
    \end{equation*}
-   if $\forall x \in A$, $e(q, x)$ is not defined, then $q$ is a \emph{silent} state.
+   or (ii) if $\forall x \in A$, $e(q, x)$ is not defined, then $q$ is a \emph{silent} state.
   \end{enumerate}
 \end{itemize}
 
-The dynamics of the system is based on Markov Chain, meaning that only the current state influences the selection of its successor ‚Äì the system has no `memory' of its history. Only the succession of characters emitted is visible; the state sequence that generated the characters remains internal to the system, i.e. hidden. By this means, the name is Hidden Markov Model\citep{IntroBio}. 
+The dynamics of the system are based on Markov Chain, meaning that only the current state influences the selection of its successor ‚Äì the system has no `memory' of its history. Only the succession of characters emitted is visible; the state sequence that generated the characters remains internal to the system, i.e. hidden. Hence, the name is Hidden Markov Model\citep{IntroBio}. 
 
-Profile HMM is a variant of HMM and can be constructed from an initial multiple sequence alignment to define a set of probabilities. The symbol sequence of an HMM is an observed sequence that resembles a consensus for the multiple sequence alignment. And a protein family can be defined by profile HMMs.
+A profile HMM is a variant of HMM and can be constructed from an initial multiple sequence alignment to define a set of probabilities. The symbol sequence of an HMM is an observed sequence that resembles a consensus for the multiple sequence alignment. A protein family can be defined by a profile HMM.
 
 In Figure \ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM used by HMMER\citep{HMMER3} shows the mechanism for generating sequences. In order to generate sequences, a profile HMM should have a set of three states per alignment column: one \emph{match} state, one \emph{insert} state and one \emph{delete} state. 
 \begin{itemize}
-\item \textbf{\emph{match state}} matches and emits a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
-\item \textbf{\emph{insert state}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
-\item \textbf{\emph{delete state}} skips the alignment column and emits a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
+\item \textbf{\emph{A match state}} matches and emits a amino acid from the query. The probability of emitting each of the 20 amino acids is a property of the model. 
+\item \textbf{\emph{An insert state}} allows the insert of one or more amino acids. The emission probability of this state is computed either from a background distribution of amino acids or from the observed insertions in the alignment.
+\item \textbf{\emph{A delete state}} skips the alignment column and emits a blank. Entering this state corresponds to gap opening, and the probabilities of these transitions reflect a position-specific gap penalty.
 \end{itemize}
 
 \begin{figure}[!htb]
@@ -205,8 +206,8 @@ In Figure \ref{fig:pHMM}, the internal structure of the ``Plan 7" profile HMM us
 \end{figure}
 
 The structure begins at Start(S), and follows some chain of arrows until arriving at Termination(T). Each arrow transits to a state of the system. 
-At each state, an action can be taken either as (1) emitting a residue, or (2) selecting an arrow to the next state. The action and the selection of successor state are governed by sets of probabilities\citep{IntroBio}.
-The linear core model has five sets of match (M), insert (I) and delete (D) states. Each M state represents one consensus position and a set of M, I, D states is the main element of the model and is referred to as a ``node''ù in HMMER. Additional flanking states (marked as N, C, and J) emit zero or more residues from the background distribution, modelling nonhomologous regions preceding, following, or joining homologous regions aligned to the core model. Start (S), begin (B), end (E) and termination (T) states are non-emitting states.
+At each state, an action can be taken as either emitting a residue, or selecting an arrow to the next state. The actions are governed by a set of probabilities\citep{IntroBio}.
+The linear core model has five sets of match (M), insert (I) and delete (D) states. Each M state represents one consensus position. A set of M, I and D state is the main element of the model and is referred to as a ``node''ù in HMMER. Additional flanking states (marked as N, C, and J) emit zero or more residues from the background distribution, modelling nonhomologous regions which precede, follow or join homologous regions. Start (S), begin (B), end (E) and termination (T) states are non-emitting states \citep{HMMER3}.
 
 A profile HMM for a protein family can be used to compare with target sequences, and classify sequences that are members of the family and those which are not\citep{ProteinBio}. 
 A common application of profile HMMs is used to search a profile HMM against a sequence database. Another application is the query of a single protein sequence of interest against a database of profile HMMs.
@@ -215,9 +216,9 @@ A common application of profile HMMs is used to search a profile HMM against a s
 
 \label{ViterbiSub}
 
-In HMMER2, both \emph{hmmsearch} and \emph{hmmpfam} rely on the same core Viterbi algorithm for their scoring function which is named as \emph{P7Viterbi} in codes.
+In HMMER2, both \emph{hmmsearch} and \emph{hmmpfam} rely on the same core Viterbi algorithm for their scoring function which is named as \emph{P7Viterbi} in the codes.
 
-To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as Viterbi to find one path that has the maximum probability of the HMM generating the sequence. Viterbi is a dynamic programming algorithm. Let $V_{i,j}$ be the maximum probability of a path from the start state $S_i$ ending at state $S_j$ and generating the prefix $q_{1...j}$ of the target sequence. $V_{i+1,j}$ is found by the recurrence:
+To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as the Viterbi algorithm to find one path that has the maximum probability of the HMM generating the sequence. The Viterbi algorithm is a dynamic programming algorithm. Let $V_{i,j}$ be the maximum probability of a path from the start state $S_i$ ending at state $S_j$ and generating the prefix $q_{1...j}$ of the target sequence. $V_{i+1,j}$ is found by the recurrence:
 
 \begin{equation*}
    \displaystyle V_{i+1,j} = \max_{0 \leqslant k \leqslant j-1} \big ( V_{i,k} P(k,j)P(q_{i+1} |j) \big )
@@ -237,7 +238,7 @@ To find whether a sequence is member of the family described by a HMM, we compar
 % \end{array} \right.
 
 Define $a[i,j]$ as the transition probability from state $i$ to $j$ and $e_i$ as emission probability in state $i$.
-Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence $x_{1...i}$ to the submodel up to state $j$, ending with $x_i$ being emitted by \emph{match} state $M_j$. Similarly $V_j^I(i)$ is the score of the optimal path ending in $x_i$ being emitted by \emph{insert} state $I_j$, and $V_j^D(i)$ for the optimal path ending in \emph{delete} state $D_j$. $q_{x_i}$ is the probability of $x_i$. Then we can write the Viterbi general equation\citep{BioSeq}:
+Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence $x_{1...i}$ to the submodel up to state $j$, ending with $x_i$ being emitted by \emph{match} state $M_j$. Similarly $V_j^I(i)$ is the score of the optimal path ending in $x_i$ being emitted by \emph{insert} state $I_j$, and $V_j^D(i)$ for the optimal path ending in \emph{delete} state $D_j$. Let $q_{x_i}$ be the probability of $x_i$. Then we can write the Viterbi general equation\citep{BioSeq}:
 
 \begin{equation*}
    V_j^M(i) = \log\frac{e_{M_j}(x_i)}{q_{x_i}} + max 
@@ -264,12 +265,10 @@ Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence
    \end{cases}  
 \end{equation*}
 
-Based on the above equations, we can write the efficient pseudo code of Viterbi algorithm, as shown in Algorithm \ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
+Based on the above equations, we can write the efficient pseudo code of the Viterbi algorithm, as shown in Algorithm \ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
 
-\renewcommand{\thepseudonum}{\roman{pseudonum}}
 \begin{pseudocode}{Viterbi}{ }
 \label{Viterbi}
-\COMMENT{Initialization}\\
 N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
 E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \COMMENT{for every sequence residue i}\\
@@ -316,11 +315,10 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
    E[i-1] + tr(E, C)
   \end{cases}\\
 \END\\
-\COMMENT{Termination: }\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
 
-From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[~]$ for Match state, $I[~]$ for Insert state and $D[~]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+From Algorithm \ref{Viterbi}, \ref{appendixPV} we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[~]$ for Match state, $I[~]$ for Insert state and $D[~]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
 
 \begin{figure}[!htb]
 \centering
@@ -394,6 +392,46 @@ E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
 \COMMENT{Termination: }\\
 \RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
 \end{pseudocode}
+
+\begin{lstlisting}[caption={\fontfamily{pag}\selectfont {Pseudo-code of the MSV}.}, label=msvpseudo]
+ N[0] = 0; B[0] = tr(N, B)
+ E[0] = C[0] = J[0] = -\infty\\
+\COMMENT{for every sequence residue i}\\
+\FOR i = 1 \TO L_t \DO
+\BEGIN
+  N[i] \GETS N[i-1] + tr(N, N)\\
+  B[i] \GETS max 
+  \begin{cases}
+   N[i-1] + tr(N, B)\\
+   J[i-1] + tr(J, B)
+  \end{cases}\\
+  M[i,0] \GETS -\infty\\
+  \COMMENT{For every model position j from 1 to $L_q$}\\
+  \FOR j \GETS 1 \TO L_q \DO
+  \BEGIN
+    M[0, j] \GETS -\infty\\
+    M[i, j] \GETS e(M_j, S[i]) + max 
+    \begin{cases}
+     M[i-1, j-1]\\
+     B[i-1] + tr(B, M_j)
+    \end{cases}\\
+  \END\\
+  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
+  J[i] \GETS max 
+  \begin{cases}
+   J[i-1] + tr(J, J)\\
+   E[i-1] + tr(E, J)
+  \end{cases}\\
+  C[i] \GETS max
+  \begin{cases}
+   C[i-1] + tr(C, C)\\
+   E[i-1] + tr(E, C)
+  \end{cases}\\
+\END\\
+\COMMENT{Termination: }\\
+\RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
+\end{lstlisting}
+
 
 \subsubsection{SIMD vectorized MSV in HMMER3}
 \label{SSE2}
@@ -510,7 +548,7 @@ $\begin{cases}
 
 In November 2006, NVIDIA\textregistered introduced CUDA\texttrademark (Compute Unified Device Architecture), a general purpose parallel computing platform and programming model that enables users to write scalable multi-threaded programs in NVIDIA GPUs. Nowadays there exist alternatives to CUDA, such as OpenCL \citep{OpenCL}, Microsoft Compute Shader\citep{Shader}. These are mostly similar, but as CUDA is the most widely used and more mature, this thesis will focus on that.
 
-This section firstly overviews CUDA programming model, then reviews recent studies on accelerating Smith-waterman algorithm and HMM-based algorithms on CUDA-enabled GPU.
+This section overviews CUDA programming model, then reviews recent studies on accelerating Smith-waterman algorithm and HMM-based algorithms on CUDA-enabled GPU.
 
 \subsection{Overview of CUDA programming model}
 \subsubsection{Streaming Multiprocessors}
@@ -716,7 +754,7 @@ Among the 7 articles reviewed here, \citep{Manavski} is the first to study accel
 \citep{Ligowski} reduces global memory access only at the loop initialization and for writing the results at the exit. They performed all operations within the loop in fast shared memory and registers.
 
 \subsubsection*{Vector programming model}
-Vector programming model plays important role in operations of array or matrix. On one side, it can reduce greatly the frequency of memory access; on the other side, it can utilize the built-in SIMD vector instructions for parallel computing both on CPU and GPU.
+Vector programming model plays important role in operations of array or matrix. On one hand, it can reduce greatly the frequency of memory access; on the other hand, it can utilize the built-in SIMD vector instructions for parallel computing both on CPU and GPU.
 
 \citep{Manavski} packs the query profile in texture memory, storing 4 successive values into the 4-byte of a single unsigned integer. To compute a column of alignment matrix, all the H and E values are needed from the previous one. They place them in the two local memory buffer of the thread: one for the previous values and another for the newly computed ones. At the end of each column they swap them. Since local memory is not cached, they use specific access pattern to read 4 H and 4 E values from local memory at a time, which can fully take advantage of the 128 bits memory bandwidth. Thus, each thread can gather all the data needed to compute 4 cells of the alignment matrix with only two read instructions: one from the local buffer and another from the texture.
 
@@ -803,6 +841,6 @@ They implement the \emph{wave-front} pattern using the data skewing strategy. Th
 
 \citep{Quirem} implements Viterbi algorithm being performed on Tesla C1060.
 
-They utilize pinned memory to reduce the latency induced by transferring memory from device to host and back. And they test two different versions of the memory allocation mechanism: one is pageable memory allocation with the standard \emph{malloc} function, another is pinned memory with the \emph{cudaHostAlloc} function. Pinned memory is host memory that can not be paged (swapped) out to disk by the virtual memory management of the OS, and thus reduces the latency induced by transferring memory from device to host and back. Based on their experiments, utilizing pinned memory, the execution of the kernels spends more GPU time relative to the less memory transfer time. Kernel execution time is basically the same for both pageable and pinned memory, because the two versions only relate to the speed of the memory transfer. In their experiments, the performance of pinned memory is improved roughly 20\% over that of pinned memory.
+They utilize pinned memory to reduce the latency induced by transferring memory from device to host and back. They test two different versions of the memory allocation mechanism: one is pageable memory allocation with the standard \emph{malloc} function, another is pinned memory with the \emph{cudaHostAlloc} function. Pinned memory is host memory that can not be paged (swapped) out to disk by the virtual memory management of the OS, and thus reduces the latency induced by transferring memory from device to host and back. Based on their experiments, utilizing pinned memory, the execution of the kernels spends more GPU time relative to the less memory transfer time. Kernel execution time is basically the same for both pageable and pinned memory, because the two versions only relate to the speed of the memory transfer. In their experiments, the performance of pinned memory is improved roughly 20\% over that of non-pinned memory.
 
-Their implementation gains 10x-15x speedup over the original implementation of the Viterbi function according to the number of queries. They tested up to 16,384 queries because of the limitations of the Tesla C1060 and the speedup increased exponentially as the number of launched threads i.e. number of queries doubled. 
+Their implementation gains 10x-15x speedup over the original implementation of the Viterbi function according to the number of queries. They tested up to 16,384 queries as that was a limitations of the Tesla C1060 and the speedup increased exponentially as the number of launched threads i.e. number of queries doubled. 

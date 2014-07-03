@@ -32,6 +32,12 @@
 \newblock Website, 2014.
 \newblock URL \url{http://www.accelereyes.com/}. 
 
+\bibitem[CIARA (2013)]{Kronos}
+[CIARA, 2013] CIARA Technologies Inc.
+\newblock KRONOS 840S Desktop Workstation.
+\newblock Website, 2013.
+\newblock URL \url{http://www.ciaratech.com/product.php?id_prod=489&lang=en&id_cat1=1&id_cat2=9&id_cat3=129}.
+
 \bibitem[Cook(2013)]{cook}
 [Cook, 2013] Shane Cook.
 \newblock \emph{CUDA Programming : A Developer’s Guide to Parallel Computing with GPUs}.
