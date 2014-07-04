@@ -267,59 +267,111 @@ Define $V_j^M(i)$ as the log-odds score of the optimal path matching subsequence
 
 Based on the above equations, we can write the efficient pseudo code of the Viterbi algorithm, as shown in Algorithm \ref{Viterbi} \citep{FPGA}.  The inner loop of the code contains three two dimensional matrices (M, I, D), which calculate scores of all node positions involved in the main models for each of the residue. The outer loop consists of flanking and special states calculated in the one dimensional arrays N, B, C, J, E.
 
-\begin{pseudocode}{Viterbi}{ }
-\label{Viterbi}
-N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
-E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
-\COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO L_t \DO
-\BEGIN
-  N[i] \GETS N[i-1] + tr(N, N)\\
-  B[i] \GETS max 
-  \begin{cases}
-   N[i-1] + tr(N, B)\\
-   J[i-1] + tr(J, B)
-  \end{cases}\\
-  M[i,0] \GETS I[i,0] \GETS D[i,0] \GETS -\infty\\
-  \COMMENT{For every model position j from 1 to $L_q$}\\
-  \FOR j \GETS 1 \TO L_q \DO
-  \BEGIN
-    M[0, j] \GETS I[0, j] \GETS D[0, j] \GETS -\infty\\
-    M[i, j] \GETS e(M_j, S[i]) + max 
-    \begin{cases}
-     M[i-1, j-1] + tr(M_{j-1}, M_j)\\
-     I[i-1, j-1] + tr(I_{j-1}, M_j)\\
-     D[i-1, j-1] + tr(D_{j-1}, M_j)\\
-     B[i-1] + tr(B, M_j)
-    \end{cases}\\
-    I[i, j] \GETS e(I_j, S[i]) + max
-    \begin{cases}
-     M[i-1, j] + tr(M_j, I_j)\\
-     I[i-1, j] + tr(I_j, I_j)
-    \end{cases}\\
-    D[i, j] \GETS max
-    \begin{cases}
-     M[i, j-1] + tr(M_{j-1}, D_j)\\
-     D[i, j-1] + tr(D_{j-1}, D_j)
-    \end{cases}\\
-  \END\\
-  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
-  J[i] \GETS max 
-  \begin{cases}
-   J[i-1] + tr(J, J)\\
-   E[i-1] + tr(E, J)
-  \end{cases}\\
-  C[i] \GETS max
-  \begin{cases}
-   C[i-1] + tr(C, C)\\
-   E[i-1] + tr(E, C)
-  \end{cases}\\
-\END\\
-T(S,M) \GETS C[L_t] + tr(C,T)
-\RETURN {T(S,M)}
-\end{pseudocode}
+\begin{algorithm}
+\caption{Pseudo code of the Viterbi algorithm}\label{Viterbi}
+\begin{algorithmic}[1]
+\Procedure {Viterbi}{ }
+ \State $N[0] \leftarrow 0; \ \ B[0] \leftarrow tr(N, B)$
+ \State $E[0] \leftarrow C[0] \leftarrow J[0] \leftarrow -\infty$
+ \For {$i \leftarrow 1, L_t$} \Comment For every sequence residue i
+   \State $N[i] \leftarrow N[i-1] + tr(N, N)$
+   \State $B[i] \leftarrow max 
+   \begin{cases}
+    N[i-1] + tr(N, B)\\
+    J[i-1] + tr(J, B)
+   \end{cases}$
+   \State $M[i,0] \leftarrow I[i,0] \leftarrow D[i,0] \leftarrow -\infty$
+   \For {$j \leftarrow 1, L_q$} \Comment For every model position j from 1 to $L_q$
+     \State $M[0, j] \leftarrow I[0, j] \leftarrow D[0, j] \leftarrow -\infty$
+     \State $M[i, j] \leftarrow e(M_j, S[i]) + max
+     \begin{cases}
+       M[i-1, j-1] + tr(M_{j-1}, M_j)\\
+       I[i-1, j-1] + tr(I_{j-1}, M_j)\\
+       D[i-1, j-1] + tr(D_{j-1}, M_j)\\
+       B[i-1] + tr(B, M_j)
+     \end{cases}$
+     \State $I[i, j] \leftarrow e(I_j, S[i]) + max
+     \begin{cases}
+       M[i-1, j] + tr(M_j, I_j)\\
+       I[i-1, j] + tr(I_j, I_j)
+     \end{cases}$
+     \State $D[i, j] \leftarrow max
+     \begin{cases}
+       M[i, j-1] + tr(M_{j-1}, D_j)\\
+       D[i, j-1] + tr(D_{j-1}, D_j)
+     \end{cases}$
+   \EndFor
+   \State $E[i] \leftarrow max\{M[i,j] + tr(M_j, E)\} \ \  (j \leftarrow 0, L_q)$
+   \State $J[i] \leftarrow max
+   \begin{cases}
+     J[i-1] + tr(J, J)\\ 
+     E[i-1] + tr(E, J)
+   \end{cases}$
+   \State $C[i] \leftarrow max
+   \begin{cases}
+     C[i-1] + tr(C, C)\\
+     E[i-1] + tr(E, C)
+   \end{cases}$     
+ \EndFor
+ \State $Score \leftarrow C[L_t] + tr(C,T)$
+ \State \textbf{return} $Score$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
-From Algorithm \ref{Viterbi}, \ref{appendixPV} we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[~]$ for Match state, $I[~]$ for Insert state and $D[~]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
+% \begin{pseudocode}{Viterbi}{ }
+% \label{Viterbi}
+% N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
+% E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
+% \COMMENT{for every sequence residue i}\\
+% \FOR i \GETS 1 \TO L_t \DO
+% \BEGIN
+%   N[i] \GETS N[i-1] + tr(N, N)\\
+%   B[i] \GETS max 
+%   \begin{cases}
+%    N[i-1] + tr(N, B)\\
+%    J[i-1] + tr(J, B)
+%   \end{cases}\\
+%   M[i,0] \GETS I[i,0] \GETS D[i,0] \GETS -\infty\\
+%   \COMMENT{For every model position j from 1 to $L_q$}\\
+%   \FOR j \GETS 1 \TO L_q \DO
+%   \BEGIN
+%     M[0, j] \GETS I[0, j] \GETS D[0, j] \GETS -\infty\\
+%     M[i, j] \GETS e(M_j, S[i]) + max 
+%     \begin{cases}
+%      M[i-1, j-1] + tr(M_{j-1}, M_j)\\
+%      I[i-1, j-1] + tr(I_{j-1}, M_j)\\
+%      D[i-1, j-1] + tr(D_{j-1}, M_j)\\
+%      B[i-1] + tr(B, M_j)
+%     \end{cases}\\
+%     I[i, j] \GETS e(I_j, S[i]) + max
+%     \begin{cases}
+%      M[i-1, j] + tr(M_j, I_j)\\
+%      I[i-1, j] + tr(I_j, I_j)
+%     \end{cases}\\
+%     D[i, j] \GETS max
+%     \begin{cases}
+%      M[i, j-1] + tr(M_{j-1}, D_j)\\
+%      D[i, j-1] + tr(D_{j-1}, D_j)
+%     \end{cases}\\
+%   \END\\
+%   E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
+%   J[i] \GETS max 
+%   \begin{cases}
+%    J[i-1] + tr(J, J)\\
+%    E[i-1] + tr(E, J)
+%   \end{cases}\\
+%   C[i] \GETS max
+%   \begin{cases}
+%    C[i-1] + tr(C, C)\\
+%    E[i-1] + tr(E, C)
+%   \end{cases}\\
+% \END\\
+% Score \GETS C[L_t] + tr(C,T)\\
+% \RETURN {Score}
+% \end{pseudocode}
+
+From Algorithm \ref{Viterbi}, we can see the fundamental task of the Viterbi algorithm for biological sequence alignment is to calculate three DP(Dynamic Programming) matrices: $M[~]$ for Match state, $I[~]$ for Insert state and $D[~]$ for Delete state. Each DP matrix consisting of $(L_t+1) * (L_q+1)$ blocks, where each value of block is dependent on the value of previous block. As shown in Figure \ref{fig:dpV}, the Match state $M[i,j]$ depends on the upper-left block $M[i-1, j-1]$, $I[i-1, j-1]$ and $D[i-1, j-1]$; the Insert state $I[i,j]$ depends on the left block $M[i-1, j]$ and $I[i-1, j]$; and the Delete state depends on the upper block $M[i, j-1]$ and $D[i, j-1]$.
 
 \begin{figure}[!htb]
 \centering
@@ -342,6 +394,46 @@ HMMER3 is nearly total rewrite of the earlier HMMER2 package, with the aim of im
 
 Figure \ref{fig:pMSV} illustrates the MSV profile architecture. Compared with Figure \ref{fig:pHMM}, the MSV corresponds to the virtual removal of the delete and insert states. All match-match transition probabilities are treated as 1.0. The other parameters remains unchanged. So this model generates sequences containing one or more ungapped local alignment segments. The pseudo code of the MSV score algorithm is simplified and shown in Algorithm \ref{MSV}.
 
+\begin{algorithm}
+\caption{Pseudo code of the MSV algorithm}\label{MSV}
+\begin{algorithmic}[1]
+\Procedure {MSV}{ }
+ \State $N[0] \leftarrow 0; \ \ B[0] \leftarrow tr(N, B)$
+ \State $E[0] \leftarrow C[0] \leftarrow J[0] \leftarrow -\infty$
+ \For {$i \leftarrow 1, L_t$} \Comment For every sequence residue i
+   \State $N[i] \leftarrow N[i-1] + tr(N, N)$
+   \State $B[i] \leftarrow max 
+   \begin{cases}
+    N[i-1] + tr(N, B)\\
+    J[i-1] + tr(J, B)
+   \end{cases}$
+   \State $M[i,0] \leftarrow -\infty$
+   \For {$j \leftarrow 1, L_q$} \Comment For every model position j from 1 to $L_q$
+     \State $M[0, j] \leftarrow -\infty$
+     \State $M[i, j] \leftarrow e(M_j, S[i]) + max
+     \begin{cases}
+       M[i-1, j-1]\\
+       B[i-1] + tr(B, M_j)
+     \end{cases}$
+   \EndFor
+   \State $E[i] \leftarrow max\{M[i,j] + tr(M_j, E)\} \ \  (j \leftarrow 0, L_q)$
+   \State $J[i] \leftarrow max
+   \begin{cases}
+     J[i-1] + tr(J, J)\\ 
+     E[i-1] + tr(E, J)
+   \end{cases}$
+   \State $C[i] \leftarrow max
+   \begin{cases}
+     C[i-1] + tr(C, C)\\
+     E[i-1] + tr(E, C)
+   \end{cases}$     
+ \EndFor
+ \State $Score \leftarrow C[L_t] + tr(C,T)$
+ \State \textbf{return} $Score$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
 Figure \ref{fig:dpMSV} illustrates an example of an alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence (length $L_t=22$). A path to generate the target sequence with the profile HMM model is shown through a dynamic programming (DP) matrix. The model identifies two high-scoring ungapped alignment segments, as shown in black dots, indicating residues aligned to profile match states. All other residues are assigned to N, J, and C states in the model, as shown in orange dots. An unfilled dot indicates a ``mute'' non-emitting state or state transition.
 
 \begin{figure}[!htb]
@@ -352,87 +444,6 @@ An alignment of a MSV profile HMM model (length $L_q = 14$) to a target sequence
 	\label{fig:dpMSV}
 \end{figure}
 
-\begin{pseudocode}{MSV}{ }
-\label{MSV}
-\COMMENT{Initialization}\\
-N[0] \GETS 0; \ \  B[0] \GETS tr(N, B)\\
-E[0] \GETS C[0] \GETS J[0] \GETS -\infty\\
-\COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO L_t \DO
-\BEGIN
-  N[i] \GETS N[i-1] + tr(N, N)\\
-  B[i] \GETS max 
-  \begin{cases}
-   N[i-1] + tr(N, B)\\
-   J[i-1] + tr(J, B)
-  \end{cases}\\
-  M[i,0] \GETS -\infty\\
-  \COMMENT{For every model position j from 1 to $L_q$}\\
-  \FOR j \GETS 1 \TO L_q \DO
-  \BEGIN
-    M[0, j] \GETS -\infty\\
-    M[i, j] \GETS e(M_j, S[i]) + max 
-    \begin{cases}
-     M[i-1, j-1]\\
-     B[i-1] + tr(B, M_j)
-    \end{cases}\\
-  \END\\
-  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
-  J[i] \GETS max 
-  \begin{cases}
-   J[i-1] + tr(J, J)\\
-   E[i-1] + tr(E, J)
-  \end{cases}\\
-  C[i] \GETS max
-  \begin{cases}
-   C[i-1] + tr(C, C)\\
-   E[i-1] + tr(E, C)
-  \end{cases}\\
-\END\\
-\COMMENT{Termination: }\\
-\RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
-\end{pseudocode}
-
-\begin{lstlisting}[caption={\fontfamily{pag}\selectfont {Pseudo-code of the MSV}.}, label=msvpseudo]
- N[0] = 0; B[0] = tr(N, B)
- E[0] = C[0] = J[0] = -\infty\\
-\COMMENT{for every sequence residue i}\\
-\FOR i = 1 \TO L_t \DO
-\BEGIN
-  N[i] \GETS N[i-1] + tr(N, N)\\
-  B[i] \GETS max 
-  \begin{cases}
-   N[i-1] + tr(N, B)\\
-   J[i-1] + tr(J, B)
-  \end{cases}\\
-  M[i,0] \GETS -\infty\\
-  \COMMENT{For every model position j from 1 to $L_q$}\\
-  \FOR j \GETS 1 \TO L_q \DO
-  \BEGIN
-    M[0, j] \GETS -\infty\\
-    M[i, j] \GETS e(M_j, S[i]) + max 
-    \begin{cases}
-     M[i-1, j-1]\\
-     B[i-1] + tr(B, M_j)
-    \end{cases}\\
-  \END\\
-  E[i] \GETS max\{M[i,j] + tr(M_j, E)\} \ \  (j \GETS 0 \TO L_q)\\
-  J[i] \GETS max 
-  \begin{cases}
-   J[i-1] + tr(J, J)\\
-   E[i-1] + tr(E, J)
-  \end{cases}\\
-  C[i] \GETS max
-  \begin{cases}
-   C[i-1] + tr(C, C)\\
-   E[i-1] + tr(E, C)
-  \end{cases}\\
-\END\\
-\COMMENT{Termination: }\\
-\RETURN {T(S,M) \GETS C[L_t] + tr(C,T)}
-\end{lstlisting}
-
-
 \subsubsection{SIMD vectorized MSV in HMMER3}
 \label{SSE2}
 
@@ -442,9 +453,9 @@ In 2000, Rognes and Seeberg presented an implementation of the SW algorithm runn
 
 In 2007, Farrar presented an efficient vector-parallel approach called striped layout for vectorizing SW algorithm \citep{SW-SSE2}. He designed a striped query profile for SIMD vector computation. He used Intel SSE2 to implement his design. A speedup of 2-8 times was reported over the Rognes and Seeberg SIMD non-stripped implementations.
 
-Inspired by Farrar, in HMMER3 \citep{HMMER3}, Sean R. Eddy used a remarkably efficient stripped vector-parallel approach to calculate MSV alignment scores. To maximize parallelism, he implemented MSV as a 16-fold parallel calculation with score values stored as 8-bit byte integers. He used SSE2 instructions on Intel-compatible systems and Altivec/VMX instructions on PowerPC systems.
+Inspired by Farrar, in HMMER3 \citep{HMMER3}, Sean R. Eddy used a remarkably efficient stripped vector-parallel approach to calculate MSV alignment scores. To maximize parallelism, he implemented the MSV algorithm as a 16-fold parallel calculation with score values stored as 8-bit byte integers. He used SSE2 instructions on Intel-compatible systems and Altivec/VMX instructions on PowerPC systems.
 
-Figure \ref{fig:strip} shows the stripped pattern. The query profile HMM of length $L_q$ is divided into vectors with equal length $L_v$. The vector length $L_v$ is equal to the number of elements being processed in the 128-bit SIMD register. MSV processes sixteen 8-bit byte integer (since $L_v$ = 128/8 = 16). In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. The dp stores $L_q$ cells in $L_Q$ vectors which is numbered as $q = 1...L_Q$, where $L_Q = (L_q+L_v-1)/L_v$. Figure \ref{fig:strip} illustrates $L_q$ cells assigned to $L_Q$ vectors in a non-sequential way. For simple illustration, $L_v = 4, L_q = 14$, and $L_Q = 4$.
+Figure \ref{fig:strip} shows the stripped pattern. The query profile HMM of length $L$ is divided into vectors with equal length $L_v$. The vector length $L_v$ is equal to the number of elements being processed in the 128-bit SIMD register. The implementation of the MSV algorithm in HMMER3 processes sixteen 8-bit byte integers (since $L_v$ = 128/8 = 16). In a row-vectorized implementation, the query profile HMM is stored in the vectorized dynamic programming matrix dp. The dp stores $L$ cells in $L_Q$ vectors which is numbered as $q = 1...L_Q$, where $L_Q = (L+L_v-1)/L_v$. Figure \ref{fig:strip} illustrates $L$ cells assigned to $L_Q$ vectors in a non-sequential stripped way. For simple illustration, we assume $L_v = 4, L = 14$, and $L_Q = 4$. Two unused cells are marked as $\times$ and set to a sentinel value. 
 
 \begin{figure}[!htb]
 	\includegraphics{Figures/msv_vector.jpg}
@@ -452,9 +463,11 @@ Figure \ref{fig:strip} shows the stripped pattern. The query profile HMM of leng
 	\label{fig:strip}
 \end{figure}
 
-In Smith-Waterman and Viterbi dynamic programming, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in the MSV algorithm, the \emph{delete} and \emph{insert} states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure \ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
+In dynamic programming of the Smith-Waterman algorithm and the Viterbi algorithm, the calculation of each cell $(i, j)$ in the dp is dependent on previously calculated cells $(i-1, j), (i, j-1)$ and $(i-1, j-1)$. However, in the MSV algorithm, the \emph{delete} and \emph{insert} states have been removed and only ungapped diagonals need calculating, so the calculation of each cell $(i, j)$ requires only previous $(i-1, j-1)$. In Figure \ref{fig:strip}, the top red row shows the previous row $i-1$ for the cells $j-1$, which is needed for calculating each new cell $j$ in a new row $i$. 
 
-Striping method can remove the SIMD register data dependencies. As can be seen in the Figure \ref{fig:strip}, with striped indexing, vector $q-1$ contains exactly the four $j-1$ cells needed to calculate the four cells $j$ in a new vector $q$ on a new blue row of the dp matrix. For example, when we calculate cells $j=(2,6,10,14)$ in vector $q=2$, we access the previous rowâ€™s vector $q-1=1$ which contains the cells we need in the order we need them, $j-1=(1,5,9,13)$ (the vector above). 
+Striping method can remove the SIMD register data dependencies. In the Figure \ref{fig:strip}, $j$ is to index each cell in dp and its value is from 1 to 14. The $q$ is to index the vector of dp and its value is from 1 to 4. With striped indexing, vector $q-1$ in the top row contains exactly the four $j-1$ cells, which are needed to calculate the four cells $j$ in a new vector $q$ in the middle row of the dp array. For example, when we calculate cells $j=(2,6,10,14)$ in vector $q=2$ in the middle row, we access the previous row's vector $q-1=1$ which contains the cells we need in the order we need them, $j-1=(1,5,9,13)$ (the vector above). After calculating, we save the result in the same dp array which is shown in the new bottom row.
+
+To calculate the first vector with $q=1$ for the cells $j=(1,5,9,13)$, we need the values of the cells ($\times$,4,8,12). Because the first cell $j=1$ is not dependent on any previous cell, we indicate its dependency cell as $\times$. To fetch the values of the cells ($\times$,4,8,12), we right-shift the last vector with $q=4$ on each finished row and store the values in the vector mpv. The mpv is used to initialize the next row calculation.
 
 \begin{figure}[!htb]
 \centering
@@ -463,64 +476,82 @@ Striping method can remove the SIMD register data dependencies. As can be seen i
 	\label{fig:nostrip}
 \end{figure}
 
-Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure \ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. Outside the inner loop(for $q = 1$ to $L_Q$), the last vector on each finished row is right-shifted (mpv, in grey with red cell $j$ indices) and used to initialize the next row calculation.
+Instead, if we indexed cells into vectors in the linear order ($j=1,2,3,4$ in vector $q=1$ and so on), as shown in Figure \ref{fig:nostrip}, there is no such correspondence of $(q,q-1)$ with four $(j-1,j)$, and each calculation of a new vector $q$ would require extra expensive operations, such as shifting or rearranging cell values inside the previous row's vectors. By using the striped query access, only one shift operation is needed per row as shown in \ref{fig:strip}. 
 
 The pseudo code for the implementation is shown in Algorithm \ref{MSV-SIMD}
 
-\begin{pseudocode}{MSV-SIMD}{ }
-\label{MSV-SIMD}
-\COMMENT{Initialization}\\
-xJ \GETS 0; \ \  dp[q] \GETS vec\_splat(0) \  (q \GETS 0 \TO L_Q-1)\\
-xB \GETS base + tr(N, B)\\
-xBv \GETS vec\_adds(xB, tr(B, M))\\
-\COMMENT{for every sequence residue i}\\
-\FOR i \GETS 1 \TO L_t \DO
-\BEGIN
-  xEv \GETS vec\_splat(0)\\
-  mpv \GETS vec\_rightshift(dp[L_Q-1])\\
-  \FOR q \GETS 0 \TO L_Q-1 \DO
-  \BEGIN
-    \COMMENT{temporary  storage of 1 current row value in progress}\\
-    tmpv \GETS vec\_max(mpv, xBv)\\
-    tmpv \GETS vec\_adds(tmpv, e(M_j, S[i]))\\
-    xEv \GETS vec\_max(xEv, tmpv)\\
-    mpv \GETS dp[q]\\
-    dp[q] \GETS tmpv\\
-  \END\\
-  xE \GETS vec\_hmax(xEv)\\
-  xJ \GETS max 
+\begin{algorithm}
+\caption{Pseudo code of the SIMD vectorized MSV algorithm}\label{MSV-SIMD}
+\begin{algorithmic}[1]
+\Procedure {MSV-SIMD}{ }
+  \State $xJ \leftarrow 0; \ \  dp[q] \leftarrow vec\_splat(0) \  (q \leftarrow 0, L_Q-1)$
+  \State $xB \leftarrow base + tr(N, B)$
+  \State $xBv \leftarrow vec\_adds(xB, tr(B, M))$
+  \For {$i \leftarrow 1, L_t$} \Comment For every sequence residue i
+  \State $xEv \leftarrow vec\_splat(0)$
+  \State $mpv \leftarrow vec\_rightshift(dp[L_Q-1])$
+  \For {$q \leftarrow 0, L_Q-1$}
+    \State $tmpv \leftarrow vec\_max(mpv, xBv)$ \Comment temporary  storage of 1 current row value
+    \State $tmpv \leftarrow vec\_adds(tmpv, e(M_j, S[i]))$
+    \State $xEv \leftarrow vec\_max(xEv, tmpv)$
+    \State $mpv \leftarrow dp[q]$
+    \State $dp[q] \leftarrow tmpv$
+  \EndFor
+  \State $xE \leftarrow vec\_hmax(xEv)$
+  \State $xJ \leftarrow max 
   \begin{cases}
    xJ\\
    xE + tr(E, J)
-  \end{cases}\\
-  xB \GETS max 
+  \end{cases}$
+  \State $xB \leftarrow max 
   \begin{cases}
    base\\
    xJ + tr(J, B)
-  \end{cases}\\
-\END\\
-\COMMENT{Termination: }\\
-\RETURN {T(S,M) \GETS xJ + tr(C,T)}
-\end{pseudocode}
+  \end{cases}$
+  \EndFor
+  \State $Score \leftarrow xJ + tr(C,T)$
+  \State \textbf{return} $Score$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
-Five pseudocode vector instructions for operations on 8-bit integers are used in the pseudo code. The instructions are vec\_splat, vec\_adds, vec\_rightshift, vec\_max and vec\_hmax. Either scalars $x$ or vectors v containing 16 8-bit integer elements numbered $v[0]...v[15]$. Each of these operations are either available or easily constructed in Intel SSE2 intrinsics as shown in the following table.
+% \begin{pseudocode}{MSV-SIMD}{ }
+% \label{MSV-SIMD}
+% \COMMENT{Initialization}\\
+% xJ \GETS 0; \ \  dp[q] \GETS vec\_splat(0) \  (q \GETS 0 \TO L_Q-1)\\
+% xB \GETS base + tr(N, B)\\
+% xBv \GETS vec\_adds(xB, tr(B, M))\\
+% \COMMENT{for every sequence residue i}\\
+% \FOR i \GETS 1 \TO L_t \DO
+% \BEGIN
+%   xEv \GETS vec\_splat(0)\\
+%   mpv \GETS vec\_rightshift(dp[L_Q-1])\\
+%   \FOR q \GETS 0 \TO L_Q-1 \DO
+%   \BEGIN
+%     \COMMENT{temporary  storage of 1 current row value in progress}\\
+%     tmpv \GETS vec\_max(mpv, xBv)\\
+%     tmpv \GETS vec\_adds(tmpv, e(M_j, S[i]))\\
+%     xEv \GETS vec\_max(xEv, tmpv)\\
+%     mpv \GETS dp[q]\\
+%     dp[q] \GETS tmpv\\
+%   \END\\
+%   xE \GETS vec\_hmax(xEv)\\
+%   xJ \GETS max 
+%   \begin{cases}
+%    xJ\\
+%    xE + tr(E, J)
+%   \end{cases}\\
+%   xB \GETS max 
+%   \begin{cases}
+%    base\\
+%    xJ + tr(J, B)
+%   \end{cases}\\
+% \END\\
+% \COMMENT{Termination: }\\
+% \RETURN {T(S,M) \GETS xJ + tr(C,T)}
+% \end{pseudocode}
 
-% \begin{minipage}{\textwidth}
-% \begin{center}
-% \begin{tabular}{|c|c|c|}\hline
-% \shortstack{\textbf{Pseudocode} \\ SSE2 code in C} & \textbf{Operation} & \textbf{Definition}\\\hline
-% \shortstack{\textbf{v = vec\_splat(x)} \\ v = \_mm\_set1\_epi8(x)} & assignment & $v[z] = x$\\\hline
-% \shortstack{\textbf{v = vec\_adds(v1, v2)} \\ v = \_mm\_adds\_epu8(v1, v2)} & saturated addition & $v[z] = min$
-% $\begin{cases}
-%   2^8-1\\
-%   v1[z]+v2[z]
-% \end{cases}$\\\hline
-% \shortstack{\textbf{v1 = vec\_rightshift(v2)} \\ v1 = \_mm\_slli\_si128(v2, 1)} & right shift & \shortstack{$v1[z] = v2[z-1](z=16...1)$; \\ $v1[0]=0;$}\\\hline
-% \shortstack{\textbf{v = vec\_max(v1, v2)} \\ v = \_mm\_max\_epu8(v1, v2)} & max & $v[z] = max(v1[z], v2[z])$\\\hline
-% \shortstack{\textbf{x = vec\_hmax(v)} \\ -} & horizontal max & $x = max_zv[z]$\\\hline
-% \end{tabular}
-% \end{center}
-% \end{minipage}
+Five pseudocode vector instructions for operations on 8-bit integers are used in the pseudo code. The instructions are vec\_splat, vec\_adds, vec\_rightshift, vec\_max and vec\_hmax. Either scalars $x$ or vectors v containing 16 8-bit integer elements numbered $v[0]...v[15]$. Each of these operations are either available or easily constructed in Intel SSE2 intrinsics as shown in Table \ref{tab.SSE2}.
 
 
 \begin{table}[H]
@@ -539,7 +570,6 @@ $\begin{cases}
 \end{tabular}
 \caption{\fontfamily{pag}\selectfont\textbf{SSE2 intrinsics for pseudocode in Algorithm \ref{MSV-SIMD}} The first column is pseudocode and its corresponding SSE2 intrinsic in C language. Because x86 and x86-64 use little endian, \textbf{vec\_rightshift()} means using a left bit shift intrinsic \textbf{\_mm\_slli\_si128()} to do right shift. No SSE2 intrinsic is corresponding to \textbf{vec\_hmax()}. Shuffle intrinsic \textbf{\_mm\_shuffle\_epi32} and \textbf{\_mm\_max\_epu8} can be combined to implement \textbf{vec\_hmax()}.\label{tab.SSE2}}
 \end{table}
-
 
 %----------------------------------------------------------------------------------------
 
@@ -567,9 +597,9 @@ The SM has been evolving rapidly since the introduction of the first CUDA-enable
 \begin{table}[H]
 \begin{tabular}[t]{|c|c|}\hline
 \shortstack{\textbf{Compute}\\ \textbf{Capability} } & \textbf{Features introduced} \\\hline
-SM 1.x & \shortstack[l]{Global memory atomics; mapped pinned memory; debuggable;\\ atomic operations on shared memory; Double precision} \\\hline
-{SM 2.x} & \shortstack[l]{64-bit addressing; L1 and L2 cache; concurrent kernel execution;\\ global atomic add for single-precision floating-point values;\\ Function calls and indirect calls in kernels} \\\hline
-SM 3.x & \shortstack[l]{SIMD Video Instructions; Increase maximum grid size; warp shuffle;\\ Bindless textures (``texture objects''); read global memory via texture;\\ faster global atomics; 64-bit atomic min, max, AND, OR, and XOR;\\ dynamic parallelism} \\\hline
+SM 1.x & \shortstack{Global memory atomics; mapped pinned memory; debuggable;\\ atomic operations on shared memory; Double precision} \\\hline
+{SM 2.x} & \shortstack{64-bit addressing; L1 and L2 cache; concurrent kernel execution;\\ global atomic add for single-precision floating-point values;\\ Function calls and indirect calls in kernels} \\\hline
+SM 3.x & \shortstack{SIMD Video Instructions; Increase maximum grid size; warp shuffle;\\ Bindless textures (``texture objects''); read global memory via texture;\\ faster global atomics; 64-bit atomic min, max, AND, OR, and XOR;\\ dynamic parallelism} \\\hline
 \end{tabular}
 \caption{\fontfamily{pag}\selectfont Features per Compute Capability\label{tab.sm}}
 \end{table}
@@ -737,8 +767,10 @@ They also exploit constant memory to store the gap penalties, scoring matrix and
 Kentie exploits constant memory and shared memory for the substitution matrix. Constant memory is fast, but only if all threads read the same address. This is not suited to the substitution matrix. Shared memory has several disadvantages for the matrix. Finally, he finds texture memory has the ability to fetch four values at a time and is well suited for random access. He gains a total speedup of 25\% after switching from shared memory to texture memory.
 He also stores gap penalties in constant memory. 
 
-\citep{Akoglu} stores database sequences in global memory. The cell calculation blocks are used to store temporary calculation values needed for data dependencies for each column and are also stored in global memory. They use the substitution matrix instead of the query profile to save memory size. In order to index the row and column of the matrix in extremely efficient way, they design a simple function for accessing the matrix, which is as follows:
-$S_{i,j} = (ascii(S_1)-65, ascii(S_2)-65)$
+\citep{Akoglu} stores database sequences in global memory. The cell calculation blocks are used to store temporary calculation values needed for data dependencies for each column and are also stored in global memory. They use the substitution matrix instead of the query profile to save memory size. In order to index the row and column of the matrix in extremely efficient way, they design a simple function for accessing the matrix, which is as follows:\\
+\begin{equation*}
+ S_{i,j} = (ascii(S_1)-65, ascii(S_2)-65)
+\end{equation*}
 where $S_1$ is a residue from the query sequence and $S_2$ is a residue from one of the database sequences.
 They map the query sequence as well as the substitution matrix to the constant memory to make access to these values easy.
 They track the highest SW score by a single register in the kernel for each thread, and update on each pass of the inner loop. Then the score is written to the global memory, after the alignment is finished.
@@ -822,18 +854,18 @@ However, they did not present exactly how they implement their CUDA programs for
 As described in Section \ref{cudaMemH}, the CUDA memory hierarchy includes registers, local, shared, global, constant and texture memory, as shown in Figure \ref{fig:cudaMem}. Memory throughput generally dominates program performance both in the CPU and GPU domains. Here is a review of how these studies applied different device memory access pattern to optimize their implementations.
 
 \citep{GPUHMM} found the most effective optimization for the Viterbi algorithm is to optimize CUDA memory layout and usage patterns within the implementation. 
-Since the Viterbi algorithm requires only the current and the previous rows of the dynamic programming matrices, they reduce the memory requirements of the Viterbi scoring calculation from $3 \times M * L + 5 * L$ to $6 * M$ integer array elements, where $M$ and $L$ are the length of the sequence and HMM, respectively.
+Since the Viterbi algorithm requires only the current and the previous rows of the dynamic programming matrices, they reduce the memory requirements of the Viterbi scoring calculation from $(3 \times M \times L + 5 \times L)$ to $(6 \times M)$ integer array elements, where $M$ and $L$ are the length of the sequence and HMM, respectively.
 
-They utilize high speed texture memory to store the target sequence batch. Because the sequence data are static and read-only through computing. They note that global memory coalesced access can significantly improve hmmsearch overall speedup. Their benchmark results show that this approach contributes an improvement of more than 9x for larger HMMs.
+They note that coalesced access of global memory can significantly improve hmmsearch overall speedup. Their benchmark results show that this single approach contributes an improvement of more than 9x for larger HMMs.
 
-They use constant memory and texture memory to store the query profile HMM depending on its size. They place the normal size HMM in constant memory. In cases where the very large HMM exceeds the capacity of constant memory, they switch over to texture memory for the remaining portion of the HMM after exploiting the full constant memory. They utilize shared memory to temporarily store the index into each thread’s digitized sequence.
+They utilize high speed texture memory to store the target sequences, because the sequence data are static and read-only during computation. They also use texture memory and constant memory to store the query profile HMM depending on its size. They place the normal size HMM in constant memory. In cases where the very large HMM exceeds the capacity of constant memory, they switch over to texture memory for the remaining portion of the HMM after allocating all the constant memory. They utilize shared memory to temporarily store the index into each thread's sequence.
 
-\citep{Du} reorganizes the computational kernel of the Viterbi algorithm, and divides the basic computing unit into two parts: independent and dependent parts. All of the independent parts are executed with a parallel and balanced load in an optimized coalesced global memory access manner, which significantly improves the Viterbi algorithm’s performance on GPU. 
+\citep{Du} reorganizes the computational kernel of the Viterbi algorithm, and divides it into two parts: the independent and dependent parts. All of the independent parts are executed in parallel and balances load to optimize the coalesced access to global memory. This significantly improves the performance of the Viterbi algorithm on the GPU. 
 
-They implement the \emph{wave-front} pattern using the data skewing strategy. This makes cells in the same parallelizing group be adjacent to each other. In this way, because data accessed by neighbor threads are organized adjacent to each other, threads could access memory in a more efficient manner.
+They implement the \emph{wave-front} pattern using a data skewing strategy. This places cells in the same group to be adjacent to each other. In this way, the data accessed by neighbor threads are adjacent to each other. Therefore threads can access memory in a more efficient manner.
 
-\citep{Quirem} implements Viterbi algorithm being performed on Tesla C1060.
+\citep{Quirem} implements the Viterbi algorithm for the Tesla C1060 GPU.
 
-They utilize pinned memory to reduce the latency induced by transferring memory from device to host and back. They test two different versions of the memory allocation mechanism: one is pageable memory allocation with the standard \emph{malloc} function, another is pinned memory with the \emph{cudaHostAlloc} function. Pinned memory is host memory that can not be paged (swapped) out to disk by the virtual memory management of the OS, and thus reduces the latency induced by transferring memory from device to host and back. Based on their experiments, utilizing pinned memory, the execution of the kernels spends more GPU time relative to the less memory transfer time. Kernel execution time is basically the same for both pageable and pinned memory, because the two versions only relate to the speed of the memory transfer. In their experiments, the performance of pinned memory is improved roughly 20\% over that of non-pinned memory.
+They utilize pinned memory to reduce the latency introduced by transfer memory between device and host. They test two different versions of the memory allocation mechanism: one is pageable memory allocation with the standard \emph{malloc} function, another is pinned memory allocation with the \emph{cudaHostAlloc} function. Pinned memory is host memory that can not be paged (swapped) out to disk by the virtual memory management of the OS, and thus reduces the latency introduced by transfer memory. Based on their experiments, utilizing pinned memory, the kernel execution on the GPU is relatively greater than the transfer time. Kernel execution time is basically the same for both pageable and pinned memory, because the two versions only relate to the speed of the memory transfer. In their experiments, the impact of pinned memory on total computation time is an improvement of roughly 20\% over that of non-pinned memory.
 
 Their implementation gains 10x-15x speedup over the original implementation of the Viterbi function according to the number of queries. They tested up to 16,384 queries as that was a limitations of the Tesla C1060 and the speedup increased exponentially as the number of launched threads i.e. number of queries doubled. 
