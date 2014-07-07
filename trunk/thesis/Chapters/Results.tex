@@ -93,15 +93,15 @@ This was done by using the fully optimized cudaHmmsearch to search the much larg
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|}\hline
-\shortstack{\textbf{Profile HMM} \\ \textbf{(length)}} & \shortstack{\textbf{hmmsearch} \\ (s) (GCUPS)} & \shortstack{\textbf{cudaHmmsearch} \\ (s) (GCUPS)} & \shortstack{\textbf{Speedup} \\ (times)} \\\hline
-\shortstack{globins4 \\ (149)} & \shortstack{217.54s \\ 9.37GCUPS} & \shortstack{88.63s \\ 23.00GCUPS} & 2.45 \\\hline
-\shortstack{120\_Rick\_ant \\ (255)} & \shortstack{297.52s \\ 11.72GCUPS} & \shortstack{108.42s \\ 32.17GCUPS} & 2.74 \\\hline
-\shortstack{2HCT \\ (414)} & \shortstack{484.68s \\ 11.68GCUPS} & \shortstack{188.72s \\ 30.01GCUPS} & 2.57 \\\hline
-\shortstack{ACC\_central \\ (708)} & \shortstack{809.97s \\ 11.96GCUPS} & \shortstack{295.02s \\ 32.83GCUPS} & 2.75 \\\hline
-\shortstack{AAA\_27 \\ (1111)} & \shortstack{2203.36s \\ 6.90GCUPS} & \shortstack{1034.96s \\ 14.68GCUPS} & 2.13 \\\hline
-\textbf{Average} & - & - & 2.53 \\\hline
+\shortstack{\textbf{Profile HMM} \\ \textbf{(length)}} & \multicolumn{2}{|c|}{\shortstack{\textbf{hmmsearch} \\ (s) (GCUPS)}} & \multicolumn{2}{|c|}{\shortstack{\textbf{cudaHmmsearch} \\ (s) (GCUPS)}} & \shortstack{\textbf{Speedup} \\ (times)} \\\hline
+\shortstack{globins4 \\ (149)} & 217.54s & 9.37GCUPS & 88.63s & 23.00GCUPS & 2.45 \\\hline
+\shortstack{120\_Rick\_ant \\ (255)} & 297.52s & 11.72GCUPS & 108.42s & 32.17GCUPS & 2.74 \\\hline
+\shortstack{2HCT \\ (414)} & 484.68s & 11.68GCUPS & 188.72s & 30.01GCUPS & 2.57 \\\hline
+\shortstack{ACC\_central \\ (708)} & 809.97s & 11.96GCUPS & 295.02s & 32.83GCUPS & 2.75 \\\hline
+\shortstack{AAA\_27 \\ (1111)} & 2203.36s & 6.90GCUPS & 1034.96s & 14.68GCUPS & 2.13 \\\hline
+\textbf{Average} & \multicolumn{2}{|c|}{-} & \multicolumn{2}{|c|}{-} & 2.53 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} The table shows the result of Experiment B, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 5 profile HMMs against the N201404 database. Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
+\caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} The table shows the result of Experiment B, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 5 profile HMMs against the N201404 database. In the column of hmmsearch and cudaHmmsearch, the left sub-column is execution time in second and the right sub-column is performance in GCUPS. Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
 \end{table}
 
 The results of the benchmarks are shown in graphical form in Figure \ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.53x over hmmsearch. 
