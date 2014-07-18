@@ -71,6 +71,7 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage[a4paper]{geometry}
 % \usepackage{pseudocode}
 
 \RequirePackage[utf8]{inputenc} % Allows the use of international characters (e.g. Umlauts)
@@ -80,14 +81,14 @@
 %----------------------------------------------------------------------------------------
 %	MARGINS
 %----------------------------------------------------------------------------------------
-\setmarginsrb  { 1.5in}  % left margin
+\setmarginsrb  { 0.825in}  % left margin
                         { 0.6in}  % top margin
-                        { 1.0in}  % right margin
-                        { 0.8in}  % bottom margin
-                        {  20pt}  % head height
+                        { 0.825in}  % right margin
+                        { 0.6in}  % bottom margin
+                        { 0.0pt}  % head height
                         {0.25in}  % head sep
                         {   9pt}  % foot height
-                        { 0.3in}  % foot sep
+                        { 0.4in}  % foot sep
 %----------------------------------------------------------------------------------------
 \raggedbottom
 \setlength{\topskip}{1\topskip \@plus 5\p@}
@@ -97,9 +98,10 @@
 \clubpenalty=9999                 % Almost no orphans at top of page.
 \interfootnotelinepenalty=9999    % Almost never break footnotes.
 \usepackage{fancyhdr}
-\lhead[\rm\thepage]{\fancyplain{}{\sl{\rightmark}}}
-\rhead[\fancyplain{}{\sl{\leftmark}}]{\rm\thepage}
-\chead{}\lfoot{}\rfoot{}\cfoot{}
+% \lhead[\rm\thepage]{\fancyplain{}{\sl{\rightmark}}}
+% \rhead[\fancyplain{}{\sl{\leftmark}}]{\rm\thepage}
+% \chead{}\lfoot{}\rfoot{}
+\cfoot{}
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\btypeout{\thechapter\space #1}\markboth{\@chapapp\ \thechapter\ #1}{\@chapapp\ \thechapter\ #1}}
 \renewcommand{\sectionmark}[1]{}
@@ -253,81 +255,80 @@
 %----------------------------------------------------------------------------------------    
 
 % The default title page, this is not used in this www.latextemplates.com version            
-\renewcommand\maketitle{
-  \btypeout{Title Page}
-  \hypersetup{pdftitle={\@title}}
-  \hypersetup{pdfsubject=\subjectname}
-  \hypersetup{pdfauthor=\authornames}
-  \hypersetup{pdfkeywords=\keywordnames}
-  \thispagestyle{empty}
-  \begin{titlepage}
-    \let\footnotesize\small
-    \let\footnoterule\relax
-    \let \footnote \thanks
-    \setcounter{footnote}{0}
-    \null\vfil
-    \vskip 60\p@
-    \begin{center}
-      \setlength{\parskip}{0pt}
-      {\large\textbf{\UNIVNAME}\par}
-      \vfill
-      {\huge \bf \@title \par}
-      \vfill
-      {\LARGE by \par}
-      \smallskip
-      {\LARGE \authornames \par}
-      \vfill
-      {\large A thesis submitted in partial fulfillment for the \par}
-      {\large degree of \degreename \par}
-      \bigskip
-      \bigskip
-      {\large in the \par}
-      {\large \facname \par}
-      {\large \deptname \par} 
-      \bigskip
-      \bigskip
-      \bigskip
-      {\Large \@date \par}
-      \bigskip
-    \end{center}
-    \par
-    \@thanks
-    \vfil\null
-  \end{titlepage}
-  \setcounter{footnote}{0}%
-  \global\let\thanks\relax
-  \global\let\maketitle\relax
-  \global\let\@thanks\@empty
-  \global\let\@author\@empty
-  \global\let\@date\@empty
-  \global\let\@title\@empty
-  \global\let\title\relax
-  \global\let\author\relax
-  \global\let\date\relax
-  \global\let\and\relax
-  \cleardoublepage
-}
+% \renewcommand\maketitle{
+%   \btypeout{Title Page}
+%   \hypersetup{pdftitle={\@title}}
+%   \hypersetup{pdfsubject=\subjectname}
+%   \hypersetup{pdfauthor=\authornames}
+%   \hypersetup{pdfkeywords=\keywordnames}
+%   \thispagestyle{empty}
+%   \begin{titlepage}
+%     \let\footnotesize\small
+%     \let\footnoterule\relax
+%     \let \footnote \thanks
+%     \setcounter{footnote}{0}
+%     \null\vfil
+%     \vskip 60\p@
+%     \begin{center}
+%       \setlength{\parskip}{0pt}
+%       {\large\textbf{\UNIVNAME}\par}
+%       \vfill
+%       {\huge \bf \@title \par}
+%       \vfill
+%       {\LARGE by \par}
+%       \smallskip
+%       {\LARGE \authornames \par}
+%       \vfill
+%       {\large A thesis submitted in partial fulfillment for the \par}
+%       {\large degree of \degreename \par}
+%       \bigskip
+%       \bigskip
+%       {\large in the \par}
+%       {\large \facname \par}
+%       {\large \deptname \par} 
+%       \bigskip
+%       \bigskip
+%       \bigskip
+%       {\Large \@date \par}
+%       \bigskip
+%     \end{center}
+%     \par
+%     \@thanks
+%     \vfil\null
+%   \end{titlepage}
+%   \setcounter{footnote}{0}%
+%   \global\let\thanks\relax
+%   \global\let\maketitle\relax
+%   \global\let\@thanks\@empty
+%   \global\let\@author\@empty
+%   \global\let\@date\@empty
+%   \global\let\@title\@empty
+%   \global\let\title\relax
+%   \global\let\author\relax
+%   \global\let\date\relax
+%   \global\let\and\relax
+%   \cleardoublepage
+% }
 %----------------------------------------------------------------------------------------
 %	ABSTRACT PAGE DESIGN
 %----------------------------------------------------------------------------------------
-\newenvironment{abstract}
+\newenvironment{abstract}[1]
 {
   \btypeout{Abstract Page}
-  \thispagestyle{empty}
+   \thispagestyle{plain}
   \null\vfil
   \begin{center}
     \setlength{\parskip}{0pt}
-    {\normalsize \UNIVNAME \par} % University name in capitals
-    {\normalsize \deptname \par} % Department name
     \bigskip
     {\huge{\textit{Abstract}} \par}
     \bigskip
     \bigskip
     {\normalsize\bf \@title \par} % Thesis title
     \medskip
-    {\normalsize by \authornames \par} % Author name
+    {\normalsize \authornames \par} % Author name
     \bigskip
   \end{center}
+  {\normalsize #1}
 }
 %----------------------------------------------------------------------------------------
 {
@@ -342,7 +343,8 @@
 \addcontentsline{toc}{chapter}{#1}}
 \renewcommand\tableofcontents{
 \btypeout{Table of Contents}
-\addtotoc{Contents}
+\pagestyle{plain}
+% \addtotoc{Contents}
 \begin{spacing}{1}{
     \setlength{\parskip}{1pt}
     \if@twocolumn
@@ -375,6 +377,7 @@
     \if@restonecol\twocolumn\fi
     \cleardoublepage
 }\end{spacing}
+\thispagestyle{plain}
 }
 \renewcommand\listoftables{
 \btypeout{List of Tables}
@@ -429,7 +432,7 @@
 }
 \newcommand\acknowledgements[1]{
 \btypeout{Acknowledgements}
-\addtotoc{Acknowledgements}
+% \addtotoc{Acknowledgements}
 \thispagestyle{plain}
 \begin{center}{\huge{\textit{Acknowledgements}} \par}\end{center}
 {\normalsize #1}
