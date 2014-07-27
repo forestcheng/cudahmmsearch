@@ -779,36 +779,9 @@ pipeline_thread(void *arg)
   cudaEventRecord( start, 0 );
 
 
-//  int j = 0;
   while (block->count > 0)
   {
-//	  if (pthread_equal(threadId, obj->threadId[0]))
-//	  {
-
-		  loadCUDA(hostPtr, cudaPtr, block, info, stream);
-
-
-//	  } else {
-//
-//		  /* Main loop: */
-//		  for (i = 0; i < block->count; ++i)
-//		  {
-//			  ESL_SQ *dbsq = block->list + i;
-//
-//			  p7_pli_NewSeq(info->pli, dbsq);
-//			  p7_bg_SetLength(info->bg, dbsq->n);
-//			  p7_oprofile_ReconfigLength(info->om, dbsq->n);
-//
-//			  p7_Pipeline(info->pli, info->om, info->bg, dbsq, info->th);
-//
-//			  esl_sq_Reuse(dbsq);
-//			  p7_pipeline_Reuse(info->pli);
-//		  }
-//	  }
-//	  ++j;
-
-	  //	  if (pthread_equal(threadId, obj->threadId[0]) && j > 12)
-	  //		  break;
+	  loadCUDA(hostPtr, cudaPtr, block, info, stream);
 	  status = esl_workqueue_WorkerUpdate(info->queue, block, &newBlock);
 	  if (status != eslOK) esl_fatal("Work queue worker failed");
 
@@ -832,8 +805,6 @@ pipeline_thread(void *arg)
 #endif
 
   esl_threads_Finished(obj, workeridx);
-
-//  printf("Thread %x work %d obj->threadId[0] %x\n", threadId, j, obj->threadId[0]);
 
   return;
 }
