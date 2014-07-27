@@ -128,7 +128,7 @@ Passed Forward filter & 7,145 & 17,719 \\\hline
 \caption{\fontfamily{pag}\selectfont \textbf{Internal pipeline statistics summary.}\label{tab.sta} The table shows the total number of target sequences in the N201404 database and the number of passed sequences after each filter for searching globins4 and AAA\_27 in the Experiment B.}
 \end{table}
 
-\subsection{Comparison with multicore CPU}
+\subsection{Comparison with multi-core CPU}
 \paragraph*{Experiment C : } This experiment tested the performance of cudaHmmsearch and hmmsearch of HMMER3 running with multiple CPU cores. The Kronos experiment system has an Intel Core i7-3960X CPU with six cores.
 
 A benchmark to study the impact of multiple CPU cores has not been used in the articles cited in this thesis. The purpose of Experiment C is to show how the performance increase or decrease with the use of more CPU cores.
@@ -143,7 +143,7 @@ cudaHmmsearch & 32.17 & 50.22 & 57.70 & 59.14 & 59.39 & 59.29 \\\hline
 hmmsearch & 11.72 & 23.28 & 29.22 & 44.15 & 46.19 & 44.69 \\\hline
 Speedup (times) & 2.74 & 2.16 & 1.97 & 1.34 & 1.29 & 1.33 \\\hline
 \end{tabular}
-\caption{\fontfamily{pag}\selectfont \textbf{Result of Comparison with multicore CPU.} \label{tab.mcpu} The table shows the result of Experiment C, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 120\_Rick\_ant profile HMM against the N201404 database with one to six CPU cores involved in computing. }
+\caption{\fontfamily{pag}\selectfont \textbf{Result of Comparison with multi-core CPU.} \label{tab.mcpu} The table shows the result of Experiment C, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 120\_Rick\_ant profile HMM against the N201404 database with one to six CPU cores involved in computing. }
 \end{table}
 
 The graphic view of the benchmark is shown in Figure \ref{fig:cpuCores}. The number above each bar is the Performance in GCUPS. As can be seen, from 1 CPU core to 4 CPU cores, both cudaHmmsearch performance and hmmsearch performance increase almost linearly. From then on, perhaps due to complex scheduling among CPU cores and only one I/O to load sequences from the database for CPU cores, the extra CPU cores do not contribute much to either cudaHmmsearch or hmmsearch execution. Even worse, six CPU cores have a negative effect compared to five CPU cores.
@@ -151,7 +151,7 @@ The graphic view of the benchmark is shown in Figure \ref{fig:cpuCores}. The num
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.25\textheight]{Figures/cpuCores.png}
-	\caption{\fontfamily{pag}\selectfont \textbf{Comparison with multicore CPU.} The data of this chart come from Table \ref{tab.mcpu} for Experiment C. The number above each bar is the Performance in GCUPS.}
+	\caption{\fontfamily{pag}\selectfont \textbf{Comparison with multi-core CPU.} The data of this chart come from Table \ref{tab.mcpu} for Experiment C. The number above each bar is the Performance in GCUPS.}
 	\label{fig:cpuCores}
 \end{figure}
 

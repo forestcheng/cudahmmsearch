@@ -145,7 +145,7 @@
 \pagestyle{fancy}
 \abstract{{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-The recent emergence of multicore CPU and manycore GPU architectures has made parallel computing more accessible. Hundreds of industrial and research applications have been mapped onto GPUs to further utilize the extra computing resource.
+The recent emergence of multi-core CPU and many-core GPU architectures has made parallel computing more accessible. Hundreds of industrial and research applications have been mapped onto GPUs to further utilize the extra computing resource.
 In bioinformatics, HMMER is a set of widely used applications for sequence analysis based on Hidden Markov Model. One of the tools in HMMER, \emph{hmmsearch}, and the Smith-Waterman algorithm are two important tools for protein sequence analysis that use dynamic programming. Both tools are particularly well-suited for many-core GPU architecture due to the parallel nature of sequence database searches. 
 
 After studying the existing research on CUDA acceleration in bioinformatics, this thesis investigated the acceleration of the key Multiple Segment Viterbi algorithm in HMMER version 3. A fully-featured CUDA-enabled protein database search tool \emph{cudaHmmsearch} was designed, implemented and optimized. We demonstrated a variety of optimization strategies that are useful for general purpose GPU-based applications. Based on our optimization experience in parallel computing, six steps were summarized for optimizing performance using CUDA programming. 

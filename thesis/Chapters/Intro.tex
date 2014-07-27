@@ -43,7 +43,7 @@ Specialized hardware architectures have been used to exploit coarse-grained para
 
 On traditional CPU architecture, MPI-HMMER \citep{Walters2006} is a well-known and commonly used MPI implementation. In their studies, a single master node is used to assign multiple database blocks to worker nodes for computing in parallel and is responsible for collecting the results. Landman et al. exploit MPI and Intel SSE2 intrinsics to accelerate HMMER2 \citep{Landman}.
 
-Graphics Processing Unit (GPU), as a specialized processor originally intended for manipulating computer graphics, has been shown to provide very attractive compute resources in addition to CPU and the above specialized hardware architectures, because of particular manycore parallel computation in a modern GPU.
+Graphics Processing Unit (GPU), as a specialized processor originally intended for manipulating computer graphics, has been shown to provide very attractive compute resources in addition to CPU and the above specialized hardware architectures, because of particular many-core parallel computation in a modern GPU.
 
 Based on the GPUs produced by NVIDIA, NVIDIA introduced CUDA (Computer Unified Device Architecture) to facilitate general-purpose computing on GPUs. NVIDIA also developed the CUDA C/C++ compiler, libraries, and runtime software to enable programmers to access the GPU parallel computing capabilities.
 
