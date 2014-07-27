@@ -218,7 +218,7 @@ A common application of profile HMMs is used to search a profile HMM against a s
 
 In HMMER2, both \emph{hmmsearch} and \emph{hmmpfam} rely on the same core Viterbi algorithm for their scoring function which is named as \emph{P7Viterbi} in the codes.
 
-To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as the Viterbi algorithm to find one path that has the maximum probability of the HMM generating the sequence. The Viterbi algorithm is a dynamic programming algorithm. Let $V_{i,j}$ be the maximum probability of a path from the start state $S_i$ ending at state $S_j$ and generating the prefix $q_{1...j}$ of the target sequence. $V_{i+1,j}$ is found by the recurrence:
+To find whether a sequence is member of the family described by a HMM, we compare the sequence with the HMM. We use an algorithm known as the Viterbi algorithm to find one path that has the maximum probability of the HMM generating the sequence. The Viterbi algorithm is a dynamic programming algorithm. For each prefix $q_{1...i}$ of the target sequence and each state $S_j$, let $V_{i,j}$ be the maximum probability of a path from the start state to the state $S_j$ and generating the prefix $q_{1...i}$ of the sequence. Let $P(k,j)$ be the transition probability from the state $S_k$ to the state $S_j$ and $P(q_{i+1}|j)$ be the conditional probability of $S_j$ emitting $q_{i+1}$. Then $V_{i+1,j}$ is found by the recurrence:
 
 \begin{equation*}
    \displaystyle V_{i+1,j} = \max_{0 \leqslant k \leqslant j-1} \big ( V_{i,k} P(k,j)P(q_{i+1} |j) \big )

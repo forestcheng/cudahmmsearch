@@ -90,6 +90,10 @@ From Figure \ref{fig:imp}, it can be seen that the global memory optimizations a
 \paragraph*{Experiment B : }This experiment tested the real-world performance of the final cudaHmmsearch implementation, with the optimizations discussed in Chapter \ref{CUDAHMMER3}. 
 This was done by using the fully optimized cudaHmmsearch to search the much large N201404 database for the 5 profile HMMs in Table \ref{tab.phmms}. As comparison, the same searches were executed by hmmsearch of HMMER3 on one CPU core on the Kronos machine. The result of Experiment B is shown in Table \ref{tab.pb}.
 
+The results of the benchmarks are shown in graphical form in Figure \ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.53x over hmmsearch of HMMER3. 
+
+Figure \ref{fig:len} also shows that the performance of both GPU and CPU searching for AAA\_27 dropped significantly compared with other searches. The reason can be seen from Table \ref{tab.sta} listing the internal pipeline statistics summary for searching globins4 and AAA\_27. Table \ref{tab.sta} shows the total number of target sequences in the N201404 database and the number of passed sequences after each filter. After every filter, the number of passed sequences for searching AAA\_27 with 1111 states is much more than that of globins4 with 149 states. This means that for searching AAA\_27, more target sequences are processed than globins4 in each filter after the MSV filter. At the same time, each of these filters is more time-consuming than the MSV filter. This results in the AAA\_27 performance dropping significantly.
+
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|}\hline
@@ -104,16 +108,12 @@ This was done by using the fully optimized cudaHmmsearch to search the much larg
 \caption{\fontfamily{pag}\selectfont \textbf{Result of Practical benchmark.} \label{tab.pb} The table shows the result of Experiment B, using the fully optimized cudaHmmsearch and hmmsearch of HMMER3 to search the 5 profile HMMs against the N201404 database. In the column of hmmsearch and cudaHmmsearch, the left sub-column is execution time in second and the right sub-column is performance in GCUPS. Speedup is measured in times of cudaHmmsearch performance over that of hmmsearch.}
 \end{table}
 
-The results of the benchmarks are shown in graphical form in Figure \ref{fig:len}. The GPU cudaHmmsearch performance hovers just above 25 GCUPS, while the CPU hmmsearch only around 10 GCUPS. The whole performance of cudaHmmsearch is stable with various lengths of query HMMs. On average, cudaHmmsearch has a speedup of 2.53x over hmmsearch. 
-
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[totalheight=0.36\textheight]{Figures/lengths.png}
 	\caption{\fontfamily{pag}\selectfont \textbf{Practical benchmarks.} The data of this chart come from Table \ref{tab.pb}. The blue and red bar is Performance (in GCUPS) of hmmsearch and cudaHmmsearch respectively, corresponding to the left Y axis. The green dot line is Speedup (in times) of cudaHmmsearch performance over that of hmmsearch, corresponding to the right Y axis.}
 	\label{fig:len}
 \end{figure}
-
-Figure \ref{fig:len} also shows that the performance of both GPU and CPU searching for AAA\_27 dropped significantly compared with other searches. The reason can be seen from Table \ref{tab.sta} listing the internal pipeline statistics summary for searching globins4 and AAA\_27. Table \ref{tab.sta} shows the total number of target sequences in the N201404 database and the number of passed sequences after each filter. After every filter, the number of passed sequences for searching AAA\_27 with 1111 states is much more than that of globins4 with 149 states. This means that for searching AAA\_27, more target sequences are processed than globins4 in each filter after the MSV filter. At the same time, each of these filters is more time-consuming than the MSV filter. This results in the AAA\_27 performance dropping significantly.
 
 \begin{table}[H]
 \centering
@@ -192,7 +192,7 @@ A fully-featured and accelerated HMMER3 protein search tool \emph{cudaHmmsearch}
 
 %----------------------------------------------------------------------------------------
 
-\section{Summary of Contributions}
+\section{Summary of Work}
 Our research work started with dynamic programming, the common characteristic of Swith-Waterman algorithm, Viterbi algorithm and MSV algorithm, which are famous protein sequence alignment algorithms in Bioinformatics.
 We summarized the technologies of accelerating Swith-Waterman algorithm on a CUDA-enabled GPU, which has been widely researched. We also briefly presented GPU acceleration work related to Viterbi algorithm.
 
