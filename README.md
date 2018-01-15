@@ -1,4 +1,4 @@
-# Implementing and Accelerating HMMER3 Protein Sequence Search onCUDA-Enabled GPU
+# Implementing and Accelerating HMMER3 Protein Sequence Search on CUDA-Enabled GPU
 Thesis Abstract of Lin CHENG For the Master Degree of Computer Science of Concordia University @Montreal
 
 July 2014
